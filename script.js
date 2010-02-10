@@ -1,7 +1,34 @@
+function plugindo_taskvisualization(){
+    if(getElementsByClass('plugin_do1',null,'span').length ||
+       getElementsByClass('plugin_do2',null,'span').length ||
+       getElementsByClass('plugin_do3',null,'span').length ||
+       getElementsByClass('plugin_do4',null,'span').length){
+
+        var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
+            ajax.AjaxFailedAlert = '';
+            ajax.encodeURIString = false;
+        if(ajax.failed) return true;
+
+        ajax.setVar('do_page', JSINFO['id']);
+        ajax.setVar('call','plugin_do_status');
+
+        ajax.onCompletion = function(){
+            var resp = 'var stat = '+this.response;
+            eval(resp);
+
+            for(var i=0; i<stat.length; i++){
+                var obj = document.getElementById('plgdo__'+stat[i].md5);
+                if(obj){
+                    obj.className += ' plugin_do_done';
+                    obj.title += ' '+LANG['plugins']['do']['done'].replace(/%s/,stat[i].status);
+                }
+            }
+        }
+        ajax.runAJAX();
+    }
+}
 
 addInitEvent(function(){
-
-console.dir(slinks);
 
     // Status toggle
     var slinks = getElementsByClass('plugin_do_status',null,'a');
@@ -39,7 +66,8 @@ console.dir(slinks);
             e.stopPropagation();
             return false;
         });
-
     }
+
+    plugindo_taskvisualization();
 });
 

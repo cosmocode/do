@@ -29,17 +29,34 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     function handle_ajax_call(&$event, $param) {
-        if($event->data != 'plugin_do') return true;
+        if($event->data == 'plugin_do'){
+            // toggle status of a single task
+            $hlp = plugin_load('helper', 'do');
+            $status = $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5']);
 
-        $hlp = plugin_load('helper', 'do');
-        $status = $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5']);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo $status;
 
-        header('Content-Type: text/plain; charset=utf-8');
-        echo $status;
+            $event->preventDefault();
+            $event->stopPropagation();
+            return false;
+        }elseif($event->data == 'plugin_do_status'){
+            // read status for a bunch of tasks
+            require_once(DOKU_INC.'inc/JSON.php');
 
-        $event->preventDefault();
-        $event->stopPropagation();
-        return false;
+            $JSON = new JSON();
+            $hlp = plugin_load('helper', 'do');
+            $status = $hlp->loadPageStatuses(cleanID($_REQUEST['do_page']));
+            $status = $JSON->encode($status);
+
+            header('Content-Type: text/plain; charset=utf-8');
+            echo $status;
+
+            $event->preventDefault();
+            $event->stopPropagation();
+            return false;
+        }
+        return true;
     }
 
 

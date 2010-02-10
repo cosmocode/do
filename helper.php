@@ -72,7 +72,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     function toggleTaskStatus($page,$md5){
         if(!$this->db) return array();
         $md5 = trim($md5);
-        if(!$page || !$md5) return;
+        if(!$page || !$md5) return array();
 
         $res = $this->db->query('SELECT status
                                    FROM task_status
@@ -96,6 +96,16 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                 $page, $md5);
             return false;
         }
+    }
+
+    function loadPageStatuses($page){
+        if(!$this->db) return array();
+        if(!$page) return array();
+
+        $res = $this->db->query('SELECT md5, status
+                                   FROM task_status
+                                  WHERE page = ?',$page);
+        return $this->db->res2arr($res);
     }
 
 }
