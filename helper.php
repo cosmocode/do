@@ -83,15 +83,18 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $stat['status'];
 
         if(!$stat){
+            $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
                                     (page, md5, status)
                                     VALUES (?, ?, ?)',
-                                    $page, $md5, date('Y-m-d',time()));
+                                    $page, $md5, $stat);
+            return $stat;
         }else{
             $this->db->query('DELETE FROM task_status
                                WHERE page = ?
                                     AND md5  = ?',
                                 $page, $md5);
+            return false;
         }
     }
 

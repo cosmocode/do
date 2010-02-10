@@ -18,4 +18,7 @@ $lang['user']   = 'Assigned to';
 $lang['date']   = 'Due on';
 $lang['status'] = 'Status';
 
+$lang['js']['done'] = 'This task was completed at %s';
+$lang['js']['open'] = 'This task hasn\'t been completed, yet';
+
 //Setup VIM: ex: et ts=4 enc=utf-8 :

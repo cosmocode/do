@@ -49,6 +49,8 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->info['cache'] = false;
         global $ID;
 
+        $this->setupLocale();
+
         $hlp = plugin_load('helper', 'do');
         $data = $hlp->loadTasks();
 
@@ -61,15 +63,9 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->doc .= '</tr>';
 
         foreach($data as $row){
-            if($row['status']){
-                $class = 'plugin_do_done';
-            }else{
-                $class = '';
-            }
-
             $R->doc .= '<tr>';
             $R->doc .= '<td>';
-            $R->doc .= '<a href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1 '.$class.'">'.hsc($row['text']).'</a>';
+            $R->doc .= '<a href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
 
             $R->doc .= '<td>'.editorinfo($row['user']).'</td>';
@@ -78,11 +74,11 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<a href="'.wl($ID,array('do'   => 'plugin_do',
                                                 'do_page' => $row['page'],
                                                 'do_md5'  => $row['md5']
-                                                )).'">';
+                                                )).'" class="plugin_do_status">';
             if($row['status']){
-                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_done.png" title="FIXME" />';
+                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_done.png" title="'.sprintf($this->lang['js']['done'],$row['status']).'" />';
             }else{
-                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_open.png" title="FIXME" />';
+                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_open.png" title="'.$this->lang['js']['open'].'" />';
             }
             $R->doc .= '</a>';
             $R->doc .= '</td>';
