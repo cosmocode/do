@@ -16,3 +16,6 @@ div.dokuwiki span.plugin_do4 {
     background: transparent url(pix/do4.png) no-repeat top right;
 }
 
+div.dokuwiki .plugin_do_done {
+    text-decoration: line-through !important;
+}

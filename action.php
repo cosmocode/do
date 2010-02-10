@@ -24,10 +24,24 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     function register(&$controller) {
 
        $controller->register_hook('DOKUWIKI_STARTED', 'FIXME', $this, 'handle_dokuwiki_started');
-   
+
+       $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
+
     }
 
     function handle_dokuwiki_started(&$event, $param) { }
+
+
+    function handle_act_preprocess(&$event, $param) {
+        if($event->data != 'plugin_do') return true;
+
+        $hlp = plugin_load('helper', 'do');
+        $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5']);
+
+        global $ACT;
+        $ACT = 'show';
+        return true;
+    }
 
 }
 

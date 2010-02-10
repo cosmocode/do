@@ -18,6 +18,7 @@ require_once(DOKU_PLUGIN.'syntax.php');
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $docstash;
     private $taskdata;
+    private $run;
 
     function getInfo() {
         return confToHash(dirname(__FILE__).'/../plugin.info.txt');
@@ -75,6 +76,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if($mode != 'xhtml') return false;
         global $ID;
 
+        $hlp = plugin_load('helper', 'do');
+
+        // on the first run for this page, clean up
+        if(!isset($this->run[$ID])){
+            $hlp->cleanPageTasks($ID);
+            $this->run[$ID] = true;
+        }
+
         switch($data['state']){
             case DOKU_LEXER_ENTER:
                 // move current document data to stack
@@ -98,7 +107,8 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_EXIT:
                 // determine the ID (ignore tags, case and whitespaces)
                 $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc))));
-                $this->taskdata['id'] = $md5;
+                $this->taskdata['md5']  = $md5;
+                $this->taskdata['text'] = trim(strip_tags($R->doc));
 
                 // put task markup into document
                 if($this->taskdata['user'] && $this->taskdata['date']){
@@ -125,11 +135,18 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $R->doc = $this->docstash.$R->doc;
                 $this->docstash = '';
 
+                // save the task data
+                $hlp->saveTask($this->taskdata);
+
+                // we're done with this task
+                $this->taskdata = array();
                 break;
         }
 
         return true;
     }
+
+
 }
 
 // vim:ts=4:sw=4:et:enc=utf-8:
