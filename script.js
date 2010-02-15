@@ -23,7 +23,7 @@ function plugindo_taskvisualization(){
                     obj.title += ' '+LANG['plugins']['do']['done'].replace(/%s/,stat[i].status);
                 }
             }
-        }
+        };
         ajax.runAJAX();
     }
 }
@@ -57,7 +57,7 @@ addInitEvent(function(){
                     this._image.src   = DOKU_BASE+'lib/plugins/do/pix/status_open.png';
                     this._image.title = LANG['plugins']['do']['open'];
                 }
-            }
+            };
 
             ajax.runAJAX(param);
 
