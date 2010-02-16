@@ -19,3 +19,34 @@ div.dokuwiki span.plugin_do4 {
 div.dokuwiki .plugin_do_done {
     text-decoration: line-through !important;
 }
+
+#do__popup {
+    position:absolute;
+    background-color: __background__;
+    border:1px solid __border__;
+}
+#do__popup .title {
+    background-color: __background_alt__;
+    text-align:center;
+}
+#do__popup .title img {
+    float:right;
+}
+#do__popup fieldset {
+    border:0;
+    padding-bottom:0.3em;
+}
+#do__popup fieldset p {
+    margin-bottom:0;
+}
+#do__popup fieldset p label {
+    display:block;
+    width:45%;
+    float:left;
+    line-height:25px;
+}
+#do__popup fieldset p input {
+    display:block;
+    width:45%;
+    float:left;
+}
