@@ -26,6 +26,8 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
 
        $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
+
+       $controller->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'handle_delete');
     }
 
     function handle_ajax_call(&$event, $param) {
@@ -61,6 +63,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
 
     function handle_act_preprocess(&$event, $param) {
+
         if($event->data != 'plugin_do') return true;
 
         $hlp = plugin_load('helper', 'do');
@@ -69,6 +72,22 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
         global $ACT;
         $ACT = 'show';
         return true;
+    }
+
+    function handle_delete(&$event, $param){
+        $data = $event->data;
+        
+        if(!empty($data[0][1])) return;
+
+        global $ID;
+        $hlp = plugin_load('helper', 'do');
+
+        // on the first run for this page, clean up
+        if(!isset($this->run[$ID])){
+            $hlp->cleanPageTasks($ID);
+            $this->run[$ID] = true;
+        }
+
     }
 
 }

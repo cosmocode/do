@@ -30,7 +30,6 @@ function plugindo_taskvisualization(){
 
 function do_createPopup(edit,btn)
 {
-
     var select = getSelection(edit);
 
     var div         = document.createElement('div');
@@ -60,7 +59,6 @@ function do_createPopup(edit,btn)
     datep.appendChild(datel);
     datep.appendChild(datei);
     actp.appendChild(acts);
-//    body.appendChild(div);
     edit.parentNode.appendChild(div);
 
     // set id from the popup
@@ -77,7 +75,7 @@ function do_createPopup(edit,btn)
     datep.className     = 'inp';
     assigni.className   = 'edit';
     datei.className     = 'edit';
-    actp.className      = 'button';
+    acts.className      = 'button';
 
     // image :)
     closeimg.src = '/lib/images/close.png';
@@ -120,22 +118,22 @@ function do_createPopup(edit,btn)
         out +='>';
 
         var sel = getSelection(edit);
-        if(sel.start == 0 && sel.end == 0) sel = selection;
+        if(sel.start == 0 && sel.end == 0) sel = select;
 
         var stxt = sel.getText();
-//        if(!stxt && !DOKU_UHC) stxt=title;
 
         if(stxt) out += stxt;
-        out += '</do>';
+        out          += '</do>';
 
         pasteText(sel,out);
-        div.style.display = 'none';
-        datei.value = '';
-        assigni.value = '';
+        div.style.display   = 'none';
+        datei.value         = '';
+        assigni.value       = '';
+
         return false;
     });
-
 }
+
 /**
  * Add button action for the link wizard button
  *
