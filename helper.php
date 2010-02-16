@@ -53,9 +53,45 @@ class helper_plugin_do extends DokuWiki_Plugin {
                          $data['text']);
     }
 
-    function loadTasks(){
+    function loadTasks($args = null){
         if(!$this->db) return array();
+        $where = '';
+        if (isset($args))
+        {
+            $where .= ' WHERE 1';
 
+            if (isset($args['ns']))
+            {
+                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
+            }
+
+            if (isset($args['status']))
+            {
+                if ($args['status'][0] == 'done')
+                {
+                    $where .= ' AND B.status IS NOT null';
+                } elseif ($args['status'][0] == 'undone')
+                {
+                    $where .= ' AND B.status IS null';
+                }
+                
+            }
+
+            $argn = array('user');
+            foreach ($argn as $n)
+            {
+                if (isset($args[$n]))
+                {
+                    if (is_array($args[$n]))
+                    {
+                        $args[$n] = $this->db->quote_and_join($args[$n]);
+                    } else {
+                        $args[$n] = $this->db->quote_string($args[$n]);
+                    }
+                    $where .= sprintf(' AND %s IN (%s)',$n,$args[$n]);
+                }
+            }
+        }
         $res = $this->db->query('SELECT A.page   AS page,
                                         A.md5    AS md5,
                                         A.date   AS date,
@@ -64,9 +100,11 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                         B.status AS status
                                    FROM tasks A LEFT JOIN task_status B
                                      ON A.page = B.page
-                                    AND A.md5 = B.md5
-                               ORDER BY B.status, A.date, A.text');
-        return $this->db->res2arr($res);
+                                     AND A.md5 = B.md5
+                                     '.$where.'
+                                   ORDER BY B.status, A.date, A.text');
+        $res = $this->db->res2arr($res);
+        return $res;
     }
 
     function toggleTaskStatus($page,$md5){

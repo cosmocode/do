@@ -41,6 +41,43 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, &$handler){
         $data = array();
 
+        // parse the given match
+        $match = substr($match, 9,-2);
+        $url = parse_url($match);
+
+        $ns = '.';
+        $args = array();
+
+        // check if a ns is given
+        if (isset($url['path']))
+        {
+            $ns = $url['path'];
+        }
+
+        // check the arguments
+        if (isset($url['query']))
+        {
+            parse_str($url['query'],$args);
+
+            // check for filters
+            $filters = array_keys($args);
+            foreach ($filters as $filter)
+            {
+                if (isset($args[$filter]))
+                {
+                    $args[$filter] = explode(',',$args[$filter]);
+                    $c = count($args[$filter]);
+                    for ($i = 0; $i<$c; $i++)
+                    {
+                        $args[$filter][$i] = trim($args[$filter][$i]);
+                    }
+                }
+            }
+        }
+
+        $data['args']       = $args;
+        $data['args']['ns'] = $ns;
+
         return $data;
     }
 
@@ -52,7 +89,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $this->setupLocale();
 
         $hlp = plugin_load('helper', 'do');
-        $data = $hlp->loadTasks();
+        $data = $hlp->loadTasks($data['args']);
 
         $R->doc .= '<table class="inline plugin_do">';
         $R->doc .= '<tr>';
