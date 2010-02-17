@@ -112,8 +112,9 @@ function do_createPopup(edit,btn)
     addEvent(btn,'click',close);
 
     addEvent(acts,'click',function(){
+
         var out = '<do';
-        if (datei.value)    out += ' ' + datei.value;
+        if (datei.value && datei.value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/))    out += ' ' + datei.value;
         if (assigni.value)  out += ' ' + assigni.value;
         out +='>';
 

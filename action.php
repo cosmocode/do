@@ -76,8 +76,8 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
     function handle_delete(&$event, $param){
         $data = $event->data;
-        
-        if(!empty($data[0][1])) return;
+
+        if (preg_match('/\<do[^>]*\>.*\<\/do\>/i',$data[0][1])) return;
 
         global $ID;
         $hlp = plugin_load('helper', 'do');
