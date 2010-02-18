@@ -17,10 +17,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
-    function getInfo() {
-        return confToHash(dirname(__FILE__).'/../plugin.info.txt');
-    }
-
     function getType() {
         return 'substition';
     }

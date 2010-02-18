@@ -17,10 +17,6 @@ require_once(DOKU_PLUGIN.'action.php');
 
 class action_plugin_do extends DokuWiki_Action_Plugin {
 
-    function getInfo() {
-        return confToHash(dirname(__FILE__).'/plugin.info.txt');
-    }
-
     function register(&$controller) {
 
        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
@@ -75,19 +71,21 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     function handle_delete(&$event, $param){
-        $data = $event->data;
-
-        if (preg_match('/\<do[^>]*\>.*\<\/do\>/i',$data[0][1])) return;
-
-        global $ID;
-        $hlp = plugin_load('helper', 'do');
-
-        // on the first run for this page, clean up
-        if(!isset($this->run[$ID])){
-            $hlp->cleanPageTasks($ID);
-            $this->run[$ID] = true;
+        if (preg_match('/\<do[^>]*\>.*\<\/do\>/i',$event->data[0][1]) === 1) {
+            // Only run if syntax plugin did not
+            return;
         }
 
+        global $ID;
+
+        if(isset($this->run[$ID])){
+            // Only execute on the first run
+            return;
+        }
+
+        $hlp = plugin_load('helper', 'do');
+        $hlp->cleanPageTasks($ID);
+        $this->run[$ID] = true;
     }
 
 }

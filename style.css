@@ -31,6 +31,7 @@ div.dokuwiki .plugin_do_done {
 }
 #do__popup .title img {
     float:right;
+    cursor:pointer;
 }
 #do__popup fieldset {
     border:0;
@@ -41,12 +42,18 @@ div.dokuwiki .plugin_do_done {
 }
 #do__popup fieldset p label {
     display:block;
-    width:45%;
+    width:48%;
     float:left;
     line-height:25px;
+    text-align: right;
+    margin-right: 0.1em;
 }
 #do__popup fieldset p input {
     display:block;
-    width:45%;
+    width:48%;
     float:left;
+}
+
+#do__popup fieldset {
+    width: auto;
 }

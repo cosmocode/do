@@ -17,10 +17,6 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
     private $db = null;
 
-    function getInfo() {
-        return confToHash(dirname(__FILE__).'plugin.info.txt');
-    }
-
     /**
      * Constructor. Initializes the SQLite DB Connection
      */
@@ -28,13 +24,12 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $this->db = plugin_load('helper', 'sqlite');
         if(!$this->db){
             msg('The do plugin requires the sqlite plugin. Please install it');
-        }else{
-            if(!$this->db->init('do',dirname(__FILE__).'/db/')){
-                $this->db = null;
-            }
+            return;
+        }
+        if(!$this->db->init('do',dirname(__FILE__).'/db/')){
+            $this->db = null;
         }
     }
-
 
     function cleanPageTasks($id){
         if(!$this->db) return;
@@ -60,8 +55,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         {
             $where .= ' WHERE 1';
 
-            if (isset($args['ns']))
-            {
+            if (isset($args['ns'])) {
                 $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
             }
 
@@ -70,11 +64,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 if ($args['status'][0] == 'done')
                 {
                     $where .= ' AND B.status IS NOT null';
-                } elseif ($args['status'][0] == 'undone')
-                {
+                } elseif ($args['status'][0] == 'undone') {
                     $where .= ' AND B.status IS null';
                 }
-                
+
             }
 
             $argn = array('user');

@@ -20,10 +20,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $taskdata;
     private $run;
 
-    function getInfo() {
-        return confToHash(dirname(__FILE__).'/../plugin.info.txt');
-    }
-
     function getType() {
         return 'formatting';
     }
@@ -145,8 +141,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
         return true;
     }
-
-
 }
 
 // vim:ts=4:sw=4:et:enc=utf-8:
