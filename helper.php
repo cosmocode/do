@@ -56,6 +56,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
             $where .= ' WHERE 1';
 
             if (isset($args['ns'])) {
+                $args['ns'] = resolve_id($args['ns']);
                 $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
             }
 

@@ -38,33 +38,22 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $data = array();
 
         // parse the given match
-        $match = substr($match, 9,-2);
-        $url = parse_url($match);
-
-        $ns = '.';
+        $match = substr($match, 9, -2);
+        $url = explode('?', $match, 2);
+        $ns = $url[0];
         $args = array();
 
-        // check if a ns is given
-        if (isset($url['path']))
-        {
-            $ns = $url['path'];
-        }
-
         // check the arguments
-        if (isset($url['query']))
-        {
-            parse_str($url['query'],$args);
+        if (isset($url[1])) {
+            parse_str($url[1],$args);
 
             // check for filters
             $filters = array_keys($args);
-            foreach ($filters as $filter)
-            {
-                if (isset($args[$filter]))
-                {
+            foreach ($filters as $filter) {
+                if (isset($args[$filter])) {
                     $args[$filter] = explode(',',$args[$filter]);
                     $c = count($args[$filter]);
-                    for ($i = 0; $i<$c; $i++)
-                    {
+                    for ($i = 0; $i<$c; $i++) {
                         $args[$filter][$i] = trim($args[$filter][$i]);
                     }
                 }
