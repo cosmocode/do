@@ -13,18 +13,18 @@ function addBtnActionDo(btn, props, edid) {
 
     var div = document.createElement('div');
     div.innerHTML = '<div class="title">' +
-                     '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                     '<span>' + LANG.plugins.do.popup_title + '</span>' +
+                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
+                    '<span>' + LANG.plugins['do'].popup_title + '</span>' +
                     '</div>';
 
     var fieldset = '<fieldset>';
     var inps = ['assign', 'date'];
     for (var i = 0 ; i < inps.length ; ++i) {
         fieldset += '<p><label for="do__popup_' + inps[i] + '">' +
-                          LANG.plugins.do['popup_' + inps[i]] + '</label>' +
+                          LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
                           '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
     }
-    div.innerHTML += fieldset + '<p><button class="button">' + LANG.plugins.do.popup_submit
+    div.innerHTML += fieldset + '<p><button class="button">' + LANG.plugins['do'].popup_submit
                    + '</button></p></fieldset>';
 
     div.id              = 'do__popup';
@@ -46,16 +46,18 @@ function addBtnActionDo(btn, props, edid) {
         else
         {
             div.style.display = 'inline';
-            div.style.top = event.pageY + 'px';
-            div.style.left = event.pageX + 'px';
+            div.style.top  = (event.pageY?event.pageY:event.clientY) + 'px';
+            div.style.left = (event.pageX?event.pageX:event.clientX) + 'px';
         }
+        event.preventDefault();
+        event.stopPropagation();
         return false;
     };
 
     addEvent(div.firstChild.firstChild,'click',close);
     addEvent(btn,'click',close);
 
-    addEvent(div.lastChild.lastChild.lastChild,'click',function(){
+    addEvent(div.lastChild.lastChild.lastChild,'click',function(e){
         // Validate data
         var out = '<do';
         if ($('do__popup_date').value && $('do__popup_date').value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)) out += ' ' + $('do__popup_date').value;
@@ -74,7 +76,8 @@ function addBtnActionDo(btn, props, edid) {
         div.style.display   = 'none';
         $('do__popup_date').value         = '';
         $('do__popup_assign').value       = '';
-
+        e.preventDefault();
+        e.stopPropagation();
         return false;
     });
    return true;
@@ -83,7 +86,7 @@ function addBtnActionDo(btn, props, edid) {
 if (typeof window.toolbar !== 'undefined') {
     window.toolbar.push({
         "type":"do",
-        "title": LANG.plugins.do.toolbar_title,
+        "title": LANG.plugins['do'].toolbar_title,
         "icon":DOKU_BASE + 'lib/plugins/do/pix/toolbar.png'
     });
 }
@@ -107,10 +110,10 @@ addInitEvent(function(){
             var resp = this.response;
             if(resp){
                 image.src   = DOKU_BASE+'lib/plugins/do/pix/status_done.png';
-                image.title = LANG.plugins.do.done.replace(/%s/,resp);
+                image.title = LANG.plugins['do'].done.replace(/%s/,resp);
             }else{
                 image.src   = DOKU_BASE+'lib/plugins/do/pix/status_open.png';
-                image.title = LANG.plugins.do.open;
+                image.title = LANG.plugins['do'].open;
             }
         };
 
@@ -148,7 +151,7 @@ addInitEvent(function(){
                 var obj = document.getElementById('plgdo__'+stat[i].md5);
                 if(obj){
                     obj.className += ' plugin_do_done';
-                    obj.title += ' '+LANG.plugins.do.done.replace(/%s/,stat[i].status);
+                    obj.title += ' '+LANG.plugins['do'].done.replace(/%s/,stat[i].status);
                 }
             }
         };
