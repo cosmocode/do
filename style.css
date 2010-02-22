@@ -42,7 +42,7 @@ div.dokuwiki .plugin_do_done {
 }
 #do__popup fieldset p label {
     display:block;
-    width:48%;
+    width:46%;
     float:left;
     line-height:25px;
     text-align: right;
@@ -50,7 +50,7 @@ div.dokuwiki .plugin_do_done {
 }
 #do__popup fieldset p input {
     display:block;
-    width:48%;
+    width:46%;
     float:left;
 }
 
