@@ -92,7 +92,7 @@ addInitEvent(function(){
     function handle_event(e){
         var me = e.target;
         if(me.tagName !== 'A') me = e.target.parentNode;
-        var param = me.search.substring(1).replace(/&do=/,'&call=');
+        var param = me.search.substring(1).replace(/&do=/,'&call=').replace(/^do=/,'call=');
 
         var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
         ajax.AjaxFailedAlert = '';
