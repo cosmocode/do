@@ -33,6 +33,7 @@ div.dokuwiki a.plugin_do_adone {
     position:absolute;
     background-color: __background__;
     border:1px solid __border__;
+    width:400px;
 }
 #do__popup .title {
     background-color: __background_alt__;
@@ -48,6 +49,7 @@ div.dokuwiki a.plugin_do_adone {
 }
 #do__popup fieldset p {
     margin-bottom:0;
+    clear:left;
 }
 #do__popup fieldset p label {
     display:block;
@@ -65,4 +67,7 @@ div.dokuwiki a.plugin_do_adone {
 
 #do__popup fieldset {
     width: auto;
+}
+#do__popup button {
+    text-align:center;
 }
