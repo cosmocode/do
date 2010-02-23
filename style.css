@@ -68,6 +68,6 @@ div.dokuwiki a.plugin_do_adone {
 #do__popup fieldset {
     width: auto;
 }
-#do__popup button {
+#do__popup p.plugin_do_insert {
     text-align:center;
 }
