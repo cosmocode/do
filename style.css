@@ -1,22 +1,31 @@
-div.dokuwiki span.plugin_do1 {
-    padding-right: 18px;
-    background: transparent url(pix/do1.png) no-repeat top right;
+div.dokuwiki a.plugin_do_adone span.plugin_do1 {
+    background-image:url(pix/do1.png);
 }
 
-div.dokuwiki span.plugin_do2 {
-    padding-right: 18px;
-    background: transparent url(pix/do2.png) no-repeat top right;
+div.dokuwiki a.plugin_do_adone span.plugin_do2 {
+    background-image:url(pix/do2.png);
 }
+div.dokuwiki a.plugin_do_adone span.plugin_do3 {
+    background-image:url(pix/do3.png);
+}
+div.dokuwiki a.plugin_do_adone span.plugin_do4 {
+    background-image:url(pix/do4.png);
+}
+
+div.dokuwiki span.plugin_do1,
 div.dokuwiki span.plugin_do3 {
     padding-right: 18px;
-    background: transparent url(pix/do3.png) no-repeat top right;
-}
-div.dokuwiki span.plugin_do4 {
-    padding-right: 18px;
-    background: transparent url(pix/do4.png) no-repeat top right;
+    background: transparent url(pix/do6.png) no-repeat top right;
 }
 
-div.dokuwiki .plugin_do_done {
+div.dokuwiki span.plugin_do2,
+div.dokuwiki span.plugin_do4 {
+    padding-right:18px;
+    background: transparent url(pix/do5.png) no-repeat top right;
+}
+
+
+div.dokuwiki a.plugin_do_adone {
     text-decoration: line-through !important;
 }
 

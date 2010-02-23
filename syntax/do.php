@@ -101,6 +101,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 break;
 
             case DOKU_LEXER_EXIT:
+                global $ID;
                 // determine the ID (ignore tags, case and whitespaces)
                 $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc))));
                 $this->taskdata['md5']  = $md5;
@@ -120,12 +121,17 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     $text = $this->getLang('title4');
                     $class = 'plugin_do4';
                 }
-
-                $R->doc = '<span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
+                $param = array(
+                    'do' => 'plugin_do',
+                    'do_page' => $ID,
+                    'do_md5' => $md5
+                );
+                
+                $R->doc = '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
                             sprintf($text,
                                     hsc($this->taskdata['user']),
                                     hsc($this->taskdata['date'])).'">'.
-                          $R->doc.'</span>';
+                                    $R->doc.'</span></a>';
 
                 // restore the full document, including our additons
                 $R->doc = $this->docstash.$R->doc;
