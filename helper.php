@@ -51,6 +51,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     function loadTasks($args = null){
         if(!$this->db) return array();
         $where = '';
+        $limit = '';
         if (isset($args))
         {
             $where .= ' WHERE 1';
@@ -72,6 +73,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
                     $where .= ' AND B.status IS null';
                 }
 
+            }
+
+            if (isset($args['limit'])) {
+                $limit = ' LIMIT ' . intval($args['limit'][0]);
             }
 
             $argn = array('user');
@@ -99,7 +104,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                      ON A.page = B.page
                                      AND A.md5 = B.md5
                                      '.$where.'
-                                   ORDER BY B.status, A.date, A.text');
+                                   ORDER BY B.status, A.date, A.text' . $limit);
         $res = $this->db->res2arr($res);
         return $res;
     }
