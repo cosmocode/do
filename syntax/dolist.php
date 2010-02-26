@@ -89,8 +89,16 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<td>';
             $R->doc .= '<a href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
+            if ($this->getConf('userpage') !== '') {
+                $R->doc .= '<td>' .
+                           $R->internallink(sprintf($this->getConf('userpage'),
+                                                    $row['user']),
+                                            editorinfo($row['user']), '',
+                                            true, 'navigation') . '</td>';
 
-            $R->doc .= '<td>'.editorinfo($row['user']).'</td>';
+            } else {
+                $R->doc .= '<td>'.editorinfo($row['user']).'</td>';
+            }
             $R->doc .= '<td>'.hsc($row['date']).'</td>';
             $R->doc .= '<td align="center">';
             $R->doc .= '<a href="'.wl($ID,array('do'   => 'plugin_do',
