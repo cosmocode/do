@@ -94,12 +94,13 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 }
             }
         }
-        $res = $this->db->query('SELECT A.page   AS page,
-                                        A.md5    AS md5,
-                                        A.date   AS date,
-                                        A.user   AS user,
-                                        A.text   AS text,
-                                        B.status AS status
+        $res = $this->db->query('SELECT A.page     AS page,
+                                        A.md5      AS md5,
+                                        A.date     AS date,
+                                        A.user     AS user,
+                                        A.text     AS text,
+                                        B.status   AS status,
+                                        B.closedby AS closedby
                                    FROM tasks A LEFT JOIN task_status B
                                      ON A.page = B.page
                                      AND A.md5 = B.md5
@@ -123,11 +124,12 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $stat['status'];
 
         if(!$stat){
+            $name = (empty($_SERVER['REMOTE_USER'])?$_SERVER['REMOTE_ADDR']:$_SERVER['REMOTE_USER']);
             $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
-                                    (page, md5, status)
-                                    VALUES (?, ?, ?)',
-                                    $page, $md5, $stat);
+                                    (page, md5, status, closedby)
+                                    VALUES (?, ?, ?, ?)',
+                                    $page, $md5, $stat, $name);
             return $stat;
         }else{
             $this->db->query('DELETE FROM task_status
@@ -142,7 +144,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$this->db) return array();
         if(!$page) return array();
 
-        $res = $this->db->query('SELECT md5, status
+        $res = $this->db->query('SELECT md5, status, closedby
                                    FROM task_status
                                   WHERE page = ?',$page);
         return $this->db->res2arr($res);

@@ -19,6 +19,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $docstash;
     private $taskdata;
     private $run;
+    private $status;
 
     function getType() {
         return 'formatting';
@@ -45,7 +46,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler){
-        $data = array();
+       $data = array();
         $data['state'] = $state;
 
         switch($state){
@@ -79,6 +80,13 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $hlp->cleanPageTasks($ID);
             $this->run[$ID] = true;
         }
+        if (!$this->status) {
+            $this->status = array();
+            $statuses = $hlp->loadPageStatuses($ID);
+            foreach ($statuses as $state) {
+                $this->status[$state['md5']] = $state;
+            }
+        }
 
         switch($data['state']){
             case DOKU_LEXER_ENTER:
@@ -108,17 +116,20 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->taskdata['text'] = trim(strip_tags($R->doc));
 
                 // put task markup into document
+                $c = '';
+                if ($this->status[$md5]) $c = 'c';
+
                 if($this->taskdata['user'] && $this->taskdata['date']){
-                    $text  = $this->getLang('title1');
+                   $text  = $this->getLang("title1$c");
                     $class = 'plugin_do1';
                 }elseif($this->taskdata['user']){
-                    $text = $this->getLang('title2');
+                    $text = $this->getLang("title2$c");
                     $class = 'plugin_do2';
                 }elseif($this->taskdata['date']){
-                    $text = $this->getLang('title3');
+                    $text = $this->getLang("title3$c");
                     $class = 'plugin_do3';
                 }else{
-                    $text = $this->getLang('title4');
+                    $text = $this->getLang("title4$c");
                     $class = 'plugin_do4';
                 }
                 $param = array(
@@ -126,11 +137,12 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     'do_page' => $ID,
                     'do_md5' => $md5
                 );
-                
+
                 $R->doc = '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
                             sprintf($text,
                                     hsc($this->taskdata['user']),
-                                    hsc($this->taskdata['date'])).'">'.
+                                    hsc($this->taskdata['date']),
+                                    hsc($this->status[$md5]['closedby'])).'">'.
                                     $R->doc.'</span></a>';
 
                 // restore the full document, including our additons

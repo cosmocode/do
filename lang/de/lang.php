@@ -8,10 +8,14 @@
 // menu entry for admin plugins
 // $lang['menu'] = 'Your menu entry';
 
-$lang['title1'] = 'Aufgabe ist %1$s zugeordnet und ist am %2$s fällig.';
-$lang['title2'] = 'Aufgabe ist %1$s zugeordnet. Kein Fälligkeitsdatum.';
-$lang['title3'] = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig.';
-$lang['title4'] = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeitsdatum';
+$lang['title1']  = 'Aufgabe ist %1$s zugeordnet und ist am %2$s fällig.';
+$lang['title1c'] = 'Aufgabe ist %1$s zugeordnet, fällig am %2$s, erledigt von %3$s.';
+$lang['title2']  = 'Aufgabe ist %1$s zugeordnet. Kein Fälligkeitsdatum.';
+$lang['title2c'] = 'Aufgabe ist %1$s zugeordnet, kein Fälligkeitsdatum, erledigt von %3$s.';
+$lang['title3']  = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig.';
+$lang['title3c'] = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig, erledigt von %3$s.';
+$lang['title4']  = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeitsdatum';
+$lang['title4c'] = 'Aufgabe ist nicht zugeordnet, hat kein Fälligkeitsdatum, erledigt von %3$s.';
 
 $lang['task']   = 'Aufgabe';
 $lang['user']   = 'zugewiesen an';

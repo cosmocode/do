@@ -19,11 +19,18 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
     function register(&$controller) {
 
-       $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
+        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
 
-       $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
+        $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
 
-       $controller->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'handle_delete');
+        $controller->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'handle_delete');
+
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, '_adduser');
+    }
+
+    function _adduser(&$event, $param) {
+        global $JSINFO;
+        $JSINFO['plugin_do_user'] = ($_SERVER['REMOTE_USER']?$_SERVER['REMOTE_USER']:$_SERVER['REMOTE_ADDR']);
     }
 
     function handle_ajax_call(&$event, $param) {

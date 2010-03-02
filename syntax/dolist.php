@@ -113,15 +113,35 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             }
             $R->doc .= '<td>'.hsc($row['date']).'</td>';
             $R->doc .= '<td align="center">';
+
+            $c = '';
+            if (!empty($row['status'])) $c = 'c';
+            if($row['user'] && $row['date']){
+                $text  = $this->getLang("title1$c");
+                $class = 'plugin_do1';
+            }elseif($row['user']){
+                $text = $this->getLang("title2$c");
+                $class = 'plugin_do2';
+            }elseif($row['date']){
+                $text = $this->getLang("title3$c");
+                $class = 'plugin_do3';
+            }else{
+                $text = $this->getLang("title4$c");
+                $class = 'plugin_do4';
+            }
+            $text = sprintf($text, hsc($row['user']), hsc($row['date']), hsc($row['closedby']));
             $R->doc .= '<a href="'.wl($ID,array('do'   => 'plugin_do',
                                                 'do_page' => $row['page'],
                                                 'do_md5'  => $row['md5']
-                                                )).'" class="plugin_do_status">';
-            if($row['status']){
-                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_done.png" title="'.sprintf($this->lang['js']['done'],$row['status']).'" />';
-            }else{
-                $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/status_open.png" title="'.$this->lang['js']['open'].'" />';
-            }
+                                            ));
+            if ($row['status']) $R->doc .= '" class="plugin_do_status plugin_do_adone">';
+            else $R->doc .= '" class="plugin_do_status">';
+
+            $editor = editorinfo($row['closedby']);
+            if (empty($editor)) $editor = '&nbsp;';
+            $R->doc .= '<span title="'.$text.'" class="'.$class.'">'.$editor.'</span>';
+
+
             $R->doc .= '</a>';
             $R->doc .= '</td>';
             $R->doc .= '</tr>';
