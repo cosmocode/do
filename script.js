@@ -28,7 +28,7 @@ function addBtnActionDo(btn, props, edid) {
                    + '</button></p></fieldset>';
 
     div.id              = 'do__popup';
-    edit.parentNode.appendChild(div);
+    $('dw__editform').appendChild(div);
 
     // hide popup
     div.style.display = 'none';
