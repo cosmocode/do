@@ -46,8 +46,8 @@ function addBtnActionDo(btn, props, edid) {
         else
         {
             div.style.display = 'inline';
-            div.style.top  = (event.pageY?event.pageY:event.clientY) + 'px';
-            div.style.left = (event.pageX?event.pageX:event.clientX) + 'px';
+            div.style.top  = event.pageY + 'px';
+            div.style.left = event.pageX + 'px';
         }
         event.preventDefault();
         event.stopPropagation();
