@@ -14,26 +14,46 @@ function addBtnActionDo(btn, props, edid) {
     var div = document.createElement('div');
     div.innerHTML = '<div class="title">' +
                     '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    '<span>' + LANG.plugins['do'].popup_title + '</span>' +
-                    '</div>';
+                    LANG.plugins['do'].popup_title + '</div>';
 
     var fieldset = '<fieldset>';
     var inps = ['assign', 'date'];
     for (var i = 0 ; i < inps.length ; ++i) {
         fieldset += '<p><label for="do__popup_' + inps[i] + '">' +
-                          LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
+                          LANG.plugins.do['popup_' + inps[i]] + '</label>' +
                           '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
     }
     div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">' + LANG.plugins['do'].popup_submit
                    + '</button></p></fieldset>';
 
     div.id              = 'do__popup';
-    $('dw__editform').appendChild(div);
 
     // hide popup
     div.style.display = 'none';
 
     drag.attach(div, div.firstChild);
+
+    $('dw__editform').appendChild(div);
+
+    if (typeof AutoCompletion !== 'undefined') {
+        var user_AutoCompletion = AutoCompletion;
+        user_AutoCompletion.prototype.prepareLi = function (li, value) {
+            var name = value[0];
+            li.innerHTML = '<a href="#">' + value[1] + ' (' + name + ')' + '</a>';
+            li.id = 'bureaucracy__user__' + name.replace(/\W/g, '_');
+            li._value = name;
+        };
+        user_AutoCompletion.prototype.styleList = function (ul, input) {
+            ul.style.position = 'relative';
+            ul.style.left = input.previousSibling.style.width + 'px';
+            ul.style.clear = 'both';
+        };
+
+        new user_AutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false);
+    }
+    if (typeof calendar !== 'undefined') {
+        calendar.set('do__popup_date');
+    }
 
     // actions
     var close = function(event)
