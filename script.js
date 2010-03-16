@@ -20,7 +20,7 @@ function addBtnActionDo(btn, props, edid) {
     var inps = ['assign', 'date'];
     for (var i = 0 ; i < inps.length ; ++i) {
         fieldset += '<p><label for="do__popup_' + inps[i] + '">' +
-                          LANG.plugins.do['popup_' + inps[i]] + '</label>' +
+                          LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
                           '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
     }
     div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">' + LANG.plugins['do'].popup_submit
