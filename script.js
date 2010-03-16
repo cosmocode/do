@@ -8,8 +8,7 @@
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
 function addBtnActionDo(btn, props, edid) {
-    var edit = $(edid);
-    var select = getSelection(edit);
+    var select = null;
 
     var div = document.createElement('div');
     div.innerHTML = '<div class="title">' +
@@ -65,6 +64,7 @@ function addBtnActionDo(btn, props, edid) {
         }
         else
         {
+            select = getSelection($(edid));
             div.style.display = 'inline';
             div.style.top  = event.pageY + 'px';
             div.style.left = event.pageX + 'px';
@@ -84,7 +84,7 @@ function addBtnActionDo(btn, props, edid) {
         if ($('do__popup_assign').value)  out += ' ' + $('do__popup_assign').value;
         out +='>';
 
-        var sel = getSelection(edit);
+        var sel = getSelection($(edid));
         if(sel.start === 0 && sel.end === 0) sel = select;
 
         var stxt = sel.getText();
