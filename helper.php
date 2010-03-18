@@ -64,6 +64,13 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
             }
 
+            if (isset($args['id'])) {
+                global $ID;
+                $exists = false;
+                resolve_pageid(getNS($ID), $args['id'], $exists);
+                $where .= sprintf(' AND A.page = %s',$this->db->quote_string($args['id']));
+            }
+
             if (isset($args['status']))
             {
                 if ($args['status'][0] == 'done')
@@ -148,6 +155,57 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                    FROM task_status
                                   WHERE page = ?',$page);
         return $this->db->res2arr($res);
+    }
+
+    /**
+     * Get information about the number of tasks on a specefic id.
+     *
+     * result keys are
+     *   count  - number of all tasks
+     *   done   - number of all finished tasks
+     *   undone - number of all tasks to do
+     *
+     * @param $id   String  Id of the wiki page - if no id is given the current page will be used.
+     * @return array
+     */
+    function getPageTaskCount($id = '') {
+        if (!$id) {
+            global $ID;
+            $id = $ID;
+        }
+
+        $tasks = $this->loadTasks(array('id'=>$id));
+
+        $result = array(
+            'count'  => count($tasks),
+            'done'   => 0,
+            'undone' => 0
+        );
+
+        foreach ($tasks as $task) {
+            if (empty($task['status'])) {
+                $result['undone']++;
+            } else {
+                $result['done']++;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     *
+     */
+    function tpl_pageTasks($id = '', $return = false) {
+        $count = $this->getPageTaskCount($id);
+        if ($count['count'] == 0) return;
+
+        $out = '<div class="plugin__do_pagetasks">';
+        $out .= sprintf('%s: %d/%d',$this->getLang('task'),$count['done'],$count['count']);
+        $out .= '</div>';
+
+        if ($return) return $out;
+        echo $out;
     }
 
 }
