@@ -107,6 +107,7 @@ if (typeof window.toolbar !== 'undefined') {
     window.toolbar.push({
         "type":"do",
         "title": LANG.plugins['do'].toolbar_title,
+        // icon from Yusuke Kamiyamane - http://www.pinvoke.com/
         "icon":DOKU_BASE + 'lib/plugins/do/pix/toolbar.png'
     });
 }
