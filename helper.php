@@ -179,7 +179,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $result = array(
             'count'  => count($tasks),
             'done'   => 0,
-            'undone' => 0
+            'undone' => 0,
+            'late'   => 0,
         );
 
         foreach ($tasks as $task) {
@@ -188,21 +189,37 @@ class helper_plugin_do extends DokuWiki_Plugin {
             } else {
                 $result['done']++;
             }
+            if (!empty($task['date']) && empty($task['status'])) {
+                if (strtotime($task['date']) < time()) {
+                    $result['late']++;
+                }
+            }
         }
 
         return $result;
     }
 
     /**
-     *
+     * displays a small page task status view
      */
     function tpl_pageTasks($id = '', $return = false) {
         $count = $this->getPageTaskCount($id);
         if ($count['count'] == 0) return;
 
-        $out = '<div class="plugin__do_pagetasks">';
-        $out .= sprintf('%s: %d/%d',$this->getLang('task'),$count['done'],$count['count']);
-        $out .= '</div>';
+        if ($count['undone'] == 0) {// all tasks done
+            $class   = 'do_done';
+            $title = $this->getLang('title_alldone');
+        } elseif ($count['late'] == 0) { // open tasks - no late
+            $class   = 'do_undone';
+            $title = sprintf($this->getLang('title_intime'), $count['undone']);
+        } else { // late tasks
+            $class   = 'do_late';
+            $title = sprintf($this->getLang('title_late'), $count['undone'], $count['late']);
+        }
+
+        $out = '<div class="plugin__do_pagetasks" title="'.$title.'"><span class="'.$class.'">';
+        $out .= $count['undone'];
+        $out .= '</span></div>';
 
         if ($return) return $out;
         echo $out;

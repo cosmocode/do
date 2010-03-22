@@ -17,6 +17,13 @@ $lang['title3c'] = 'Unassigned task due on %2$s, closed by %3$s.';
 $lang['title4']  = 'Unassigned task, no deadline.';
 $lang['title4c'] = 'Unassigned task, no deadline, closed by %3$s.';
 
+$lang['title_intime']  = 'There are %1$d open tasks.';
+$lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
+$lang['title_alldone'] = 'All tasks done.';
+
+$lang['js']['title_done']   = 'All tasks done.';
+$lang['js']['title_undone'] = 'There are unfinished tasks.';
+
 $lang['task']   = 'Task';
 $lang['user']   = 'Assigned to';
 $lang['date']   = 'Due on';

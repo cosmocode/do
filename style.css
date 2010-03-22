@@ -80,3 +80,12 @@ div.dokuwiki div.page td a.plugin_do_adone {
 #do__popup p.plugin_do_insert {
     text-align:center;
 }
+
+div.plugin__do_pagetasks span {
+    background: transparent url(pix/toolbar.png) no-repeat top right;
+    padding-right:17px;
+}
+
+.plugin__do_pagetasks span.do_done   { background-image: url(pix/tasklist_green.png); }
+.plugin__do_pagetasks span.do_undone { background-image: url(pix/tasklist_yellow.png); }
+.plugin__do_pagetasks span.do_late   { background-image: url(pix/tasklist_red.png); }

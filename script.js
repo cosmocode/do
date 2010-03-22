@@ -114,8 +114,30 @@ if (typeof window.toolbar !== 'undefined') {
 
 addInitEvent(function(){
     function handle_event(e){
+        var isLate = function(ele) {
+            if (typeof(ele.parentNode) == 'undefined') {
+                return false;
+            }
+            if (ele.parentNode.parentNode.firstChild.className.indexOf('plugin_do_adone') >= 0) {
+                return false;
+            }
+            var dc = new Date();
+            var y = parseInt(ele.innerHTML.substr(0,4));
+            if (y != dc.getFullYear()) {
+                return y < dc.getFullYear();
+            }
+            var m = parseInt(ele.innerHTML.substr(5,2));
+            if (m != dc.getMonth() +1 ) {
+                return m < dc.getMonth() +1
+            }
+            return parseInt(ele.innerHTML.substr(8,2)) < dc.getDate();
+        }
+
         var me = e.target;
-        if(me.tagName !== 'A') me = e.target.parentNode;
+        while (me.tagName !== 'A') {
+            me = me.parentNode;
+            if (me == null) return;
+        }
         var param = me.search.substring(1).replace(/&do=/,'&call=').replace(/^do=/,'call=');
 
         var tablemode = false;
@@ -133,6 +155,9 @@ addInitEvent(function(){
 
         ajax.onCompletion = function(){
             var resp = this.response;
+
+            var pagestat = getElementsByClass('plugin__do_pagetasks');
+
             if(resp){
                 image.style.backgroundImage = '';
                 me.className ='plugin_do_status plugin_do_adone';
@@ -140,6 +165,7 @@ addInitEvent(function(){
                     me.firstChild.innerHTML = JSINFO['plugin_do_user'];
                 }
                 image.title = LANG.plugins['do'].done.replace(/%s/,resp);
+
             }else{
                 image.style.backgroundImage = '';
                 me.className = 'plugin_do_status';
@@ -148,6 +174,65 @@ addInitEvent(function(){
                 }
                 image.title = LANG.plugins['do'].open;
             }
+
+            if (pagestat.length != 0) {
+                var newCount = parseInt(pagestat[0].firstChild.innerHTML);
+                var newClass;
+                var oldClass = pagestat[0].firstChild.className;
+                var cdate = getElementsByClass('plugin_do_meta_date', me.parentNode, 'SPAN')[0];
+                if (resp) {
+                    if (newCount == 1) {
+                        newClass = 'do_done';
+                    } else if (oldClass != 'do_late'){
+                        newClass = 'do_undone';
+                    } else {
+                        var dos = getElementsByClass('plugin_do_meta_date');
+                        newClass = 'do_undone';
+                        for (var i = 0; i<dos.length; i++) {
+                            if (isLate(dos[i])) {
+                                newClass = 'do_late';
+                                break;
+                            }
+                        }
+                    }
+                    newCount-=1;
+                } else {
+                    if (newCount == 0) {
+                        if (cdate) {
+                            if (isLate(cdate)) {
+                                newClass = 'do_late';
+                            } else {
+                                newClass = 'do_undone';
+                            }
+                        } else {
+                            newClass = 'do_undone';
+                        }
+                    } else if (oldClass == 'do_late') {
+                        newClass = 'do_late';
+                    } else {
+                        var dos = getElementsByClass('plugin_do_meta_date');
+                        newClass = 'do_undone';
+                        for (var i = 0; i<dos.length; i++) {
+                            if (isLate(dos[i])) {
+                                newClass = 'do_late';
+                                break;
+                            }
+                        }
+                    }
+                    newCount+=1;
+                }
+
+                var title = LANG.plugins['do'].title_undone;
+                if (newCount == 0) {
+                    title = LANG.plugins['do'].title_done;
+                }
+                for (var i = 0; i < pagestat.length; i++) {
+                    pagestat[i].firstChild.innerHTML = newCount;
+                    pagestat[i].firstChild.className = newClass;
+                    pagestat[i].title = title;
+                }
+            }
+
         };
 
         ajax.runAJAX(param);

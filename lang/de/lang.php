@@ -17,6 +17,13 @@ $lang['title3c'] = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig, erledi
 $lang['title4']  = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeitsdatum';
 $lang['title4c'] = 'Aufgabe ist nicht zugeordnet, hat kein Fälligkeitsdatum, erledigt von %3$s.';
 
+$lang['title_intime']  = '%1$d unerledigte Aufgabe(n).';
+$lang['title_late']    = '%1$d unerledigte Aufgebe(n) von denen %2$d Überfällig sind.';
+$lang['title_alldone'] = 'Alle Aufgaben erledigt.';
+
+$lang['js']['title_done']   = 'Alle Aufgaben erledigt.';
+$lang['js']['title_undone'] = 'Es gibt unerledigte Aufgaben.';
+
 $lang['task']   = 'Aufgabe';
 $lang['user']   = 'zugewiesen an';
 $lang['date']   = 'Fällig am';
