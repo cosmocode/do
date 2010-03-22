@@ -138,7 +138,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     'do_md5' => $md5
                 );
 
-                $R->doc = '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
+                $R->doc = '<span><a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
                             sprintf($text,
                                     hsc($this->taskdata['user']),
                                     hsc($this->taskdata['date']),
@@ -158,6 +158,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     }
                     $meta .=')</span>';
                 }
+                $meta .='</span>';
                 // restore the full document, including our additons
                 $R->doc = $this->docstash.$R->doc.$meta;
                 $this->docstash = '';
