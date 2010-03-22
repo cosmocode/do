@@ -120,7 +120,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 if ($this->status[$md5]) $c = 'c';
 
                 if($this->taskdata['user'] && $this->taskdata['date']){
-                   $text  = $this->getLang("title1$c");
+                    $text  = $this->getLang("title1$c");
                     $class = 'plugin_do1';
                 }elseif($this->taskdata['user']){
                     $text = $this->getLang("title2$c");
@@ -145,8 +145,21 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                                     hsc($this->status[$md5]['closedby'])).'">'.
                                     $R->doc.'</span></a>';
 
+
+                $meta = '';
+                if ($this->taskdata['user'] || $this->taskdata['date']) {
+                    $meta  = ' <span class="plugin_do_meta">(';
+                    if ($this->taskdata['user']) {
+                        $meta .= $this->getLang('user').' <span class="plugin_do_meta_user">'.hsc($this->taskdata['user']).'</span>';
+                        if ($this->taskdata['date']) $meta .= ', ';
+                    }
+                    if ($this->taskdata['date']) {
+                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($this->taskdata['date']).'</span>';
+                    }
+                    $meta .=')</span>';
+                }
                 // restore the full document, including our additons
-                $R->doc = $this->docstash.$R->doc;
+                $R->doc = $this->docstash.$R->doc.$meta;
                 $this->docstash = '';
 
                 // save the task data
