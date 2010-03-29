@@ -48,7 +48,7 @@ function addBtnActionDo(btn, props, edid) {
             ul.style.clear = 'both';
         };
 
-        new user_AutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false);
+        user_AutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false);
     }
     if (typeof calendar !== 'undefined') {
         calendar.set('do__popup_date');
@@ -128,10 +128,10 @@ addInitEvent(function(){
             }
             var m = parseInt(ele.innerHTML.substr(5,2));
             if (m != dc.getMonth() +1 ) {
-                return m < dc.getMonth() +1
+                return m < dc.getMonth() + 1;
             }
             return parseInt(ele.innerHTML.substr(8,2)) < dc.getDate();
-        }
+        };
 
         var me = e.target;
         while (me.tagName !== 'A') {
