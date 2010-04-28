@@ -34,21 +34,20 @@ function addBtnActionDo(btn, props, edid) {
 
     $('dw__editform').appendChild(div);
 
-    if (typeof AutoCompletion !== 'undefined') {
-        var user_AutoCompletion = AutoCompletion;
-        user_AutoCompletion.prototype.prepareLi = function (li, value) {
+    if (typeof addAutoCompletion !== 'undefined') {
+        function prepareLi(li, value) {
             var name = value[0];
             li.innerHTML = '<a href="#">' + value[1] + ' (' + name + ')' + '</a>';
             li.id = 'bureaucracy__user__' + name.replace(/\W/g, '_');
             li._value = name;
         };
-        user_AutoCompletion.prototype.styleList = function (ul, input) {
+        function styleList(ul, input) {
             ul.style.position = 'relative';
             ul.style.left = input.previousSibling.style.width + 'px';
             ul.style.clear = 'both';
         };
 
-        user_AutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false);
+        addAutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false, prepareLi, styleList);
     }
     if (typeof calendar !== 'undefined') {
         calendar.set('do__popup_date');
