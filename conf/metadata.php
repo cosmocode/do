@@ -6,5 +6,4 @@
  */
 
 
-//$meta['fixme'] = array('string');
-
+$meta['userpage'] = array('string');

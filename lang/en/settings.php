@@ -2,12 +2,9 @@
 /**
  * english language file for do plugin
  *
- * @author Andreas Gohr <gohr@cosmocode.de>
+ * @author Adrian Lang <lang@cosmocode.de>
  */
 
-// keys need to match the config setting name
-// $lang['fixme'] = 'FIXME';
-
-
+$lang['userpage'] = 'A printf input string used to generate a link to a userpage (insert ›%s‹ where the user name should appear)';
 
 //Setup VIM: ex: et ts=4 enc=utf-8 :
