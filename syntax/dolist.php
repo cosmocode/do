@@ -101,7 +101,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<td>';
             $R->doc .= '<a href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
-            if ($this->getConf('userpage') !== '') {
+            if ($this->getConf('userpage') !== '' && $row['user'] !== '') {
                 $R->doc .= '<td>' .
                            $R->internallink(sprintf($this->getConf('userpage'),
                                                     $row['user']),
