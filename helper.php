@@ -225,6 +225,18 @@ class helper_plugin_do extends DokuWiki_Plugin {
         echo $out;
     }
 
+    function getPrettyUser($user) {
+        $userpage = $this->getConf('userpage');
+        if ($userpage !== '' && $user !== '') {
+            return p_get_renderer('xhtml')->internallink(sprintf($userpage,
+                                                                 $user),
+                                                         '', '',
+                                                         true, 'navigation');
+
+        } else {
+            return editorinfo($user);
+        }
+    }
 }
 
 // vim:ts=4:sw=4:et:enc=utf-8:

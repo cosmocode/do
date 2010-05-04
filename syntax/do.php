@@ -46,7 +46,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler){
-       $data = array();
+        $data = array();
         $data['state'] = $state;
 
         switch($state){
@@ -140,9 +140,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
                 $R->doc = '<span><a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
                             sprintf($text,
-                                    hsc($this->taskdata['user']),
+                                    editorinfo($this->taskdata['user']),
                                     hsc($this->taskdata['date']),
-                                    hsc($this->status[$md5]['closedby'])).'">'.
+                                    editorinfo($this->status[$md5]['closedby'])).'">'.
                                     $R->doc.'</span></a>';
 
 
@@ -150,11 +150,11 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 if ($this->taskdata['user'] || $this->taskdata['date']) {
                     $meta  = ' <span class="plugin_do_meta">(';
                     if ($this->taskdata['user']) {
-                        $meta .= $this->getLang('user').' <span class="plugin_do_meta_user">'.hsc($this->taskdata['user']).'</span>';
+                        $meta .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($this->taskdata['user']).'</span>';
                         if ($this->taskdata['date']) $meta .= ', ';
                     }
                     if ($this->taskdata['date']) {
-                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($this->taskdata['date']).'</span>';
+                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.$hlp->getPrettyUser($this->taskdata['date']).'</span>';
                     }
                     $meta .=')</span>';
                 }
@@ -175,4 +175,4 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 }
 
-// vim:ts=4:sw=4:et:enc=utf-8:
+// vim:ts=4:sw=4:et:enc=utf-8
