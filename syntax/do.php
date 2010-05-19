@@ -154,7 +154,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         if ($this->taskdata['date']) $meta .= ', ';
                     }
                     if ($this->taskdata['date']) {
-                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.$hlp->getPrettyUser($this->taskdata['date']).'</span>';
+                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($this->taskdata['date']).'</span>';
                     }
                     $meta .=')</span>';
                 }
