@@ -119,18 +119,23 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $c = '';
                 if ($this->status[$md5]) $c = 'c';
 
+                $img = '';
                 if($this->taskdata['user'] && $this->taskdata['date']){
                     $text  = $this->getLang("title1$c");
-                    $class = 'plugin_do1';
+                    $class = 'do1';
+                    $img = '3';
                 }elseif($this->taskdata['user']){
                     $text = $this->getLang("title2$c");
-                    $class = 'plugin_do2';
+                    $class = 'do2';
+                    $img = '6';
                 }elseif($this->taskdata['date']){
                     $text = $this->getLang("title3$c");
-                    $class = 'plugin_do3';
+                    $class = 'do3';
+                    $img = '4';
                 }else{
                     $text = $this->getLang("title4$c");
-                    $class = 'plugin_do4';
+                    $class = 'do4';
+                    $img = '5';
                 }
                 $param = array(
                     'do' => 'plugin_do',
@@ -138,13 +143,19 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     'do_md5' => $md5
                 );
 
-                $R->doc = '<span><a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'"><span class="'.$class.'" id="plgdo__'.$md5.'" title="'.
-                            sprintf($text,
-                                    editorinfo($this->taskdata['user']),
-                                    hsc($this->taskdata['date']),
-                                    editorinfo($this->status[$md5]['closedby'])).'">'.
-                                    $R->doc.'</span></a>';
+                $title = sprintf($text,
+                    editorinfo($this->taskdata['user']),
+                    hsc($this->taskdata['date']),
+                    editorinfo($this->status[$md5]['closedby'])
+                );
 
+                $R->doc = '<span>'
+                        . '<span class="plugin_'.$class.'" id="plgdo__'.$md5.'" title="'.$title.'">'
+                        .   $R->doc
+                        . '</span>'
+                        . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
+                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$img.'.png" class="plugin_do_img" title="'.$title.'" />'
+                        . '</a>';
 
                 $meta = '';
                 if ($this->taskdata['user'] || $this->taskdata['date']) {

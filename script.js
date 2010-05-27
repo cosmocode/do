@@ -117,39 +117,41 @@ addInitEvent(function(){
             if (typeof(ele.parentNode) == 'undefined') {
                 return false;
             }
-            if (ele.parentNode.parentNode.firstChild.className.indexOf('plugin_do_adone') >= 0) {
+            if (ele.parentNode.parentNode.className.indexOf('plugin_do_done') >= 0) {
                 return false;
             }
             var dc = new Date();
-            var y = parseInt(ele.innerHTML.substr(0,4));
+            var y = parseInt(ele.innerHTML.substr(0,4), 10);
             if (y != dc.getFullYear()) {
                 return y < dc.getFullYear();
             }
-            var m = parseInt(ele.innerHTML.substr(5,2));
+            var m = parseInt(ele.innerHTML.substr(5,2), 10);
             if (m != dc.getMonth() +1 ) {
                 return m < dc.getMonth() + 1;
             }
-            return parseInt(ele.innerHTML.substr(8,2)) < dc.getDate();
+            return parseInt(ele.innerHTML.substr(8,2), 10) < dc.getDate();
         };
 
         var me = e.target;
         while (me.tagName !== 'A') {
             me = me.parentNode;
-            if (me == null) return;
+            if (me === null) { return; }
         }
         var param = me.search.substring(1).replace(/&do=/,'&call=').replace(/^do=/,'call=');
 
         var tablemode = false;
-        if (me.parentNode.tagName == 'TD') {
+        if (me.parentNode.parentNode.tagName == 'TD') {
             tablemode = true;
         }
+
         var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
         ajax.AjaxFailedAlert = '';
         ajax.encodeURIString = false;
-        if(ajax.failed) return true;
+        if(ajax.failed) { return true; }
 
-        var image = me.firstChild;
-            image.style.backgroundImage = 'url(' + DOKU_BASE + 'lib/plugins/do/pix/throbber.gif)';
+        var image = getElementsByClass('plugin_do_img', me, 'IMG')[0];
+        var donr = image.src.match(/do([0-9])\.png/)[1];
+        image.src = 'url(' + DOKU_BASE + 'lib/plugins/do/pix/throbber.gif)';
         image.title = '…';
 
         ajax.onCompletion = function(){
@@ -158,24 +160,38 @@ addInitEvent(function(){
             var pagestat = getElementsByClass('plugin__do_pagetasks');
 
             if(resp){
-                image.style.backgroundImage = '';
-                me.className ='plugin_do_status plugin_do_adone';
+                image.src = DOKU_BASE + 'lib/plugins/do/pix/do';
+                if      (donr == '3') { image.src += '7'; }
+                else if (donr == '4') { image.src += '8'; }
+                else if (donr == '6') { image.src += '1'; }
+                else if (donr == '5') { image.src += '2'; }
+                image.src += '.png';
+
+                me.parentNode.className ='plugin_do_done';
                 if (tablemode) {
-                    me.firstChild.innerHTML = JSINFO['plugin_do_user'];
+                    me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user;
                 }
                 image.title = LANG.plugins['do'].done.replace(/%s/,resp);
 
             }else{
-                image.style.backgroundImage = '';
-                me.className = 'plugin_do_status';
+                image.src = DOKU_BASE + 'lib/plugins/do/pix/do';
+                if      (donr == '7') { image.src += '3'; }
+                else if (donr == '8') { image.src += '4'; }
+                else if (donr == '1') { image.src += '6'; }
+                else if (donr == '2') { image.src += '5'; }
+                else    { image.src = donr; }
+                image.src += '.png';
+
+                me.parentNode.className = 'plugin_do_undone';
                 if (tablemode) {
-                    me.firstChild.innerHTML = '&nbsp;';
+                    me.parentNode.firstChild.innerHTML = '&nbsp;';
                 }
                 image.title = LANG.plugins['do'].open;
             }
+            image.parentNode.firstChild.title = image.title;
 
-            if (pagestat.length != 0) {
-                var newCount = parseInt(pagestat[0].firstChild.innerHTML);
+            if (pagestat.length !== 0) {
+                var newCount = parseInt(pagestat[0].firstChild.innerHTML, 10);
                 var newClass;
                 var oldClass = pagestat[0].firstChild.className;
                 var cdate = getElementsByClass('plugin_do_meta_date', me.parentNode, 'SPAN')[0];
@@ -196,7 +212,7 @@ addInitEvent(function(){
                     }
                     newCount-=1;
                 } else {
-                    if (newCount == 0) {
+                    if (newCount === 0) {
                         if (cdate) {
                             if (isLate(cdate)) {
                                 newClass = 'do_late';
@@ -222,7 +238,7 @@ addInitEvent(function(){
                 }
 
                 var title = LANG.plugins['do'].title_undone;
-                if (newCount == 0) {
+                if (newCount === 0) {
                     title = LANG.plugins['do'].title_done;
                 }
                 for (var i = 0; i < pagestat.length; i++) {
@@ -247,6 +263,7 @@ addInitEvent(function(){
         addEvent(slinks[i],'click', handle_event);
     }
 
+    // get initial task status
     if (getElementsByClass('plugin_do1', null, 'span').length ||
         getElementsByClass('plugin_do2', null, 'span').length ||
         getElementsByClass('plugin_do3', null, 'span').length ||
@@ -255,7 +272,7 @@ addInitEvent(function(){
         var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
             ajax.AjaxFailedAlert = '';
             ajax.encodeURIString = false;
-        if (ajax.failed) return true;
+        if (ajax.failed) { return true; }
 
         ajax.setVar('do_page', JSINFO.id);
         ajax.setVar('call','plugin_do_status');
@@ -269,7 +286,17 @@ addInitEvent(function(){
                 if(obj){
                     obj.className += ' plugin_do_done';
                     obj.title += ' '+LANG.plugins['do'].done.replace(/%s/,stat[i].status);
-                    obj.parentNode.className += ' plugin_do_adone';
+                    obj.parentNode.className = 'plugin_do_done';
+                    var img = getElementsByClass('plugin_do_img',obj.parentNode,'img');
+                    if (typeof(img) != 'undefined') {
+                        var donr = img[0].src.match(/do([0-9])\.png/)[1];
+                        img[0].src = DOKU_BASE + 'lib/plugins/do/pix/do';
+                        if      (donr == '3') { img[0].src += '7'; }
+                        else if (donr == '4') { img[0].src += '8'; }
+                        else if (donr == '6') { img[0].src += '1'; }
+                        else if (donr == '5') { img[0].src += '2'; }
+                        img[0].src += '.png';
+                    }
                 }
             }
         };

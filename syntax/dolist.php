@@ -106,34 +106,48 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<td align="center">';
 
             $c = '';
+            $img = '';
             if (!empty($row['status'])) $c = 'c';
             if($row['user'] && $row['date']){
                 $text  = $this->getLang("title1$c");
                 $class = 'plugin_do1';
+                if ($row['status']) $img = '7';
+                else $img = 3;
             }elseif($row['user']){
                 $text = $this->getLang("title2$c");
                 $class = 'plugin_do2';
+                if ($row['status']) $img = '1';
+                else $img = 6;
             }elseif($row['date']){
                 $text = $this->getLang("title3$c");
                 $class = 'plugin_do3';
+                if ($row['status']) $img = '8';
+                else $img = 4;
             }else{
                 $text = $this->getLang("title4$c");
                 $class = 'plugin_do4';
+                if ($row['status']) $img = '2';
+                else $img = 5;
             }
             $text = sprintf($text, hsc($row['user']), hsc($row['date']), hsc($row['closedby']));
-            $R->doc .= '<a href="'.wl($ID,array('do'   => 'plugin_do',
-                                                'do_page' => $row['page'],
-                                                'do_md5'  => $row['md5']
-                                            ));
-            if ($row['status']) $R->doc .= '" class="plugin_do_status plugin_do_adone">';
-            else $R->doc .= '" class="plugin_do_status">';
 
+            $R->doc .= '<span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
+
+            // text span
             $editor = editorinfo($row['closedby']);
             if (empty($editor)) $editor = '&nbsp;';
             $R->doc .= '<span title="'.$text.'" class="'.$class.'">'.$editor.'</span>';
 
 
+            // img link
+            $R->doc .= '<a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
+            if ($row['status']) $R->doc .= '" class="plugin_do_status plugin_do_adone">';
+            else $R->doc .= '" class="plugin_do_status">';
+            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$img.'.png" class="plugin_do_img" title="'.$text.'" />';
             $R->doc .= '</a>';
+
+            $R->doc .= '</span>'; // outer span end
+
             $R->doc .= '</td>';
             $R->doc .= '</tr>';
         }
