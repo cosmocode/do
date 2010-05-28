@@ -1,11 +1,15 @@
+div.dokuwiki span.plugin_do_done,
+div.dokuwiki span.plugin_do1,
+div.dokuwiki span.plugin_do2,
+div.dokuwiki span.plugin_do3,
+div.dokuwiki span.plugin_do4,
+div.dokuwiki span.plugin_do_undone {
+    color: __text_alt__;
+}
 
 div.dokuwiki span.plugin_do_done span {
     text-decoration: line-through;
 }
-div.dokuwiki td span.plugin_do_done span {
-    text-decoration: none;
-}
-
 
 div.dokuwiki div.page a.plugin_do_adone {
     text-decoration: line-through;
