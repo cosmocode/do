@@ -36,16 +36,24 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $this->db->query('DELETE FROM tasks WHERE page = ?',$id);
     }
 
-    function saveTask($data){
+    function saveTask($data, $creator = ''){
         if(!$this->db) return;
 
-        $this->db->query('INSERT INTO tasks (page,md5,date,user,text)
-                               VALUES (?, ?, ?, ?, ?)',
+
+        if (!empty($creator)) {
+            $data['creator'] = $creator;
+        } else {
+            $data['creator'] = $_SERVER['REMOTE_USER'];
+        }
+        $this->db->query('INSERT INTO tasks (page,md5,date,user,text,creator)
+                               VALUES (?, ?, ?, ?, ?, ?)',
                          $data['page'],
                          $data['md5'],
                          $data['date'],
                          $data['user'],
-                         $data['text']);
+                         $data['text'],
+                         $data['creator']
+                     );
     }
 
     function loadTasks($args = null){
@@ -106,6 +114,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                         A.date     AS date,
                                         A.user     AS user,
                                         A.text     AS text,
+                                        A.creator  AS creator,
                                         B.status   AS status,
                                         B.closedby AS closedby
                                    FROM tasks A LEFT JOIN task_status B
@@ -152,10 +161,31 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$page) return array();
 
         $res = $this->db->query('SELECT md5, status, closedby
-                                   FROM task_status
-                                  WHERE page = ?',$page);
+                                 FROM task_status
+                                 WHERE page = ?',$page);
+
         return $this->db->res2arr($res);
     }
+
+
+    function getAllPageStatuses($page){
+        if(!$this->db) return array();
+        if(!$page) return array();
+
+        $res = $this->db->query('SELECT A.page     AS page,
+                                        A.creator  AS creator,
+                                        A.md5      AS md5,
+                                        B.status   AS status,
+                                        B.closedby AS closedby
+                                 FROM tasks A LEFT JOIN task_status B
+                                 ON A.page = B.page
+                                 AND A.md5 = B.md5
+                                 WHERE A.page = ?', $page);
+
+        return $this->db->res2arr($res);
+    }
+
+
 
     /**
      * Get information about the number of tasks on a specefic id.

@@ -94,6 +94,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->doc .= '<th>'.$this->getLang('user').'</th>';
         $R->doc .= '<th>'.$this->getLang('date').'</th>';
         $R->doc .= '<th>'.$this->getLang('status').'</th>';
+        $R->doc .= '<th>'.$this->getLang('creator').'</th>';
         $R->doc .= '</tr>';
 
         foreach($data as $row){
@@ -148,6 +149,9 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
             $R->doc .= '</span>'; // outer span end
 
+            $R->doc .= '</td>';
+            $R->doc .= '<td class="plugin_do_creator">';
+            $R->doc .= hsc($row['creator']);
             $R->doc .= '</td>';
             $R->doc .= '</tr>';
         }

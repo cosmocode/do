@@ -24,10 +24,11 @@ $lang['title_alldone'] = 'All tasks done.';
 $lang['js']['title_done']   = 'All tasks done.';
 $lang['js']['title_undone'] = 'There are unfinished tasks.';
 
-$lang['task']   = 'Task';
-$lang['user']   = 'Assigned to';
-$lang['date']   = 'Due on';
-$lang['status'] = 'Status';
+$lang['task']    = 'Task';
+$lang['user']    = 'Assigned to';
+$lang['date']    = 'Due on';
+$lang['status']  = 'Status';
+$lang['creator'] = 'Creator';
 
 $lang['js']['done'] = 'This task was completed on %s.';
 $lang['js']['open'] = 'This task hasn\'t been completed, yet.';

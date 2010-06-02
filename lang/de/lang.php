@@ -24,10 +24,11 @@ $lang['title_alldone'] = 'Alle Aufgaben erledigt.';
 $lang['js']['title_done']   = 'Alle Aufgaben erledigt.';
 $lang['js']['title_undone'] = 'Es gibt unerledigte Aufgaben.';
 
-$lang['task']   = 'Aufgabe';
-$lang['user']   = 'zugewiesen an';
-$lang['date']   = 'Fällig am';
-$lang['status'] = 'Status';
+$lang['task']    = 'Aufgabe';
+$lang['user']    = 'zugewiesen an';
+$lang['date']    = 'Fällig am';
+$lang['status']  = 'Status';
+$lang['creator'] = 'Ersteller';
 
 $lang['js']['done']             = 'Diese Aufgabe wurde am %s erledigt.';
 $lang['js']['open']             = 'Diese Aufgabe ist noch nicht erledigt.';

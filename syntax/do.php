@@ -20,6 +20,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $taskdata;
     private $run;
     private $status;
+    private $oldStatus;
 
     function getType() {
         return 'formatting';
@@ -75,11 +76,21 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
         $hlp = plugin_load('helper', 'do');
 
+        if (!$this->oldStatus) {
+            $this->oldStatus = array();
+            $statuses = $hlp->getAllPageStatuses($ID);
+            foreach ($statuses as $state) {
+                $this->oldStatus[$state['md5']] = $state;
+            }
+        }
+
+
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){
             $hlp->cleanPageTasks($ID);
             $this->run[$ID] = true;
         }
+
         if (!$this->status) {
             $this->status = array();
             $statuses = $hlp->loadPageStatuses($ID);
@@ -175,7 +186,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->docstash = '';
 
                 // save the task data
-                $hlp->saveTask($this->taskdata);
+                $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
 
                 // we're done with this task
                 $this->taskdata = array();
