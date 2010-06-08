@@ -100,7 +100,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         foreach($data as $row){
             $R->doc .= '<tr>';
             $R->doc .= '<td>';
-            $R->doc .= '<a href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
+            $R->doc .= '<a title="' . $row['page'] . '" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
             $R->doc .= '<td>' . $hlp->getPrettyUser($row['user']) . '</td>';
             $R->doc .= '<td>'.hsc($row['date']).'</td>';
