@@ -95,6 +95,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->doc .= '<th>'.$this->getLang('date').'</th>';
         $R->doc .= '<th>'.$this->getLang('status').'</th>';
         $R->doc .= '<th>'.$this->getLang('creator').'</th>';
+        $R->doc .= '<th>'.$this->lang['js']['popup_msg'].'</th>';
         $R->doc .= '</tr>';
 
         foreach($data as $row){
@@ -153,6 +154,10 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<td class="plugin_do_creator">';
             $R->doc .= hsc($row['creator']);
             $R->doc .= '</td>';
+            $R->doc .= '<td class="plugin_do_commit">';
+            $R->doc .= hsc($row['msg']);
+            $R->doc .= '</td>';
+ 
             $R->doc .= '</tr>';
         }
 

@@ -45,14 +45,15 @@ class helper_plugin_do extends DokuWiki_Plugin {
         } else {
             $data['creator'] = $_SERVER['REMOTE_USER'];
         }
-        $this->db->query('INSERT INTO tasks (page,md5,date,user,text,creator)
-                               VALUES (?, ?, ?, ?, ?, ?)',
+        $this->db->query('INSERT INTO tasks (page,md5,date,user,text,creator,msg)
+                               VALUES (?, ?, ?, ?, ?, ?,?)',
                          $data['page'],
                          $data['md5'],
                          $data['date'],
                          $data['user'],
                          $data['text'],
-                         $data['creator']
+                         $data['creator'],
+                         $data['msg']
                      );
     }
 
@@ -115,6 +116,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                         A.user     AS user,
                                         A.text     AS text,
                                         A.creator  AS creator,
+                                        A.msg      AS msg,
                                         B.status   AS status,
                                         B.closedby AS closedby
                                    FROM tasks A LEFT JOIN task_status B
@@ -126,7 +128,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         return $res;
     }
 
-    function toggleTaskStatus($page,$md5){
+    function toggleTaskStatus($page, $md5, $commitmsg = ''){
         if(!$this->db) return array();
         $md5 = trim($md5);
         if(!$page || !$md5) return array();
@@ -146,12 +148,14 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                     (page, md5, status, closedby)
                                     VALUES (?, ?, ?, ?)',
                                     $page, $md5, $stat, $name);
+            $this->db->query('UPDATE tasks SET msg=? WHERE md5=?',$commitmsg, $md5);
             return $stat;
         }else{
             $this->db->query('DELETE FROM task_status
                                WHERE page = ?
-                                    AND md5  = ?',
-                                $page, $md5);
+                               AND md5  = ?',
+                               $page, $md5);
+            $this->db->query('UPDATE tasks SET msg=? WHERE md5=?', '', $md5);
             return false;
         }
     }
@@ -160,10 +164,17 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$this->db) return array();
         if(!$page) return array();
 
+        $res = $this->db->query('SELECT DISTINCT A.md5 AS md5, A.status AS status, A.closedby AS closedby, B.msg AS msg
+                                 FROM tasks B LEFT JOIN task_status A
+                                 ON B.page = A.page
+                                 AND B.md5 = A.md5
+                                 WHERE B.page = ?',$page);
+/*
         $res = $this->db->query('SELECT md5, status, closedby
                                  FROM task_status
                                  WHERE page = ?',$page);
-
+ 
+ */
         return $this->db->res2arr($res);
     }
 
@@ -176,7 +187,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                         A.creator  AS creator,
                                         A.md5      AS md5,
                                         B.status   AS status,
-                                        B.closedby AS closedby
+                                        B.closedby AS closedby,
+                                        A.msg      AS msg
                                  FROM tasks A LEFT JOIN task_status B
                                  ON A.page = B.page
                                  AND A.md5 = B.md5

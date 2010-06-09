@@ -37,5 +37,6 @@ $lang['js']['popup_assign'] = 'Assign to (username)';
 $lang['js']['popup_date'] = 'Due on (YYYY-MM-DD)';
 $lang['js']['popup_submit'] = 'Insert';
 $lang['js']['popup_title'] = 'Create task';
-
+$lang['js']['popup_msg'] = 'Completion message';
+$lang['js']['note_done'] = 'Completed: ';
 //Setup VIM: ex: et ts=4 enc=utf-8 :

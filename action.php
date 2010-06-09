@@ -37,7 +37,10 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
         if($event->data == 'plugin_do'){
             // toggle status of a single task
             $hlp = plugin_load('helper', 'do');
-            $status = $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5']);
+            $status = $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5'],$_REQUEST['do_commit']);
+
+            // rerender the page
+            p_get_metadata(cleanID($_REQUEST['do_page']),'',true);
 
             header('Content-Type: text/plain; charset=utf-8');
             echo $status;

@@ -74,6 +74,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if($mode != 'xhtml') return false;
         global $ID;
 
+
         $hlp = plugin_load('helper', 'do');
 
         if (!$this->oldStatus) {
@@ -164,6 +165,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         . '<span class="plugin_'.$class.'" id="plgdo__'.$md5.'" title="'.$title.'">'
                         .   $R->doc
                         . '</span>'
+                        . '<span class="plugin_do_commit">'
+                        . ((empty($this->oldStatus[$md5]['msg']))?'':'(' . $this->lang['js']['note_done'] . hsc($this->oldStatus[$md5]['msg']) .')')
+                        . '</span>'
                         . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
                         . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$img.'.png" class="plugin_do_img" title="'.$title.'" />'
                         . '</a>';
@@ -184,7 +188,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 // restore the full document, including our additons
                 $R->doc = $this->docstash.$R->doc.$meta;
                 $this->docstash = '';
-
+                $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
                 // save the task data
                 $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
 

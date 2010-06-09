@@ -18,29 +18,47 @@ div.dokuwiki div.page td a.plugin_do_adone {
     text-decoration: none;
 }
 
-#do__popup {
+div.dokuwiki div.page span span.plugin_do_commit {
+    text-decoration: none;
+    display: none;
+    padding-left:0.5em;
+}
+div.dokuwiki div.page span.plugin_do_done span.plugin_do_commit {
+    display: inline;
+}
+
+
+
+
+#do__popup,
+#do__commit_popup {
     position:absolute;
     background-color: __background__;
     border:1px solid __border__;
     width:400px;
 }
-#do__popup .title {
+#do__popup .title,
+#do__commit_popup .title {
     background-color: __background_alt__;
     text-align:center;
 }
-#do__popup .title img {
+#do__popup .title img,
+#do__commit_popup .title img {
     float:right;
     cursor:pointer;
 }
-#do__popup fieldset {
+#do__popup fieldset,
+#do__commit_popup fieldset {
     border:0;
     padding-bottom:0.3em;
 }
-#do__popup fieldset p {
+#do__popup fieldset p,
+#do__commit_popup fieldset p {
     margin-bottom:0;
     clear:left;
 }
-#do__popup fieldset p label {
+#do__popup fieldset p label,
+#do__commit_popup fieldset p label {
     display:block;
     width:46%;
     float:left;
@@ -48,16 +66,19 @@ div.dokuwiki div.page td a.plugin_do_adone {
     text-align: right;
     margin-right: 0.1em;
 }
-#do__popup fieldset p input {
+#do__popup fieldset p input,
+#do__commit_popup fieldset p input {
     display:block;
     width:46%;
     float:left;
 }
 
-#do__popup fieldset {
+#do__popup fieldset,
+#do__commit_popup fieldset {
     width: auto;
 }
-#do__popup p.plugin_do_insert {
+#do__popup p.plugin_do_insert,
+#do__commit_popup p.plugin_do_insert {
     text-align:center;
 }
 
