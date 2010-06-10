@@ -36,9 +36,18 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
     function handle_ajax_call(&$event, $param) {
         if($event->data == 'plugin_do'){
+
+            $id = cleanID($_REQUEST['do_page']);
+
+            if (auth_quickaclcheck($id) < AUTH_EDIT) {
+                echo -1;
+                $event->preventDefault();
+                $event->stopPropagation();
+                return false;
+            }
             // toggle status of a single task
             $hlp = plugin_load('helper', 'do');
-            $status = $hlp->toggleTaskStatus(cleanID($_REQUEST['do_page']),$_REQUEST['do_md5'],$_REQUEST['do_commit']);
+            $status = $hlp->toggleTaskStatus($id, $_REQUEST['do_md5'], $_REQUEST['do_commit']);
 
             // rerender the page
             p_get_metadata(cleanID($_REQUEST['do_page']),'',true);

@@ -171,7 +171,7 @@ addInitEvent(function(){
 
             var image = getElementsByClass('plugin_do_img', me, 'IMG')[0];
             var donr = image.src.match(/do([0-9]+)\.png/)[1];
-            image.src = 'url(' + DOKU_BASE + 'lib/plugins/do/pix/throbber.gif)';
+            image.src = DOKU_BASE + 'lib/plugins/do/pix/throbber.gif';
             image.title = '…';
 
             ajax.onCompletion = function(){
@@ -180,6 +180,12 @@ addInitEvent(function(){
                 var pagestat = getElementsByClass('plugin__do_pagetasks');
 
                 if(resp){
+                    if (resp == "-1") {
+                       alert( LANG.plugins['do'].notloggedin );
+                       image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + donr + '.png';
+                       return;
+                    }
+
                     image.src = DOKU_BASE + 'lib/plugins/do/pix/do';
                     if      (donr == '3') { image.src += '7'; }
                     else if (donr == '4') { image.src += '8'; }

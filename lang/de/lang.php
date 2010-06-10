@@ -39,5 +39,5 @@ $lang['js']['popup_submit']     = 'Einfügen';
 $lang['js']['popup_title']      = 'Aufgabe erstellen';
 $lang['js']['popup_msg']        = 'Abschlussnachricht';
 $lang['js']['note_done']        = 'Erledigt: ';
-
+$lang['js']['notloggedin']      = 'Sie sind nicht eingeloggt.';
 //Setup VIM: ex: et ts=4 enc=utf-8 :
