@@ -113,7 +113,120 @@ if (typeof window.toolbar !== 'undefined') {
 
 addInitEvent(function(){
 
+
+    /**
+     * switch the status of a image src
+     *
+     * done <-> undone
+     * @param img image to change.
+     * @param doNr the old do number
+     */
+    var switchDoNr = function( image, doNr ) {
+        if (isUndefined(doNr)) {
+            doNr = image.src.match(/do([0-9])\.png/)[1];
+        }
+
+        var newnr = DOKU_BASE + 'lib/plugins/do/pix/do';
+        switch (doNr) {
+            case '1': newnr='6'; break;
+            case '2': newnr='5'; break;
+            case '3': newnr='7'; break;
+            case '4': newnr='8'; break;
+            case '5': newnr='2'; break;
+            case '6': newnr='1'; break;
+            case '7': newnr='3'; break;
+            case '8': newnr='4'; break;
+        }
+        image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+    }
+
+    /**
+     * set the titles.
+     * @param rootNode the surrounding span.
+     */
+    var buildTitle = function ( rootNode, assigne, due, closedon, closedby ) {
+        var newTitle = '';
+
+        var table = rootNode.parentNode.tagName === 'TD';
+
+        // determine assigne
+        if (isUndefined(assigne) || isEmpty(assigne)) {
+            if (table) {
+                assigne = getInnerHtmlByClass('plugin_do_assigne', rootNode.parentNode.parentNode, 'td');
+            } else {
+                assigne = getInnerHtmlByClass('plugin_do_meta_user', rootNode, 'span');
+            }
+        }
+        if (assigne !== '') {
+            newTitle += getText('assigne', assigne) + " ";
+        }
+
+        // determine due
+        if (isUndefined(due)|| isEmpty(due)) {
+            if (table) {
+                due = getInnerHtmlByClass('plugin_do_date', rootNode.parentNode.parentNode, 'td');
+            } else {
+                due = getInnerHtmlByClass('plugin_do_meta_date', rootNode, 'span');
+            }
+        }
+        if (due !== '') {
+            newTitle += getText('due', due) + " ";
+        }
+        if (!isUndefined(closedon)) newTitle += getText('done', closedon) + " ";
+
+        if (!isUndefined(closedby)) newTitle += getText('closedby', closedby);
+
+        // apply new title
+        for (var i = 0; i < rootNode.childNodes.length; i++) {
+            rootNode.childNodes[i].title = newTitle;
+        }
+
+        getElementsByClass('plugin_do_img', rootNode, 'img')[0].title = newTitle;
+    }
+
+    /**
+     * get the inner HTML content from a given class.
+     *
+     * parameters are equal to getElementsByClass()
+     * @return inner content or empty string.
+     */
+    var getInnerHtmlByClass = function( className , parentNode, tag ) {
+        var elements = getElementsByClass(className, parentNode, tag);
+        if (typeof(elements[0]) === 'undefined') {
+            return '';
+        } else {
+            return elements[0].innerHTML;
+        }
+
+    }
+
+    /**
+     * get a localized string by name.
+     *
+     * if a arg is given it replaces %s with arg
+     *
+     * @return localized text.
+     */
+    var getText = function(name, arg) {
+        if (arg === null) {
+            return LANG.plugins['do'][name];
+        } else {
+            return LANG.plugins['do'][name].replace(/%s/,arg);
+        }
+    }
+
+    /**
+     * escapes html entities from a string.
+     */
+    var hsc = function(text) {
+        return text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;');
+    }
+
     function handle_event(e){
+
+        /**
+         * determine if a element is late
+         */
         var isLate = function(ele) {
             if (typeof(ele.parentNode) == 'undefined') {
                 return false;
@@ -158,11 +271,11 @@ addInitEvent(function(){
 
             if (!done) {
                 var msg = $('do__popup_msg').value;
-                var msge = msg.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;');
+                var msge = hsc(msg);
                 if (tablemode) {
                     getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = (msge)?msge:'';
                 } else {
-                   getElementsByClass('plugin_do_commit', me.parentNode, 'span')[0].innerHTML = (msge)?'(' + LANG.plugins['do'].note_done + msge +')':'';
+                   getElementsByClass('plugin_do_commit', me.parentNode, 'span')[0].innerHTML = (msge)?'(' + getText("note_done") + msge +')':'';
                 }
                 param+= "&do_commit=" + escape(msg);
             } else if (tablemode) {
@@ -181,41 +294,24 @@ addInitEvent(function(){
 
                 if(resp){
                     if (resp == "-1") {
-                       alert( LANG.plugins['do'].notloggedin );
+                       alert(getText("notloggedin"));
                        image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + donr + '.png';
                        return;
                     }
-
-                    image.src = DOKU_BASE + 'lib/plugins/do/pix/do';
-                    if      (donr == '3') { image.src += '7'; }
-                    else if (donr == '4') { image.src += '8'; }
-                    else if (donr == '6') { image.src += '1'; }
-                    else if (donr == '5') { image.src += '2'; }
-                    image.src += '.png';
-
+                    switchDoNr(image, donr);
                     me.parentNode.className ='plugin_do_done';
                     if (tablemode) {
                         me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user;
                     }
-                    image.title = LANG.plugins['do'].done.replace(/%s/,resp);
-
-
+                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user, resp);
                 }else{
-                    image.src = DOKU_BASE + 'lib/plugins/do/pix/do';
-                    if      (donr == '7') { image.src += '3'; }
-                    else if (donr == '8') { image.src += '4'; }
-                    else if (donr == '1') { image.src += '6'; }
-                    else if (donr == '2') { image.src += '5'; }
-                    else    { image.src = donr; }
-                    image.src += '.png';
-
+                    switchDoNr( image, donr);
                     me.parentNode.className = 'plugin_do_undone';
                     if (tablemode) {
                         me.parentNode.firstChild.innerHTML = '&nbsp;';
                     }
-                    image.title = LANG.plugins['do'].open;
+                    buildTitle(image.parentNode.parentNode, '', '');
                 }
-                image.parentNode.firstChild.title = image.title;
 
                 if (pagestat.length !== 0) {
                     var newCount = parseInt(pagestat[0].firstChild.innerHTML, 10);
@@ -264,9 +360,9 @@ addInitEvent(function(){
                         newCount+=1;
                     }
 
-                    var title = LANG.plugins['do'].title_undone;
+                    var title = getText("title_undone");
                     if (newCount === 0) {
-                        title = LANG.plugins['do'].title_done;
+                        title = getText("title_done");
                     }
                     for (var i = 0; i < pagestat.length; i++) {
                         pagestat[i].firstChild.innerHTML = newCount;
@@ -324,14 +420,14 @@ addInitEvent(function(){
 
     div.innerHTML = '<div class="title">' +
                     '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    LANG.plugins['do'].popup_title + '</div>';
+                    getText("popup_title") + '</div>';
 
     var fieldset = '<fieldset>';
-    fieldset += '<p><label for="do__popup_msg">' + LANG.plugins['do'].popup_msg + '</label>'
+    fieldset += '<p><label for="do__popup_msg">' + getText("popup_msg") + '</label>'
               + '<input class="edit" id="do__popup_msg" /></p>';
 
     div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">'
-                   + LANG.plugins['do'].popup_submit
+                   + getText("popup_submit")
                    + '</button></p></fieldset>';
 
     div.id = 'do__commit_popup';
@@ -382,31 +478,32 @@ addInitEvent(function(){
         ajax.setVar('do_page', JSINFO.id);
         ajax.setVar('call','plugin_do_status');
 
+        var nodes = getElementsByClass('plugin_do_img');
+        for (var i = 0; i < nodes.length; i++) {
+            buildTitle(nodes[i].parentNode.parentNode);
+        }
+
         ajax.onCompletion = function(){
             var resp = 'var stat = '+this.response;
             eval(resp);
 
             for(var i=0; i<stat.length; i++){
                 var obj = document.getElementById('plgdo__'+stat[i].md5);
+
                 if(obj){
+                    buildTitle(obj.parentNode, '', '', stat[i].status, stat[i].closedby);
                     obj.className += ' plugin_do_done';
-                    obj.title += ' '+LANG.plugins['do'].done.replace(/%s/,stat[i].status);
+
                     obj.parentNode.className = 'plugin_do_done';
                     var img = getElementsByClass('plugin_do_img',obj.parentNode,'img');
                     if (typeof(img) != 'undefined') {
-                        var donr = img[0].src.match(/do([0-9])\.png/)[1];
-                        img[0].src = DOKU_BASE + 'lib/plugins/do/pix/do';
-                        if      (donr == '3') { img[0].src += '7'; }
-                        else if (donr == '4') { img[0].src += '8'; }
-                        else if (donr == '6') { img[0].src += '1'; }
-                        else if (donr == '5') { img[0].src += '2'; }
-                        img[0].src += '.png';
+                        switchDoNr(img[0]);
                     }
                     if (typeof(stat[i].msg) != 'undefined') {
                         var commitmsg = getElementsByClass('plugin_do_commit',obj.parentNode,'span')[0];
-                        var msg = stat[i].msg.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;");
+                        var msg = hsc(stat[i].msg);
                         if (msg !== "") {
-                            commitmsg.innerHTML = '(' +LANG.plugins['do'].note_done + msg + ')';
+                            commitmsg.innerHTML = '(' + getText("note_done") + msg + ')';
                         }
                     }
                 }

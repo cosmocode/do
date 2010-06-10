@@ -100,38 +100,36 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
         foreach($data as $row){
             $R->doc .= '<tr>';
-            $R->doc .= '<td>';
+            $R->doc .= '<td class="plugin_do_page">';
             $R->doc .= '<a title="' . $row['page'] . '" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
-            $R->doc .= '<td>' . $hlp->getPrettyUser($row['user']) . '</td>';
-            $R->doc .= '<td>'.hsc($row['date']).'</td>';
-            $R->doc .= '<td align="center">';
+            $R->doc .= '<td class="plugin_do_assigne">' . $hlp->getPrettyUser($row['user']) . '</td>';
+            $R->doc .= '<td class="plugin_do_date">'.hsc($row['date']).'</td>';
+            $R->doc .= '<td class="plugin_do_status" align="center">';
 
-            $c = '';
             $img = '';
-            if (!empty($row['status'])) $c = 'c';
             if($row['user'] && $row['date']){
-                $text  = $this->getLang("title1$c");
+                $text  = $this->getLang("title1");
                 $class = 'plugin_do1';
                 if ($row['status']) $img = '7';
                 else $img = 3;
             }elseif($row['user']){
-                $text = $this->getLang("title2$c");
+                $text = $this->getLang("title2");
                 $class = 'plugin_do2';
                 if ($row['status']) $img = '1';
                 else $img = 6;
             }elseif($row['date']){
-                $text = $this->getLang("title3$c");
+                $text = $this->getLang("title3");
                 $class = 'plugin_do3';
                 if ($row['status']) $img = '8';
                 else $img = 4;
             }else{
-                $text = $this->getLang("title4$c");
+                $text = $this->getLang("title4");
                 $class = 'plugin_do4';
                 if ($row['status']) $img = '2';
                 else $img = 5;
             }
-            $text = sprintf($text, hsc($row['user']), hsc($row['date']), hsc($row['closedby']));
+            $text = sprintf($text, hsc($row['user']), hsc($row['date']));
 
             $R->doc .= '<span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
 

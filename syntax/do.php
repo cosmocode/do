@@ -157,8 +157,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
                 $title = sprintf($text,
                     editorinfo($this->taskdata['user']),
-                    hsc($this->taskdata['date']),
-                    editorinfo($this->status[$md5]['closedby'])
+                    hsc($this->taskdata['date'])
                 );
 
                 $R->doc = '<span>'

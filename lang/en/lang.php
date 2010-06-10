@@ -9,13 +9,9 @@
 // $lang['menu'] = 'Your menu entry';
 
 $lang['title1']  = 'Task assigned to %1$s, due on %2$s.';
-$lang['title1c'] = 'Task assigned to %1$s, due on %2$s, closed by %3$s.';
 $lang['title2']  = 'Task assigned to %1$s, no deadline.';
-$lang['title2c'] = 'Task assigned to %1$s, no deadline, closed by %3$s.';
 $lang['title3']  = 'Unassigned task due on %2$s.';
-$lang['title3c'] = 'Unassigned task due on %2$s, closed by %3$s.';
 $lang['title4']  = 'Unassigned task, no deadline.';
-$lang['title4c'] = 'Unassigned task, no deadline, closed by %3$s.';
 
 $lang['title_intime']  = 'There are %1$d open tasks.';
 $lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
@@ -39,5 +35,10 @@ $lang['js']['popup_submit'] = 'Insert';
 $lang['js']['popup_title'] = 'Create task';
 $lang['js']['popup_msg'] = 'Completion message';
 $lang['js']['note_done'] = 'Completed: ';
+
+$lang['js']['assigne'] = 'Task is assigned to %s.';
+$lang['js']['due'] = 'Due on %s.';
+
 $lang['js']['notloggedin'] = 'You are not logged in.';
+$lang['js']['closedby'] = 'Task was closed by %s.';
 //Setup VIM: ex: et ts=4 enc=utf-8 :
