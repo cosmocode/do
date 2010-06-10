@@ -30,7 +30,8 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
     function _adduser(&$event, $param) {
         global $JSINFO;
-        $JSINFO['plugin_do_user'] = ($_SERVER['REMOTE_USER']?$_SERVER['REMOTE_USER']:$_SERVER['REMOTE_ADDR']);
+        $hlp = plugin_load('helper', 'do');
+        $JSINFO['plugin_do_user'] = $hlp->_getUser();
     }
 
     function handle_ajax_call(&$event, $param) {

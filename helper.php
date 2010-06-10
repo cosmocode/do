@@ -43,7 +43,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if (!empty($creator)) {
             $data['creator'] = $creator;
         } else {
-            $data['creator'] = $_SERVER['REMOTE_USER'];
+            $data['creator'] = $this->_getUser();
         }
         $this->db->query('INSERT INTO tasks (page,md5,date,user,text,creator,msg)
                                VALUES (?, ?, ?, ?, ?, ?,?)',
@@ -142,7 +142,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $stat['status'];
 
         if(!$stat){
-            $name = (empty($_SERVER['REMOTE_USER'])?$_SERVER['REMOTE_ADDR']:$_SERVER['REMOTE_USER']);
+            $name = $this->_getUser();;
             $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
                                     (page, md5, status, closedby)
@@ -169,13 +169,14 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                  ON B.page = A.page
                                  AND B.md5 = A.md5
                                  WHERE B.page = ?',$page);
-/*
-        $res = $this->db->query('SELECT md5, status, closedby
-                                 FROM task_status
-                                 WHERE page = ?',$page);
- 
- */
         return $this->db->res2arr($res);
+    }
+
+    function _getUser() {
+        global $USERINFO;
+        if ($USERINFO['name']) return $USERINFO['name'];
+        if ($_SERVER['REMOTE_USER']) return $_SERVER['REMOTE_USER'];
+        return $_SERVER['REMOTE_ADDR'];
     }
 
 
