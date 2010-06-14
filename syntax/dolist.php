@@ -35,8 +35,6 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler){
-        $data = array();
-
         // parse the given match
         $match = substr($match, 9, -2);
 
@@ -72,10 +70,9 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             }
         }
 
-        $data['args']       = $args;
-        $data['args']['ns'] = $ns;
+        $args['ns'] = $ns;
 
-        return $data;
+        return $args;
     }
 
     function render($mode, &$R, $data) {
@@ -85,13 +82,15 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
         $this->setupLocale();
 
+        $userstyle = isset($data['user']) ? ' style="display: none;"' : '';
+
         $hlp = plugin_load('helper', 'do');
-        $data = $hlp->loadTasks($data['args']);
+        $data = $hlp->loadTasks($data);
 
         $R->doc .= '<table class="inline plugin_do">';
         $R->doc .= '<tr>';
         $R->doc .= '<th>'.$this->getLang('task').'</th>';
-        $R->doc .= '<th>'.$this->getLang('user').'</th>';
+        $R->doc .= '<th' . $userstyle . '>'.$this->getLang('user').'</th>';
         $R->doc .= '<th>'.$this->getLang('date').'</th>';
         $R->doc .= '<th>'.$this->getLang('status').'</th>';
         $R->doc .= '<th>'.$this->getLang('creator').'</th>';
@@ -103,7 +102,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '<td class="plugin_do_page">';
             $R->doc .= '<a title="' . $row['page'] . '" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_assigne">' . $hlp->getPrettyUser($row['user']) . '</td>';
+            $R->doc .= '<td class="plugin_do_assigne"' . $userstyle . '>' . $hlp->getPrettyUser($row['user']) . '</td>';
             $R->doc .= '<td class="plugin_do_date">'.hsc($row['date']).'</td>';
             $R->doc .= '<td class="plugin_do_status" align="center">';
 
