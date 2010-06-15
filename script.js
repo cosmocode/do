@@ -419,14 +419,14 @@ addInitEvent(function(){
 
     div.innerHTML = '<div class="title">' +
                     '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    getText("popup_title") + '</div>';
+                    getText("finish_popup_title") + '</div>';
 
     var fieldset = '<fieldset>';
     fieldset += '<p><label for="do__popup_msg">' + getText("popup_msg") + '</label>'
               + '<input class="edit" id="do__popup_msg" /></p>';
 
     div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">'
-                   + getText("popup_submit")
+                   + getText("finish_popup_submit")
                    + '</button></p></fieldset>';
 
     div.id = 'do__commit_popup';

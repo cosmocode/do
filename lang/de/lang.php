@@ -39,4 +39,7 @@ $lang['js']['notloggedin']      = 'Sie sind nicht eingeloggt.';
 $lang['js']['closedby']         = 'Aufgabe wurde von %s geschlossen.';
 $lang['js']['assigne']          = 'Aufgabe ist %s zugewiesen.';
 $lang['js']['due']              = 'Fällig am %s.';
+
+$lang['js']['finish_popup_title'] = 'Aufgabe erledigen';
+$lang['js']['finish_popup_submit'] = 'Erledigen';
 //Setup VIM: ex: et ts=4 enc=utf-8 :

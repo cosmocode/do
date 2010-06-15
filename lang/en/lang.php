@@ -41,4 +41,7 @@ $lang['js']['due'] = 'Due on %s.';
 
 $lang['js']['notloggedin'] = 'You are not logged in.';
 $lang['js']['closedby'] = 'Task was closed by %s.';
+
+$lang['js']['finish_popup_title'] = 'Close task';
+$lang['js']['finish_popup_submit'] = 'Close';
 //Setup VIM: ex: et ts=4 enc=utf-8 :
