@@ -83,6 +83,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $this->setupLocale();
 
         $userstyle = isset($data['user']) ? ' style="display: none;"' : '';
+        $creatorstyle = isset($data['creator']) ? ' style="display: none;"' : '';
 
         $hlp = plugin_load('helper', 'do');
         $data = $hlp->loadTasks($data);
@@ -93,7 +94,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->doc .= '<th' . $userstyle . '>'.$this->getLang('user').'</th>';
         $R->doc .= '<th>'.$this->getLang('date').'</th>';
         $R->doc .= '<th>'.$this->getLang('status').'</th>';
-        $R->doc .= '<th>'.$this->getLang('creator').'</th>';
+        $R->doc .= '<th' . $creatorstyle . '>'.$this->getLang('creator').'</th>';
         $R->doc .= '<th>'.$this->lang['js']['popup_msg'].'</th>';
         $R->doc .= '</tr>';
 
@@ -158,13 +159,13 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .= '</span>'; // outer span end
 
             $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_creator">';
+            $R->doc .= '<td class="plugin_do_creator"' . $creatorstyle . '>';
             $R->doc .= hsc($row['creator']);
             $R->doc .= '</td>';
             $R->doc .= '<td class="plugin_do_commit">';
             $R->doc .= hsc($row['msg']);
             $R->doc .= '</td>';
- 
+
             $R->doc .= '</tr>';
         }
 
