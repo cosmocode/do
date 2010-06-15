@@ -91,7 +91,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     function handle_delete(&$event, $param){
-        if (preg_match('/\<do[^>]*\>.*\<\/do\>/i',$event->data[0][1]) === 1) {
+        if (preg_match('/<do[^>]*>.*<\/do>/i',$event->data[0][1]) === 1) {
             // Only run if syntax plugin did not
             return;
         }
