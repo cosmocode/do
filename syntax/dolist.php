@@ -97,6 +97,16 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $R->doc .= '<th>'.$this->lang['js']['popup_msg'].'</th>';
         $R->doc .= '</tr>';
 
+        if (count($data) === 0) {
+            $R->tablerow_open();
+            $R->tablecell_open(6, 'center');
+            $R->cdata($this->getLang('none'));
+            $R->tablecell_close();
+            $R->tablerow_close();
+            $R->table_close();
+            return true;
+        }
+
         foreach($data as $row){
             $R->doc .= '<tr>';
             $R->doc .= '<td class="plugin_do_page">';

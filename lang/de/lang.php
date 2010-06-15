@@ -26,6 +26,8 @@ $lang['date']    = 'Fällig am';
 $lang['status']  = 'Status';
 $lang['creator'] = 'Ersteller';
 
+$lang['none']    = 'Keine Tasks gefunden';
+
 $lang['js']['done']             = 'Diese Aufgabe wurde am %s erledigt.';
 $lang['js']['open']             = 'Diese Aufgabe ist noch nicht erledigt.';
 $lang['js']['toolbar_title']    = 'Neue Aufgabe erstellen';

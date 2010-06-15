@@ -26,6 +26,8 @@ $lang['date']    = 'Due on';
 $lang['status']  = 'Status';
 $lang['creator'] = 'Creator';
 
+$lang['none']    = 'No tasks found';
+
 $lang['js']['done'] = 'This task was completed on %s.';
 $lang['js']['open'] = 'This task hasn\'t been completed, yet.';
 $lang['js']['toolbar_title'] = 'Insert new task';
