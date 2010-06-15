@@ -43,7 +43,6 @@ function addBtnActionDo(btn, props, edid) {
         };
         function styleList(ul, input) {
             ul.style.position = 'relative';
-            ul.style.left = input.previousSibling.style.width + 'px';
             ul.style.clear = 'both';
         };
 
