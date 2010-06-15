@@ -120,7 +120,7 @@ addInitEvent(function(){
      * @param img image to change.
      * @param doNr the old do number
      */
-    var switchDoNr = function( image, doNr ) {
+    function switchDoNr (image, doNr) {
         if (isUndefined(doNr)) {
             doNr = image.src.match(/do([0-9])\.png/)[1];
         }
@@ -143,7 +143,7 @@ addInitEvent(function(){
      * set the titles.
      * @param rootNode the surrounding span.
      */
-    var buildTitle = function ( rootNode, assigne, due, closedon, closedby ) {
+    function buildTitle (rootNode, assigne, due, closedon, closedby) {
         var newTitle = '';
 
         var table = rootNode.parentNode.tagName === 'TD';
@@ -189,7 +189,7 @@ addInitEvent(function(){
      * parameters are equal to getElementsByClass()
      * @return inner content or empty string.
      */
-    var getInnerHtmlByClass = function( className , parentNode, tag ) {
+    function getInnerHtmlByClass(className , parentNode, tag) {
         var elements = getElementsByClass(className, parentNode, tag);
         if (typeof(elements[0]) === 'undefined') {
             return '';
@@ -206,7 +206,7 @@ addInitEvent(function(){
      *
      * @return localized text.
      */
-    var getText = function(name, arg) {
+    function getText(name, arg) {
         if (arg === null) {
             return LANG.plugins['do'][name];
         } else {
@@ -217,7 +217,7 @@ addInitEvent(function(){
     /**
      * escapes html entities from a string.
      */
-    var hsc = function(text) {
+    function hsc(text) {
         return text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;');
     }
 
