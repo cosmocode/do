@@ -50,7 +50,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, &$handler){
         $data = array();
         $data['state'] = $state;
-
         switch($state){
             case DOKU_LEXER_ENTER:
                 $match = trim(substr($match,3,-1));
@@ -72,27 +71,15 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 
     function render($mode, &$R, $data) {
+        if ($mode === 'metadata') {
+            $this->_save($data);
+            return true;
+        }
         if($mode != 'xhtml') return false;
         global $ID;
 
         // get the helper
         $hlp = plugin_load('helper', 'do');
-
-        // hold old status. we need this to keep creator stuff
-        if (!$this->oldStatus) {
-            $this->oldStatus = array();
-            $statuses = $hlp->getAllPageStatuses($ID);
-            foreach ($statuses as $state) {
-                $this->oldStatus[$state['md5']] = $state;
-            }
-        }
-
-
-        // on the first run for this page, clean up
-        if(!isset($this->run[$ID])){
-            $hlp->cleanPageTasks($ID);
-            $this->run[$ID] = true;
-        }
 
         // get the page status if not present
         if (!$this->status) {
@@ -192,8 +179,68 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->docstash = '';
                 $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
 
-                $this->taskdata['pos'] = ++$this->position;
+                // we're done with this task
+                $this->taskdata = array();
+                break;
+        }
 
+        return true;
+    }
+
+    function _save($data) {
+        global $ID;
+
+        // get the helper
+        $hlp = plugin_load('helper', 'do');
+
+        // hold old status. we need this to keep creator stuff
+        if (!$this->oldStatus) {
+            $this->oldStatus = array();
+            $statuses = $hlp->getAllPageStatuses($ID);
+            foreach ($statuses as $state) {
+                $this->oldStatus[$state['md5']] = $state;
+            }
+        }
+
+
+        // on the first run for this page, clean up
+        if(!isset($this->run[$ID])){
+            $hlp->cleanPageTasks($ID);
+            $this->run[$ID] = true;
+        }
+
+        // get the page status if not present
+        if (!$this->status) {
+            $this->status = array();
+            $statuses = $hlp->loadPageStatuses($ID);
+            foreach ($statuses as $state) {
+                $this->status[$state['md5']] = $state;
+            }
+        }
+
+        switch($data['state']){
+            case DOKU_LEXER_ENTER:
+                // initialize data storage
+                $this->taskdata = array(
+                    'date' => $data['date'],
+                    'user' => $data['user'],
+                    'page' => $ID,
+                );
+                break;
+            case DOKU_LEXER_UNMATCHED:
+                $this->taskdata['text'] = trim(strip_tags($data['match']));
+                break;
+
+            case DOKU_LEXER_EXIT:
+                global $ID;
+                // determine the ID (ignore tags, case and whitespaces)
+                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($this->taskdata['text']))));
+                $this->taskdata['md5']  = $md5;
+
+
+                $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
+
+                $this->taskdata['pos'] = ++$this->position;
                 // save the task data
                 $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
 
@@ -201,8 +248,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->taskdata = array();
                 break;
         }
-
-        return true;
     }
 }
 
