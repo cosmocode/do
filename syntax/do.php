@@ -21,6 +21,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $run;
     private $status;
     private $oldStatus;
+    private $position = 0;
 
     function getType() {
         return 'formatting';
@@ -190,6 +191,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $R->doc = $this->docstash.$R->doc.$meta;
                 $this->docstash = '';
                 $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
+
+                $this->taskdata['pos'] = ++$this->position;
+
                 // save the task data
                 $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
 

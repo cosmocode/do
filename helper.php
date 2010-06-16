@@ -57,15 +57,16 @@ class helper_plugin_do extends DokuWiki_Plugin {
             $data['creator'] = $_SERVER['REMOTE_USER'];
         }
         $this->db->query(
-            'INSERT INTO tasks (page,md5,date,user,text,creator,msg)
-             VALUES (?, ?, ?, ?, ?, ?,?)',
+            'INSERT INTO tasks (page,md5,date,user,text,creator,msg,pos)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
              $data['page'],
              $data['md5'],
              $data['date'],
              $data['user'],
              strip_tags($data['text']),
              $data['creator'],
-             strip_tags($data['msg'])
+             strip_tags($data['msg']),
+             $data['pos']
         );
     }
 
@@ -148,7 +149,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                      ON A.page = B.page
                                      AND A.md5 = B.md5
                                      '.$where.'
-                                   ORDER BY B.status, A.date, A.text' . $limit);
+                                   ORDER BY A.page, A.pos' . $limit);
         $res = $this->db->res2arr($res);
         return $res;
     }
