@@ -31,32 +31,57 @@ class helper_plugin_do extends DokuWiki_Plugin {
         }
     }
 
+    /**
+     * Delete the all tasks from a given page id
+     */
     function cleanPageTasks($id){
         if(!$this->db) return;
         $this->db->query('DELETE FROM tasks WHERE page = ?',$id);
     }
 
+    /**
+     * save a task.
+     *
+     * @param array  data       task informations as key value array.
+     *                          keys are: page, md5, date, user, text, creator, msg
+     *
+     * @param string creator    if the task is has already a knowen creator you can
+     *                          set it here. if it's not set it'll be the current user.
+     */
     function saveTask($data, $creator = ''){
         if(!$this->db) return;
-
 
         if (!empty($creator)) {
             $data['creator'] = $creator;
         } else {
-            $data['creator'] = $this->_getUser();
+            $data['creator'] = $_SERVER['REMOTE_USER'];
         }
-        $this->db->query('INSERT INTO tasks (page,md5,date,user,text,creator,msg)
-                               VALUES (?, ?, ?, ?, ?, ?,?)',
-                         $data['page'],
-                         $data['md5'],
-                         $data['date'],
-                         $data['user'],
-                         $data['text'],
-                         $data['creator'],
-                         $data['msg']
-                     );
+        $this->db->query(
+            'INSERT INTO tasks (page,md5,date,user,text,creator,msg)
+             VALUES (?, ?, ?, ?, ?, ?,?)',
+             $data['page'],
+             $data['md5'],
+             $data['date'],
+             $data['user'],
+             strip_tags($data['text']),
+             $data['creator'],
+             strip_tags($data['msg'])
+        );
     }
 
+    /**
+     * Load all tasks with given filters.
+     *
+     * Filters are:
+     *  - ns        for namespace filters
+     *  - id
+     *  - status    can be done or undone to filter for (un)completed tasks
+     *  - limit     limit the results to a given number of results
+     *  - user      all tasks to a given user
+     *
+     * @param array $args filters to apply
+     * @return filtered result.
+     */
     function loadTasks($args = null){
         if(!$this->db) return array();
         $where = '';
@@ -128,10 +153,20 @@ class helper_plugin_do extends DokuWiki_Plugin {
         return $res;
     }
 
+    /**
+     * toggles a tasks status.
+     *
+     * @param string $page          page id of the task
+     * @param string $md5           tasks md5 hash
+     * @param string $commitmsg     a optional message to the task completion
+     * @return false on undone a task or timestamp on task completion
+     */
     function toggleTaskStatus($page, $md5, $commitmsg = ''){
         if(!$this->db) return array();
         $md5 = trim($md5);
         if(!$page || !$md5) return array();
+
+        $commitmsg = strip_tags($commitmsg);
 
         $res = $this->db->query('SELECT status
                                    FROM task_status
@@ -142,7 +177,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $stat['status'];
 
         if(!$stat){
-            $name = $this->_getUser();;
+            $name = $_SERVER['REMOTE_USER'];
             $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
                                     (page, md5, status, closedby)
@@ -160,16 +195,11 @@ class helper_plugin_do extends DokuWiki_Plugin {
         }
     }
 
+    /**
+     * load all page stats from a given page.
+     */
     function loadPageStatuses($page){
-        if(!$this->db) return array();
-        if(!$page) return array();
-
-        $res = $this->db->query('SELECT DISTINCT A.md5 AS md5, A.status AS status, A.closedby AS closedby, B.msg AS msg
-                                 FROM tasks B LEFT JOIN task_status A
-                                 ON B.page = A.page
-                                 AND B.md5 = A.md5
-                                 WHERE B.page = ?',$page);
-        return $this->db->res2arr($res);
+        return $this->getAllPageStatuses($page);
     }
 
     function _getUser() {
@@ -184,21 +214,24 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$this->db) return array();
         if(!$page) return array();
 
-        $res = $this->db->query('SELECT A.page     AS page,
-                                        A.creator  AS creator,
-                                        A.md5      AS md5,
-                                        B.status   AS status,
-                                        B.closedby AS closedby,
-                                        A.msg      AS msg
-                                 FROM tasks A LEFT JOIN task_status B
-                                 ON A.page = B.page
-                                 AND A.md5 = B.md5
-                                 WHERE A.page = ?', $page);
+        $res = $this->db->query('
+            SELECT 
+                A.page     AS page,
+                A.creator  AS creator,
+                A.md5      AS md5,
+                B.status   AS status,
+                B.closedby AS closedby,
+                A.msg      AS msg
+            FROM tasks A 
+            LEFT JOIN task_status B
+            ON A.page = B.page
+            AND A.md5 = B.md5
+            WHERE A.page = ?',
+            $page
+        );
 
         return $this->db->res2arr($res);
     }
-
-
 
     /**
      * Get information about the number of tasks on a specefic id.
@@ -268,13 +301,17 @@ class helper_plugin_do extends DokuWiki_Plugin {
         echo $out;
     }
 
+    /**
+     * get a pretty userlink
+     * @param string $user users loginname
+     * @return username with possible links
+     */
     function getPrettyUser($user) {
         $userpage = $this->getConf('userpage');
+        $res = '';
         if ($userpage !== '' && $user !== '') {
-            return p_get_renderer('xhtml')->internallink(sprintf($userpage,
-                                                                 $user),
-                                                         '', '',
-                                                         true, 'navigation');
+            return p_get_renderer('xhtml')->internallink(sprintf($userpage, $user),
+                                                         '', '', true, 'navigation');
 
         } else {
             return editorinfo($user);

@@ -82,21 +82,21 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
         $this->setupLocale();
 
-        $userstyle = isset($data['user']) ? ' style="display: none;"' : '';
+        $userstyle    = isset($data['user']) ? ' style="display: none;"' : '';
         $creatorstyle = isset($data['creator']) ? ' style="display: none;"' : '';
 
         $hlp = plugin_load('helper', 'do');
         $data = $hlp->loadTasks($data);
 
         $R->doc .= '<table class="inline plugin_do">';
-        $R->doc .= '<tr>';
-        $R->doc .= '<th>'.$this->getLang('task').'</th>';
-        $R->doc .= '<th' . $userstyle . '>'.$this->getLang('user').'</th>';
-        $R->doc .= '<th>'.$this->getLang('date').'</th>';
-        $R->doc .= '<th>'.$this->getLang('status').'</th>';
-        $R->doc .= '<th' . $creatorstyle . '>'.$this->getLang('creator').'</th>';
-        $R->doc .= '<th>'.$this->lang['js']['popup_msg'].'</th>';
-        $R->doc .= '</tr>';
+        $R->doc .= '    <tr>';
+        $R->doc .= '    <th>'.$this->getLang('task').'</th>';
+        $R->doc .= '    <th' . $userstyle . '>'.$this->getLang('user').'</th>';
+        $R->doc .= '    <th>'.$this->getLang('date').'</th>';
+        $R->doc .= '    <th>'.$this->getLang('status').'</th>';
+        $R->doc .= '    <th' . $creatorstyle . '>'.$this->getLang('creator').'</th>';
+        $R->doc .= '    <th>'.$this->lang['js']['popup_msg'].'</th>';
+        $R->doc .= '  </tr>';
 
         if (count($data) === 0) {
             $R->tablerow_open();
@@ -109,69 +109,104 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         }
 
         foreach($data as $row){
-            $R->doc .= '<tr>';
-            $R->doc .= '<td class="plugin_do_page">';
-            $R->doc .= '<a title="' . $row['page'] . '" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_assigne"' . $userstyle . '>' . $hlp->getPrettyUser($row['user']) . '</td>';
-            $R->doc .= '<td class="plugin_do_date">'.hsc($row['date']).'</td>';
-            $R->doc .= '<td class="plugin_do_status" align="center">';
+            $R->doc .= '  <tr>';
+            $R->doc .= '    <td class="plugin_do_page">';
+            $R->doc .= '      <a title="' . $row['page'] .'" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
+            $R->doc .= '    </td>';
+            $R->doc .= '    <td class="plugin_do_assigne"' . $userstyle . '>' . $hlp->getPrettyUser($row['user']) . '</td>';
+            $R->doc .= '    <td class="plugin_do_date">'.hsc($row['date']).'</td>';
+            $R->doc .= '    <td class="plugin_do_status" align="center">';
 
-            $img = '';
-            if($row['user'] && $row['date']){
-                $text  = $this->getLang("title1");
-                $class = 'plugin_do1';
-                if ($row['status']) $img = '7';
-                else $img = 3;
-            }elseif($row['user']){
-                $text = $this->getLang("title2");
-                $class = 'plugin_do2';
-                if ($row['status']) $img = '1';
-                else $img = 6;
-            }elseif($row['date']){
-                $text = $this->getLang("title3");
-                $class = 'plugin_do3';
-                if ($row['status']) $img = '8';
-                else $img = 4;
-            }else{
-                $text = $this->getLang("title4");
-                $class = 'plugin_do4';
-                if ($row['status']) $img = '2';
-                else $img = 5;
-            }
-            $text = sprintf($text, hsc($row['user']), hsc($row['date']));
+            // task status icon...
+            list($class, $image, $title) = $data = $this->prepareTaskInfo($row['user'], $row['date'], $row['status'], $row['closedby']);
+            $editor = ($row['closedby'])?$hlp->getPrettyUser($row['closedby']):'';
 
-            $R->doc .= '<span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
-
-            // text span
-            $editor = editorinfo($row['closedby']);
-            if (empty($editor)) $editor = '&nbsp;';
-            $R->doc .= '<span title="'.$text.'" class="'.$class.'">'.$editor.'</span>';
-
+            $R->doc .= '      <span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
+            $R->doc .= '        <span title="'.$title.'" class="'.$class.'">'.$editor.'</span>';
 
             // img link
-            $R->doc .= '<a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
-            if ($row['status']) $R->doc .= '" class="plugin_do_status plugin_do_adone">';
-            else $R->doc .= '" class="plugin_do_status">';
-            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$img.'.png" class="plugin_do_img" title="'.$text.'" />';
-            $R->doc .= '</a>';
+            $R->doc .= '        <a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
+            if ($row['status']) 
+                $R->doc .= '" class="plugin_do_status plugin_do_adone">';
+            else 
+                $R->doc .= '" class="plugin_do_status">';
 
-            $R->doc .= '</span>'; // outer span end
+            $R->doc .= '          <img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$image.'.png" class="plugin_do_img" title="'.$title.'" />';
+            $R->doc .= '        </a>';
 
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_creator"' . $creatorstyle . '>';
-            $R->doc .= hsc($row['creator']);
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_commit">';
-            $R->doc .= hsc($row['msg']);
-            $R->doc .= '</td>';
+            $R->doc .= '      </span>'; // outer span end
 
-            $R->doc .= '</tr>';
+            $R->doc .= '    </td>';
+            $R->doc .= '    <td class="plugin_do_creator"' . $creatorstyle . '>';
+            $R->doc .= $hlp->getPrettyUser($row['creator']);
+            $R->doc .= '    </td>';
+            $R->doc .= '    <td class="plugin_do_commit">';
+            $R->doc .=        hsc($row['msg']);
+            $R->doc .= '    </td>';
+
+            $R->doc .= '  </tr>';
         }
 
         $R->doc .= '</table>';
 
         return true;
+    }
+
+
+    function prepareTaskInfo($user, $date, $status, $closedBy) {
+        $result = array();
+        $img = 0;
+        if($user && $date) {
+            $result[] = 'plugin_do1';
+            $img = 3;
+        }elseif($user){
+            $result[] = 'plugin_do2';
+            $img = 6;
+        }elseif($date){
+            $result[] = 'plugin_do3';
+            $img = 4;
+        }else{
+            $result[] = 'plugin_do4';
+            $img = 5;
+        }
+
+        // change to "done" images
+        if ($status) {
+            switch ($img) {
+                case '3': $img='7'; break;
+                case '4': $img='8'; break;
+                case '5': $img='2'; break;
+                case '6': $img='1'; break;
+            }
+        }
+
+        // setup title
+        $title = '';
+
+        if ($user) {
+            $title .= $this->getJsText('assigne', $user);
+        }
+
+        if ($date) {
+            $title .= $this->getJsText('due', $date);
+        }
+
+        if ($status) {
+            $title .= $this->getJsText('done', $status);
+        }
+
+        if ($closedBy) {
+           $title .= $this->getJsText('closedby', $closedBy);
+        }
+
+        $result[] = $img;
+        $result[] = trim($title);
+
+        return $result;
+    }
+
+    function getJsText($str, $arg) {
+        return sprintf($this->lang['js'][$str], $arg) . ' ';
     }
 }
 

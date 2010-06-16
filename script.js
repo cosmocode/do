@@ -155,6 +155,7 @@ addInitEvent(function(){
             } else {
                 assigne = getInnerHtmlByClass('plugin_do_meta_user', rootNode, 'span');
             }
+            assigne = stripTags(assigne);
         }
         if (assigne !== '') {
             newTitle += getText('assigne', assigne) + " ";
@@ -167,6 +168,7 @@ addInitEvent(function(){
             } else {
                 due = getInnerHtmlByClass('plugin_do_meta_date', rootNode, 'span');
             }
+            due = stripTags(due);
         }
         if (due !== '') {
             newTitle += getText('due', due) + " ";
@@ -221,6 +223,10 @@ addInitEvent(function(){
         return text.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace('"','&quot;');
     }
 
+    function stripTags(text) {
+        return text.replace(/(<([^>]+)>)/ig,"");
+    }
+
     function handle_event(e){
 
         /**
@@ -270,7 +276,7 @@ addInitEvent(function(){
 
             if (!done) {
                 var msg = $('do__popup_msg').value;
-                var msge = hsc(msg);
+                var msge = hsc(stripTags(msg));
                 if (tablemode) {
                     getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = (msge)?msge:'';
                 } else {
@@ -300,9 +306,9 @@ addInitEvent(function(){
                     switchDoNr(image, donr);
                     me.parentNode.className ='plugin_do_done';
                     if (tablemode) {
-                        me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user;
+                        me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user_name;
                     }
-                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user, resp);
+                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user_clean, resp);
                 }else{
                     switchDoNr( image, donr);
                     me.parentNode.className = 'plugin_do_undone';
@@ -479,6 +485,9 @@ addInitEvent(function(){
 
         var nodes = getElementsByClass('plugin_do_img');
         for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].parentNode.parentNode.parentNode.tagName === 'TD') {
+                continue;
+            }
             buildTitle(nodes[i].parentNode.parentNode);
         }
 
@@ -487,6 +496,10 @@ addInitEvent(function(){
             eval(resp);
 
             for(var i=0; i<stat.length; i++){
+                if (!stat[i]['status']) {
+                    continue;
+                }
+
                 var obj = document.getElementById('plgdo__'+stat[i].md5);
 
                 if(obj){

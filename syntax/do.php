@@ -74,9 +74,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if($mode != 'xhtml') return false;
         global $ID;
 
-
+        // get the helper
         $hlp = plugin_load('helper', 'do');
 
+        // hold old status. we need this to keep creator stuff
         if (!$this->oldStatus) {
             $this->oldStatus = array();
             $statuses = $hlp->getAllPageStatuses($ID);
@@ -92,6 +93,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $this->run[$ID] = true;
         }
 
+        // get the page status if not present
         if (!$this->status) {
             $this->status = array();
             $statuses = $hlp->loadPageStatuses($ID);
@@ -156,7 +158,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 );
 
                 $title = sprintf($text,
-                    editorinfo($this->taskdata['user']),
+                    strip_tags(editorinfo($this->taskdata['user'])),
                     hsc($this->taskdata['date'])
                 );
 
