@@ -22,6 +22,8 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $status;
     private $oldStatus;
     private $position = 0;
+    private $saved = array();
+    private $ids = array();
 
     function getType() {
         return 'formatting';
@@ -113,7 +115,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_EXIT:
                 global $ID;
                 // determine the ID (ignore tags, case and whitespaces)
-                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc))));
+                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc.$ID))));
                 $this->taskdata['md5']  = $md5;
                 $this->taskdata['text'] = trim(strip_tags($R->doc));
 
@@ -150,8 +152,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     hsc($this->taskdata['date'])
                 );
 
+                $id = '';
+                if (!in_array($md5, $this->ids)) {
+                    $id = ' id="plgdo__' . $md5 . '"';
+                    $this->ids[] = $md5;
+                }
+
                 $R->doc = '<span>'
-                        . '<span class="plugin_'.$class.'" id="plgdo__'.$md5.'" title="'.$title.'">'
+                        . '<span class="plugin_'.$class.' plgdo__'.$md5.'" title="'.$title.'" '. $id . '>'
                         .   $R->doc
                         . '</span>'
                         . '<span class="plugin_do_commit">'
@@ -234,16 +242,19 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_EXIT:
                 global $ID;
                 // determine the ID (ignore tags, case and whitespaces)
-                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($this->taskdata['text']))));
+                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($this->taskdata['text'].$ID))));
                 $this->taskdata['md5']  = $md5;
 
 
                 $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
 
                 $this->taskdata['pos'] = ++$this->position;
-                // save the task data
-                $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
 
+                // save the task data - only when not saved yet.
+                if (!in_array($this->taskdata['md5'], $this->saved)) {
+                    $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
+                    $this->saved[] = $this->taskdata['md5'];
+                }
                 // we're done with this task
                 $this->taskdata = array();
                 break;

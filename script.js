@@ -120,7 +120,7 @@ addInitEvent(function(){
      * @param img image to change.
      * @param doNr the old do number
      */
-    function switchDoNr (image, doNr) {
+    function switchDoNr (image, doNr, applyto) {
         if (isUndefined(doNr)) {
             doNr = image.src.match(/do([0-9])\.png/)[1];
         }
@@ -136,14 +136,23 @@ addInitEvent(function(){
             case '7': newnr='3'; break;
             case '8': newnr='4'; break;
         }
-        image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+        if (isUndefined(applyto)) {
+            image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+        } else {
+            for (var i = 0; i < applyto.length; i++) {
+                var img = getElementsByClass('plugin_do_img', applyto[i].parentNode, 'IMG');
+                if (img.length === 1) {
+                    img[0].src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+                }
+            }
+        }
     }
 
     /**
      * set the titles.
      * @param rootNode the surrounding span.
      */
-    function buildTitle (rootNode, assigne, due, closedon, closedby) {
+    function buildTitle (rootNode, assigne, due, closedby, closedon, applyto) {
         var newTitle = '';
 
         var table = rootNode.parentNode.tagName === 'TD';
@@ -177,12 +186,20 @@ addInitEvent(function(){
 
         if (!isUndefined(closedby)) newTitle += getText('closedby', closedby);
 
-        // apply new title
-        for (var i = 0; i < rootNode.childNodes.length; i++) {
-            rootNode.childNodes[i].title = newTitle;
+        if (!isUndefined(applyto)) {
+            for (var j = 0; j < applyto.length; j++) {
+                for (var i = 0; i < applyto[j].parentNode.childNodes.length; i++) {
+                    applyto[j].parentNode.childNodes[i].title = newTitle;
+                }
+                getElementsByClass('plugin_do_img', applyto[j].parentNode, 'img')[0].title = newTitle;
+            }
+        } else {
+            // apply new title
+            for (var i = 0; i < rootNode.childNodes.length; i++) {
+                rootNode.childNodes[i].title = newTitle;
+            }
+            getElementsByClass('plugin_do_img', rootNode, 'img')[0].title = newTitle;
         }
-
-        getElementsByClass('plugin_do_img', rootNode, 'img')[0].title = newTitle;
     }
 
     /**
@@ -265,8 +282,11 @@ addInitEvent(function(){
             tablemode = true;
         }
 
-
         var send = function(event) {
+            var md5v = me.parentNode.firstChild.className.match(/plgdo__([a-f0-9]{32})/)[1];
+            var dotags = getElementsByClass('plgdo__' + md5v);
+
+
             removeEvent(div.lastChild.lastChild.lastChild,'click', send);
             $('do__commit_popup').style.display = 'none';
             var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
@@ -280,7 +300,10 @@ addInitEvent(function(){
                 if (tablemode) {
                     getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = (msge)?msge:'';
                 } else {
-                   getElementsByClass('plugin_do_commit', me.parentNode, 'span')[0].innerHTML = (msge)?'(' + getText("note_done") + msge +')':'';
+                    var out = (isEmpty(msge)) ? '' : '(' + getText("note_done") + msge +')';
+                    for (var i = 0; i < dotags.length; i++) {
+                        getElementsByClass('plugin_do_commit', dotags[i].parentNode, 'span')[0].innerHTML = out;
+                    }
                 }
                 param+= "&do_commit=" + escape(msg);
             } else if (tablemode) {
@@ -294,8 +317,9 @@ addInitEvent(function(){
 
             ajax.onCompletion = function(){
                 var resp = this.response;
-
                 var pagestat = getElementsByClass('plugin__do_pagetasks');
+
+
 
                 if(resp){
                     if (resp == "-1") {
@@ -303,19 +327,19 @@ addInitEvent(function(){
                        image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + donr + '.png';
                        return;
                     }
-                    switchDoNr(image, donr);
-                    me.parentNode.className ='plugin_do_done';
+                    switchDoNr(image, donr, dotags);
+                    for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_done';
                     if (tablemode) {
                         me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user_name;
                     }
-                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user_clean, resp);
+                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user_clean, resp, dotags);
                 }else{
-                    switchDoNr( image, donr);
-                    me.parentNode.className = 'plugin_do_undone';
+                    switchDoNr( image, donr, dotags);
+                    for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_undone';
                     if (tablemode) {
                         me.parentNode.firstChild.innerHTML = '&nbsp;';
                     }
-                    buildTitle(image.parentNode.parentNode, '', '');
+                    buildTitle(image.parentNode.parentNode, '', '', undefined, undefined, dotags);
                 }
 
                 if (pagestat.length !== 0) {
@@ -500,22 +524,25 @@ addInitEvent(function(){
                     continue;
                 }
 
-                var obj = document.getElementById('plgdo__'+stat[i].md5);
+                var objs = getElementsByClass('plgdo__'+stat[i].md5);
 
-                if(obj){
-                    buildTitle(obj.parentNode, '', '', stat[i].status, stat[i].closedby);
-                    obj.className += ' plugin_do_done';
+                for (var j = 0; j<objs.length; j++) {
+                    var obj = objs[j];
+                    if(obj){
+                        buildTitle(obj.parentNode, '', '', stat[i].closedby, stat[i].status);
+                        obj.className += ' plugin_do_done';
 
-                    obj.parentNode.className = 'plugin_do_done';
-                    var img = getElementsByClass('plugin_do_img',obj.parentNode,'img');
-                    if (typeof(img) != 'undefined') {
-                        switchDoNr(img[0]);
-                    }
-                    if (typeof(stat[i].msg) != 'undefined') {
-                        var commitmsg = getElementsByClass('plugin_do_commit',obj.parentNode,'span')[0];
-                        var msg = hsc(stat[i].msg);
-                        if (msg !== "") {
-                            commitmsg.innerHTML = '(' + getText("note_done") + msg + ')';
+                        obj.parentNode.className = 'plugin_do_done';
+                        var img = getElementsByClass('plugin_do_img',obj.parentNode,'img');
+                        if (typeof(img) != 'undefined') {
+                            switchDoNr(img[0]);
+                        }
+                        if (typeof(stat[i].msg) != 'undefined') {
+                            var commitmsg = getElementsByClass('plugin_do_commit',obj.parentNode,'span')[0];
+                            var msg = hsc(stat[i].msg);
+                            if (msg !== "") {
+                                commitmsg.innerHTML = '(' + getText("note_done") + msg + ')';
+                            }
                         }
                     }
                 }

@@ -109,40 +109,40 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         }
 
         foreach($data as $row){
-            $R->doc .= '  <tr>';
-            $R->doc .= '    <td class="plugin_do_page">';
-            $R->doc .= '      <a title="' . $row['page'] .'" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
-            $R->doc .= '    </td>';
-            $R->doc .= '    <td class="plugin_do_assigne"' . $userstyle . '>' . $hlp->getPrettyUser($row['user']) . '</td>';
-            $R->doc .= '    <td class="plugin_do_date">'.hsc($row['date']).'</td>';
-            $R->doc .= '    <td class="plugin_do_status" align="center">';
+            $R->doc .= '<tr>';
+            $R->doc .=   '<td class="plugin_do_page">';
+            $R->doc .=     '<a title="' . $row['page'] .'" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
+            $R->doc .=   '</td>';
+            $R->doc .=   '<td class="plugin_do_assigne"' . $userstyle . '>' . $hlp->getPrettyUser($row['user']) . '</td>';
+            $R->doc .=   '<td class="plugin_do_date">'.hsc($row['date']).'</td>';
+            $R->doc .=   '<td class="plugin_do_status" align="center">';
 
             // task status icon...
             list($class, $image, $title) = $data = $this->prepareTaskInfo($row['user'], $row['date'], $row['status'], $row['closedby']);
             $editor = ($row['closedby'])?$hlp->getPrettyUser($row['closedby']):'';
 
-            $R->doc .= '      <span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
-            $R->doc .= '        <span title="'.$title.'" class="'.$class.'">'.$editor.'</span>';
+            $R->doc .= '<span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
+            $R->doc .= '<span title="'.$title.'" class="'.$class.' plgdo__'.$row['md5'].'">'.$editor.'</span>';
 
             // img link
-            $R->doc .= '        <a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
-            if ($row['status']) 
+            $R->doc .= '<a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
+            if ($row['status'])
                 $R->doc .= '" class="plugin_do_status plugin_do_adone">';
-            else 
+            else
                 $R->doc .= '" class="plugin_do_status">';
 
-            $R->doc .= '          <img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$image.'.png" class="plugin_do_img" title="'.$title.'" />';
-            $R->doc .= '        </a>';
+            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$image.'.png" class="plugin_do_img" title="'.$title.'" />';
+            $R->doc .= '</a>';
 
-            $R->doc .= '      </span>'; // outer span end
+            $R->doc .= '</span>'; // outer span end
 
-            $R->doc .= '    </td>';
-            $R->doc .= '    <td class="plugin_do_creator"' . $creatorstyle . '>';
+            $R->doc .= '</td>';
+            $R->doc .= '<td class="plugin_do_creator"' . $creatorstyle . '>';
             $R->doc .= $hlp->getPrettyUser($row['creator']);
-            $R->doc .= '    </td>';
-            $R->doc .= '    <td class="plugin_do_commit">';
-            $R->doc .=        hsc($row['msg']);
-            $R->doc .= '    </td>';
+            $R->doc .= '</td>';
+            $R->doc .= '<td class="plugin_do_commit">';
+            $R->doc .=  hsc($row['msg']);
+            $R->doc .= '</td>';
 
             $R->doc .= '  </tr>';
         }
