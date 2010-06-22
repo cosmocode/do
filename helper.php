@@ -216,14 +216,14 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$page) return array();
 
         $res = $this->db->query('
-            SELECT 
+            SELECT
                 A.page     AS page,
                 A.creator  AS creator,
                 A.md5      AS md5,
                 B.status   AS status,
                 B.closedby AS closedby,
                 A.msg      AS msg
-            FROM tasks A 
+            FROM tasks A
             LEFT JOIN task_status B
             ON A.page = B.page
             AND A.md5 = B.md5
