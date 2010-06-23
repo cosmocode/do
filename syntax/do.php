@@ -123,23 +123,18 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $c = '';
                 if ($this->status[$md5]) $c = 'c';
 
-                $img = '';
                 if($this->taskdata['user'] && $this->taskdata['date']){
                     $text  = $this->getLang("title1$c");
                     $class = 'do1';
-                    $img = '3';
                 }elseif($this->taskdata['user']){
                     $text = $this->getLang("title2$c");
                     $class = 'do2';
-                    $img = '6';
                 }elseif($this->taskdata['date']){
                     $text = $this->getLang("title3$c");
                     $class = 'do3';
-                    $img = '4';
                 }else{
                     $text = $this->getLang("title4$c");
                     $class = 'do4';
-                    $img = '5';
                 }
                 $param = array(
                     'do' => 'plugin_do',
@@ -166,7 +161,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         . ((empty($this->oldStatus[$md5]['msg']))?'':'(' . $this->lang['js']['note_done'] . hsc($this->oldStatus[$md5]['msg']) .')')
                         . '</span>'
                         . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
-                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$img.'.png" class="plugin_do_img" title="'.$title.'" />'
+                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" class="plugin_do_img" title="'.$title.'" />'
                         . '</a>';
 
                 $meta = '';

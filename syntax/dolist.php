@@ -131,7 +131,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             else
                 $R->doc .= '" class="plugin_do_status">';
 
-            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/do'.$image.'.png" class="plugin_do_img" title="'.$title.'" />';
+            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$image.'" class="plugin_do_img" title="'.$title.'" />';
             $R->doc .= '</a>';
 
             $R->doc .= '</span>'; // outer span end
@@ -155,30 +155,18 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
     function prepareTaskInfo($user, $date, $status, $closedBy) {
         $result = array();
-        $img = 0;
         if($user && $date) {
             $result[] = 'plugin_do1';
-            $img = 3;
         }elseif($user){
             $result[] = 'plugin_do2';
-            $img = 6;
         }elseif($date){
             $result[] = 'plugin_do3';
-            $img = 4;
         }else{
             $result[] = 'plugin_do4';
-            $img = 5;
         }
 
         // change to "done" images
-        if ($status) {
-            switch ($img) {
-                case '3': $img='7'; break;
-                case '4': $img='8'; break;
-                case '5': $img='2'; break;
-                case '6': $img='1'; break;
-            }
-        }
+        $img = ($status) ? 'done.png' : 'undone.png';
 
         // setup title
         $title = '';

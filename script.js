@@ -118,31 +118,21 @@ addInitEvent(function(){
      *
      * done <-> undone
      * @param img image to change.
-     * @param doNr the old do number
+     * @param doNr boolean value. true for done tasks false for undone.
      */
-    function switchDoNr (image, doNr, applyto) {
-        if (isUndefined(doNr)) {
-            doNr = image.src.match(/do([0-9])\.png/)[1];
+    function switchDoNr (image, done, applyto) {
+        if (isUndefined(done)) {
+            done = isEmpty(image.src.match(/undone\.png/));
         }
+        var newImg = done ? 'undone.png' : 'done.png';
 
-        var newnr = DOKU_BASE + 'lib/plugins/do/pix/do';
-        switch (doNr) {
-            case '1': newnr='6'; break;
-            case '2': newnr='5'; break;
-            case '3': newnr='7'; break;
-            case '4': newnr='8'; break;
-            case '5': newnr='2'; break;
-            case '6': newnr='1'; break;
-            case '7': newnr='3'; break;
-            case '8': newnr='4'; break;
-        }
         if (isUndefined(applyto)) {
-            image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+            image.src = DOKU_BASE + 'lib/plugins/do/pix/' + newImg;
         } else {
             for (var i = 0; i < applyto.length; i++) {
                 var img = getElementsByClass('plugin_do_img', applyto[i].parentNode, 'IMG');
                 if (img.length === 1) {
-                    img[0].src = DOKU_BASE + 'lib/plugins/do/pix/do' + newnr + '.png';
+                    img[0].src = DOKU_BASE + 'lib/plugins/do/pix/' + newImg;
                 }
             }
         }
@@ -250,7 +240,7 @@ addInitEvent(function(){
          * determine if a element is late
          */
         var isLate = function(ele) {
-            if (typeof(ele.parentNode) == 'undefined') {
+            if (isUndefined(ele.parentNode)) {
                 return false;
             }
             if (ele.parentNode.parentNode.className.indexOf('plugin_do_done') >= 0) {
@@ -311,7 +301,7 @@ addInitEvent(function(){
             }
 
             var image = getElementsByClass('plugin_do_img', me, 'IMG')[0];
-            var donr = image.src.match(/do([0-9]+)\.png/)[1];
+            var donr = isEmpty( image.src.match(/undone\.png/) );
             image.src = DOKU_BASE + 'lib/plugins/do/pix/throbber.gif';
             image.title = '…';
 
@@ -324,7 +314,7 @@ addInitEvent(function(){
                 if(resp){
                     if (resp == "-1") {
                        alert(getText("notloggedin"));
-                       image.src = DOKU_BASE + 'lib/plugins/do/pix/do' + donr + '.png';
+                       image.src = DOKU_BASE + 'lib/plugins/do/pix/' + (donr?'done':'undone') + '.png';
                        return;
                     }
                     switchDoNr(image, donr, dotags);
