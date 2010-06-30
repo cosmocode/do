@@ -89,7 +89,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $limit = '';
         if (isset($args))
         {
-            $where .= ' WHERE 1';
+            $where .= ' WHERE 1=1';
 
             if (isset($args['ns'])) {
                 global $ID;
@@ -121,7 +121,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 $limit = ' LIMIT ' . intval($args['limit'][0]);
             }
 
-            $argn = array('user');
+            $argn = array('user', 'creator');
             foreach ($argn as $n)
             {
                 if (isset($args[$n]))
