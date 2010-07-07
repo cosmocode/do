@@ -411,7 +411,7 @@ addInitEvent(function(){
             var popup = $('do__commit_popup');
             popup.style.display = 'inline';
             $('do__popup_msg').focus();
-            popup.style.top     = (e.clientY + 20) + 'px';
+            popup.style.top     = (e.pageY + 20) + 'px';
 
             var posX = e.clientX - popup.clientWidth/2;
             if (posX < 5) {
