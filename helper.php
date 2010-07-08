@@ -93,9 +93,12 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
             if (isset($args['ns'])) {
                 global $ID;
-                $exists = false;
-                resolve_pageid(getNS($ID), $args['ns'], $exists);
-                $args['ns'] = getNS($args['ns']);
+                if ($args['ns'][0] === '.') {
+                    $currentNs = '';
+                    $exists = false;
+                    resolve_pageid($ID, $currentNs, $exists);
+                    $args['ns'] = getNS($currentNs) . substr($args['ns'],1);
+                }
                 $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
             }
 
