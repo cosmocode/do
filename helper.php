@@ -92,14 +92,22 @@ class helper_plugin_do extends DokuWiki_Plugin {
             $where .= ' WHERE 1=1';
 
             if (isset($args['ns'])) {
+                // Whatever you do here, test it against the following mappings
+                // (current ID has to be NS1:NS2:PAGE):
+                // '..:..' => ''
+                // '.'     => 'NS1:NS2:'
+                // 'NS3'  => 'NS1:NS2:NS3'
+                // ':NS4'  => 'NS4'
+                // ':'     => ''
+
                 global $ID;
-                if ($args['ns'][0] === '.') {
-                    $currentNs = '';
-                    $exists = false;
-                    resolve_pageid($ID, $currentNs, $exists);
-                    $args['ns'] = getNS($currentNs) . substr($args['ns'],1);
+                $ns = trim(resolve_id(getNS($ID), $args['ns'], false), ':');
+                if (strlen($ns) > 0) {
+                    // Do not match NSbla with NS, but only NS:bla
+                    $ns .= ':';
                 }
-                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($args['ns'].'%'));
+
+                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($ns).'%'));
             }
 
             if (isset($args['id'])) {
