@@ -107,7 +107,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                     $ns .= ':';
                 }
 
-                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($ns).'%'));
+                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($ns).'%');
             }
 
             if (isset($args['id'])) {
