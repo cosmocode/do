@@ -111,8 +111,6 @@ if (typeof window.toolbar !== 'undefined') {
 }
 
 addInitEvent(function(){
-
-
     /**
      * switch the status of a image src
      *
@@ -273,7 +271,7 @@ addInitEvent(function(){
         }
 
         var send = function(event) {
-            var md5v = me.parentNode.firstChild.className.match(/plgdo__([a-f0-9]{32})/)[1];
+            var md5v = me.parentNode.firstChild.nextSibling.className.match(/plgdo__([a-f0-9]{32})/)[1];
             var dotags = getElementsByClass('plgdo__' + md5v);
 
 
@@ -320,14 +318,14 @@ addInitEvent(function(){
                     switchDoNr(image, donr, dotags);
                     for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_done';
                     if (tablemode) {
-                        me.parentNode.firstChild.innerHTML = JSINFO.plugin_do_user_name;
+                        me.parentNode.firstChild.nextSibling.innerHTML = JSINFO.plugin_do_user_name;
                     }
                     buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user_clean, resp, dotags);
                 }else{
                     switchDoNr( image, donr, dotags);
                     for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_undone';
                     if (tablemode) {
-                        me.parentNode.firstChild.innerHTML = '&nbsp;';
+                        me.parentNode.firstChild.nextSibling.innerHTML = '&nbsp;';
                     }
                     buildTitle(image.parentNode.parentNode, '', '', undefined, undefined, dotags);
                 }
@@ -506,8 +504,7 @@ addInitEvent(function(){
         }
 
         ajax.onCompletion = function(){
-            var resp = 'var stat = '+this.response;
-            eval(resp);
+            var stat = eval(this.response);
 
             for(var i=0; i<stat.length; i++){
                 if (!stat[i]['status']) {
@@ -541,4 +538,3 @@ addInitEvent(function(){
         ajax.runAJAX();
     }
 });
-

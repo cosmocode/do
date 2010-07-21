@@ -153,16 +153,16 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     $this->ids[] = $md5;
                 }
 
-                $R->doc = '<span>'
+                $R->doc = '<span class="plugin_do_undone">'
+                        . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
+                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" class="plugin_do_img" title="'.$title.'" />'
+                        . '</a>'
                         . '<span class="plugin_'.$class.' plgdo__'.$md5.'" title="'.$title.'" '. $id . '>'
                         .   $R->doc
                         . '</span>'
                         . '<span class="plugin_do_commit">'
                         . ((empty($this->oldStatus[$md5]['msg']))?'':'(' . $this->lang['js']['note_done'] . hsc($this->oldStatus[$md5]['msg']) .')')
-                        . '</span>'
-                        . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
-                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" class="plugin_do_img" title="'.$title.'" />'
-                        . '</a>';
+                        . '</span>';
 
                 $meta = '';
                 if ($this->taskdata['user'] || $this->taskdata['date']) {
