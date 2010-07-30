@@ -293,7 +293,7 @@ addInitEvent(function(){
                         getElementsByClass('plugin_do_commit', dotags[i].parentNode, 'span')[0].innerHTML = out;
                     }
                 }
-                param+= "&do_commit=" + escape(msg);
+                param+= "&do_commit=" + encodeURIComponent(msg);
             } else if (tablemode) {
                 getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = '';
             }
