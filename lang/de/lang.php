@@ -8,10 +8,10 @@
 // menu entry for admin plugins
 // $lang['menu'] = 'Your menu entry';
 
-$lang['title1']  = 'Aufgabe ist %1$s zugeordnet und ist am %2$s fällig.';
-$lang['title2']  = 'Aufgabe ist %1$s zugeordnet. Kein Fälligkeitsdatum.';
-$lang['title3']  = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig.';
-$lang['title4']  = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeitsdatum';
+$lang['js']['title1']  = 'Aufgabe ist %1$s zugeordnet und ist am %2$s fällig.';
+$lang['js']['title2']  = 'Aufgabe ist %1$s zugeordnet. Kein Fälligkeitsdatum.';
+$lang['js']['title3']  = 'Aufgabe ist nicht zugeordnet und ist am %2$s fällig.';
+$lang['js']['title4']  = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeitsdatum';
 
 $lang['title_intime']  = '%1$d unerledigte Aufgabe(n).';
 $lang['title_late']    = '%1$d unerledigte Aufgebe(n) von denen %2$d Überfällig sind.';
@@ -39,6 +39,7 @@ $lang['js']['popup_msg']        = 'Abschlussnachricht';
 $lang['js']['note_done']        = 'Erledigt: ';
 $lang['js']['notloggedin']      = 'Sie sind nicht eingeloggt.';
 $lang['js']['closedby']         = 'Aufgabe wurde von %s geschlossen.';
+$lang['js']['by_unknown']       = 'einem unbekannten Benutzer';
 $lang['js']['assigne']          = 'Aufgabe ist %s zugewiesen.';
 $lang['js']['due']              = 'Fällig am %s.';
 

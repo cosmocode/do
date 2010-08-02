@@ -1,3 +1,61 @@
+function plugin_do__createOverlay(title, id, content, submitcaption, submitaction) {
+    var div = document.createElement('div');
+    content = '<div class="title">' +
+                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
+                    title + '</div><fieldset>' + content;
+
+    content += '<p class="button_wrap"><button class="button">' +
+               submitcaption + '</button></p>';
+
+    div.innerHTML = content + '</fieldset>';
+
+    div.id        = id;
+    div.className = 'plugin_do_popup';
+
+    // hide popup
+    div.style.display = 'none';
+
+    div.__close = function(event)
+    {
+        if (div.style.display === 'inline')
+        {
+            div.style.display = 'none';
+        }
+        else
+        {
+            div.style.display = 'inline';
+            div.style.top  = event.pageY + 'px';
+            div.style.left = event.pageX + 'px';
+        }
+    };
+
+    addEvent(div.firstChild.firstChild,'click',div.__close);
+    addEvent(div.lastChild.lastChild.lastChild,'click',function(e){
+        submitaction();
+        div.__close();
+
+        e.preventDefault();
+        return false;
+    });
+
+    addEvent(div,'keydown',function (e) {
+        if(e.keyCode !== 13){ //Enter
+            return;
+        }
+
+        submitaction();
+        div.__close();
+
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
+
+    drag.attach(div, div.firstChild);
+    getElementsByClass('dokuwiki', document.body, 'div')[0].appendChild(div);
+    return div;
+}
+
 /**
  * Add button action for the do button
  *
@@ -10,29 +68,40 @@
 function addBtnActionDo(btn, props, edid) {
     var select = null;
 
-    var div = document.createElement('div');
-    div.innerHTML = '<div class="title">' +
-                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    LANG.plugins['do'].popup_title + '</div>';
-
-    var fieldset = '<fieldset>';
+    var fieldset = '';
     var inps = ['assign', 'date'];
     for (var i = 0 ; i < inps.length ; ++i) {
         fieldset += '<p><label for="do__popup_' + inps[i] + '">' +
                           LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
                           '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
     }
-    div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">' + LANG.plugins['do'].popup_submit
-                   + '</button></p></fieldset>';
 
-    div.id              = 'do__popup';
+    function onclick() {
+        // Validate data
+        var out = '<do';
+        if ($('do__popup_date').value && $('do__popup_date').value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)) out += ' ' + $('do__popup_date').value;
+        if ($('do__popup_assign').value)  out += ' ' + $('do__popup_assign').value;
+        out +='>';
 
-    // hide popup
-    div.style.display = 'none';
+        var sel = getSelection($(edid));
+        if(sel.start === 0 && sel.end === 0) sel = select;
 
-    drag.attach(div, div.firstChild);
+        var stxt = sel.getText();
 
-    $('dw__editform').appendChild(div);
+        if(stxt) out += stxt;
+        out          += '</do>';
+
+        pasteText(sel,out);
+        $('do__popup_date').value         = '';
+        $('do__popup_assign').value       = '';
+    }
+
+    var div = plugin_do__createOverlay(LANG.plugins['do'].popup_title,
+                                       'do__popup',
+                                       fieldset,
+                                       LANG.plugins['do'].popup_submit,
+                                       onclick);
+    addEvent(btn,'click', div.__close);
 
     if (typeof addAutoCompletion !== 'undefined') {
         function prepareLi(li, value) {
@@ -52,53 +121,7 @@ function addBtnActionDo(btn, props, edid) {
         calendar.set('do__popup_date');
     }
 
-    // actions
-    var close = function(event)
-    {
-        var div = $('do__popup');
-        if (div.style.display === 'inline')
-        {
-            div.style.display = 'none';
-        }
-        else
-        {
-            select = getSelection($(edid));
-            div.style.display = 'inline';
-            div.style.top  = event.pageY + 'px';
-            div.style.left = event.pageX + 'px';
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    };
-
-    addEvent(div.firstChild.firstChild,'click',close);
-    addEvent(btn,'click',close);
-
-    addEvent(div.lastChild.lastChild.lastChild,'click',function(e){
-        // Validate data
-        var out = '<do';
-        if ($('do__popup_date').value && $('do__popup_date').value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)) out += ' ' + $('do__popup_date').value;
-        if ($('do__popup_assign').value)  out += ' ' + $('do__popup_assign').value;
-        out +='>';
-
-        var sel = getSelection($(edid));
-        if(sel.start === 0 && sel.end === 0) sel = select;
-
-        var stxt = sel.getText();
-
-        if(stxt) out += stxt;
-        out          += '</do>';
-
-        pasteText(sel,out);
-        div.style.display   = 'none';
-        $('do__popup_date').value         = '';
-        $('do__popup_assign').value       = '';
-        e.preventDefault();
-        e.stopPropagation();
-        return false;
-    });
-   return true;
+    return true;
 }
 
 if (typeof window.toolbar !== 'undefined') {
@@ -128,7 +151,7 @@ addInitEvent(function(){
             image.src = DOKU_BASE + 'lib/plugins/do/pix/' + newImg;
         } else {
             for (var i = 0; i < applyto.length; i++) {
-                var img = getElementsByClass('plugin_do_img', applyto[i].parentNode, 'IMG');
+                var img = applyto[i].getElementsByTagName('IMG');
                 if (img.length === 1) {
                     img[0].src = DOKU_BASE + 'lib/plugins/do/pix/' + newImg;
                 }
@@ -141,7 +164,7 @@ addInitEvent(function(){
      * @param rootNode the surrounding span.
      */
     function buildTitle (rootNode, assigne, due, closedby, closedon, applyto) {
-        var newTitle = '';
+        var newTitle = 4;
 
         var table = rootNode.parentNode.tagName === 'TD';
 
@@ -155,7 +178,7 @@ addInitEvent(function(){
             assigne = stripTags(assigne);
         }
         if (assigne !== '') {
-            newTitle += getText('assigne', assigne) + " ";
+            newTitle -= 2;
         }
 
         // determine due
@@ -168,25 +191,23 @@ addInitEvent(function(){
             due = stripTags(due);
         }
         if (due !== '') {
-            newTitle += getText('due', due) + " ";
+            newTitle -= 1;
         }
-        if (!isUndefined(closedon)) newTitle += getText('done', closedon) + " ";
+        newTitle = LANG.plugins['do']['title' + newTitle].replace(/%(1\$)?s/, assigne).replace(/%(2\$)?s/, due);
 
-        if (!isUndefined(closedby)) newTitle += getText('closedby', closedby);
+        if (!isUndefined(closedon)) newTitle += ' ' + getText('done', closedon);
 
-        if (!isUndefined(applyto)) {
-            for (var j = 0; j < applyto.length; j++) {
-                for (var i = 0; i < applyto[j].parentNode.childNodes.length; i++) {
-                    applyto[j].parentNode.childNodes[i].title = newTitle;
-                }
-                getElementsByClass('plugin_do_img', applyto[j].parentNode, 'img')[0].title = newTitle;
-            }
-        } else {
-            // apply new title
-            for (var i = 0; i < rootNode.childNodes.length; i++) {
-                rootNode.childNodes[i].title = newTitle;
-            }
-            getElementsByClass('plugin_do_img', rootNode, 'img')[0].title = newTitle;
+        if (!isUndefined(closedby)) {
+            if (closedby === '') closedby = LANG.plugins['do'].by_unknown;
+            newTitle += ' ' + getText('closedby', closedby);
+        }
+
+        if (isUndefined(applyto)) {
+            applyto = [rootNode];
+        }
+
+        for (var j = 0; j < applyto.length; j++) {
+            applyto[j].title = newTitle;
         }
     }
 
@@ -196,7 +217,7 @@ addInitEvent(function(){
      * parameters are equal to getElementsByClass()
      * @return inner content or empty string.
      */
-    function getInnerHtmlByClass(className , parentNode, tag) {
+    function getInnerHtmlByClass(className, parentNode, tag) {
         var elements = getElementsByClass(className, parentNode, tag);
         if (typeof(elements[0]) === 'undefined') {
             return '';
@@ -232,260 +253,190 @@ addInitEvent(function(){
         return text.replace(/(<([^>]+)>)/ig,"");
     }
 
-    function handle_event(e){
-
-        /**
-         * determine if a element is late
-         */
-        var isLate = function(ele) {
-            if (isUndefined(ele.parentNode)) {
-                return false;
-            }
-            if (ele.parentNode.parentNode.className.indexOf('plugin_do_done') >= 0) {
-                return false;
-            }
-            var dc = new Date();
-            var y = parseInt(ele.innerHTML.substr(0,4), 10);
-            if (y != dc.getFullYear()) {
-                return y < dc.getFullYear();
-            }
-            var m = parseInt(ele.innerHTML.substr(5,2), 10);
-            if (m != dc.getMonth() +1 ) {
-                return m < dc.getMonth() + 1;
-            }
-            return parseInt(ele.innerHTML.substr(8,2), 10) < dc.getDate();
-        };
-
-        var me = e.target;
-        while (me.tagName !== 'A') {
-            me = me.parentNode;
-            if (me === null) { return; }
+    /**
+     * determine if a element is late
+     */
+    function isLate(ele) {
+        if (isUndefined(ele.parentNode)) {
+            return false;
         }
+        if (ele.parentNode.parentNode.className.indexOf('plugin_do_done') >= 0) {
+            return false;
+        }
+        var dc = new Date();
+        var y = parseInt(ele.innerHTML.substr(0,4), 10);
+        if (y != dc.getFullYear()) {
+            return y < dc.getFullYear();
+        }
+        var m = parseInt(ele.innerHTML.substr(5,2), 10);
+        if (m != dc.getMonth() +1 ) {
+            return m < dc.getMonth() + 1;
+        }
+        return parseInt(ele.innerHTML.substr(8,2), 10) < dc.getDate();
+    }
+
+    var send = function(me) {
+        var md5v = me.parentNode.className.match(/plugin_do_([a-f0-9]{32})/)[1];
+        var dotags = getElementsByClass('plugin_do_' + md5v);
+
+        var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
+        ajax.AjaxFailedAlert = '';
+        ajax.encodeURIString = false;
+        if(ajax.failed) { return true; }
+
         var param = me.search.substring(1).replace(/&do=/,'&call=').replace(/^do=/,'call=');
 
-        var done = (me.parentNode.className === 'plugin_do_done');
+        var tablemode = (me.parentNode.parentNode.tagName == 'TD');
+        var done = me.parentNode.className.match(/\bplugin_do_done\b/);
 
-        var tablemode = false;
-        if (me.parentNode.parentNode.tagName == 'TD') {
-            tablemode = true;
+        if (!done) {
+            var msg = $('do__popup_msg').value;
+            var msge = hsc(msg);
+            if (tablemode) {
+                getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = (msge)?msge:'';
+            } else {
+                var out = (isEmpty(msge)) ? '' : '&nbsp;(' + getText("note_done") + msge +')';
+                for (var i = 0; i < dotags.length; i++) {
+                    getElementsByClass('plugin_do_commit', dotags[i], 'span')[0].innerHTML = out;
+                }
+            }
+            param+= "&do_commit=" + encodeURIComponent(msg);
+        } else if (tablemode) {
+            getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = '';
         }
 
-        var send = function(event) {
-            var md5v = me.parentNode.firstChild.nextSibling.className.match(/plgdo__([a-f0-9]{32})/)[1];
-            var dotags = getElementsByClass('plgdo__' + md5v);
+        var image = me.getElementsByTagName('IMG')[0];
+        var donr = isEmpty( image.src.match(/undone\.png/) );
+        image.src = DOKU_BASE + 'lib/images/throbber.gif';
 
+        ajax.onCompletion = function(){
+            var resp = this.response;
+            var pagestat = getElementsByClass('plugin__do_pagetasks');
 
-            removeEvent(div.lastChild.lastChild.lastChild,'click', send);
-            $('do__commit_popup').style.display = 'none';
-            var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
-            ajax.AjaxFailedAlert = '';
-            ajax.encodeURIString = false;
-            if(ajax.failed) { return true; }
-
-            if (!done) {
-                var msg = $('do__popup_msg').value;
-                var msge = hsc(stripTags(msg));
-                if (tablemode) {
-                    getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = (msge)?msge:'';
-                } else {
-                    var out = (isEmpty(msge)) ? '' : '(' + getText("note_done") + msge +')';
-                    for (var i = 0; i < dotags.length; i++) {
-                        getElementsByClass('plugin_do_commit', dotags[i].parentNode, 'span')[0].innerHTML = out;
-                    }
+            if(resp){
+                if (resp == "-1") {
+                   alert(getText("notloggedin"));
+                   image.src = DOKU_BASE + 'lib/plugins/do/pix/' + (donr?'done':'undone') + '.png';
+                   return;
                 }
-                param+= "&do_commit=" + encodeURIComponent(msg);
-            } else if (tablemode) {
-                getElementsByClass('plugin_do_commit', me.parentNode.parentNode.parentNode, 'td')[0].innerHTML = '';
+                switchDoNr(image, donr, dotags);
+                for (var i = 0; i<dotags.length; i++) dotags[i].className += ' plugin_do_done';
+                if (tablemode && typeof JSINFO.plugin_do_user_name !== 'undefined') {
+                    me.parentNode.firstChild.nextSibling.innerHTML = JSINFO.plugin_do_user_name;
+                }
+                buildTitle(me.parentNode, '', '', JSINFO.plugin_do_user_clean, resp, dotags);
+            }else{
+                switchDoNr( image, donr, dotags);
+                for (var i = 0; i<dotags.length; i++) {
+                    dotags[i].className = dotags[i].className.replace(/plugin_do_done/g, '');
+                }
+                if (tablemode) {
+                    me.parentNode.firstChild.nextSibling.innerHTML = '&nbsp;';
+                }
+                buildTitle(me.parentNode, '', '', undefined, undefined, dotags);
             }
 
-            var image = getElementsByClass('plugin_do_img', me, 'IMG')[0];
-            var donr = isEmpty( image.src.match(/undone\.png/) );
-            image.src = DOKU_BASE + 'lib/plugins/do/pix/throbber.gif';
-            image.title = '…';
-
-            ajax.onCompletion = function(){
-                var resp = this.response;
-                var pagestat = getElementsByClass('plugin__do_pagetasks');
-
-
-
-                if(resp){
-                    if (resp == "-1") {
-                       alert(getText("notloggedin"));
-                       image.src = DOKU_BASE + 'lib/plugins/do/pix/' + (donr?'done':'undone') + '.png';
-                       return;
-                    }
-                    switchDoNr(image, donr, dotags);
-                    for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_done';
-                    if (tablemode) {
-                        me.parentNode.firstChild.nextSibling.innerHTML = JSINFO.plugin_do_user_name;
-                    }
-                    buildTitle(image.parentNode.parentNode, '', '', JSINFO.plugin_do_user_clean, resp, dotags);
-                }else{
-                    switchDoNr( image, donr, dotags);
-                    for (var i = 0; i<dotags.length; i++) dotags[i].parentNode.className = 'plugin_do_undone';
-                    if (tablemode) {
-                        me.parentNode.firstChild.nextSibling.innerHTML = '&nbsp;';
-                    }
-                    buildTitle(image.parentNode.parentNode, '', '', undefined, undefined, dotags);
-                }
-
-                if (pagestat.length !== 0) {
-                    var newCount = parseInt(pagestat[0].firstChild.innerHTML, 10);
-                    var newClass;
-                    var oldClass = pagestat[0].firstChild.className;
-                    var cdate = getElementsByClass('plugin_do_meta_date', me.parentNode, 'SPAN')[0];
-                    if (resp) {
-                        if (newCount == 1) {
-                            newClass = 'do_done';
-                        } else if (oldClass != 'do_late'){
-                            newClass = 'do_undone';
-                        } else {
-                            var dos = getElementsByClass('plugin_do_meta_date');
-                            newClass = 'do_undone';
-                            for (var i = 0; i<dos.length; i++) {
-                                if (isLate(dos[i])) {
-                                    newClass = 'do_late';
-                                    break;
-                                }
+            if (pagestat.length !== 0) {
+                var newCount = parseInt(pagestat[0].firstChild.innerHTML, 10);
+                var newClass;
+                var oldClass = pagestat[0].firstChild.className;
+                var cdate = getElementsByClass('plugin_do_meta_date', me.parentNode, 'SPAN')[0];
+                if (resp) {
+                    if (newCount == 1) {
+                        newClass = 'do_done';
+                    } else if (oldClass != 'do_late'){
+                        newClass = 'do_undone';
+                    } else {
+                        var dos = getElementsByClass('plugin_do_meta_date');
+                        newClass = 'do_undone';
+                        for (var i = 0; i<dos.length; i++) {
+                            if (isLate(dos[i])) {
+                                newClass = 'do_late';
+                                break;
                             }
                         }
-                        newCount-=1;
-                    } else {
-                        if (newCount === 0) {
-                            if (cdate) {
-                                if (isLate(cdate)) {
-                                    newClass = 'do_late';
-                                } else {
-                                    newClass = 'do_undone';
-                                }
+                    }
+                    newCount-=1;
+                } else {
+                    if (newCount === 0) {
+                        if (cdate) {
+                            if (isLate(cdate)) {
+                                newClass = 'do_late';
                             } else {
                                 newClass = 'do_undone';
                             }
-                        } else if (oldClass == 'do_late') {
-                            newClass = 'do_late';
                         } else {
-                            var dos = getElementsByClass('plugin_do_meta_date');
                             newClass = 'do_undone';
-                            for (var i = 0; i<dos.length; i++) {
-                                if (isLate(dos[i])) {
-                                    newClass = 'do_late';
-                                    break;
-                                }
+                        }
+                    } else if (oldClass == 'do_late') {
+                        newClass = 'do_late';
+                    } else {
+                        var dos = getElementsByClass('plugin_do_meta_date');
+                        newClass = 'do_undone';
+                        for (var i = 0; i<dos.length; i++) {
+                            if (isLate(dos[i])) {
+                                newClass = 'do_late';
+                                break;
                             }
                         }
-                        newCount+=1;
                     }
-
-                    var title = getText("title_undone");
-                    if (newCount === 0) {
-                        title = getText("title_done");
-                    }
-                    for (var i = 0; i < pagestat.length; i++) {
-                        pagestat[i].firstChild.innerHTML = newCount;
-                        pagestat[i].firstChild.className = newClass;
-                        pagestat[i].title = title;
-                    }
+                    newCount+=1;
                 }
 
-            };
-            ajax.runAJAX(param);
-
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        };
-
-
-        if (me.parentNode.className === 'plugin_do_done') {
-            send();
-        } else {
-            var close = function (event) {
-                $('do__commit_popup').style.display = 'none';
-            };
-            $('do__popup_msg').value = '';
-
-
-            var popup = $('do__commit_popup');
-            popup.style.display = 'inline';
-            $('do__popup_msg').focus();
-            popup.style.top     = (e.pageY + 20) + 'px';
-
-            var posX = e.clientX - popup.clientWidth/2;
-            if (posX < 5) {
-                posX = 5;
+                var title = getText("title_undone");
+                if (newCount === 0) {
+                    title = getText("title_done");
+                }
+                for (var i = 0; i < pagestat.length; i++) {
+                    pagestat[i].firstChild.innerHTML = newCount;
+                    pagestat[i].firstChild.className = newClass;
+                    pagestat[i].title = title;
+                }
             }
-            popup.style.left    = posX + 'px';
 
-            addEvent(div.lastChild.lastChild.lastChild,'click', send);
-            addEvent(div.firstChild.firstChild,'click', close);
+        };
+        ajax.runAJAX(param);
+
+        return false;
+    };
+
+    // build commit popup
+    var fieldset = '<p><label for="do__popup_msg">' + getText("popup_msg") + '</label>'
+                 + '<input class="edit" id="do__popup_msg" /></p>';
+
+
+    plugin_do__createOverlay(LANG.plugins['do'].finish_popup_title,
+                             'do__commit_popup',
+                             fieldset,
+                             LANG.plugins['do'].finish_popup_submit,
+                             function () {
+                                 send($('do__commit_popup').__me);
+                                 $('do__popup_msg').value = '';
+                             });
+
+    // Status toggle
+    function toggle_status(e){
+        if (this.parentNode.className.match(/\bplugin_do_done\b/)) {
+            send(this);
+        } else {
+            var popup = $('do__commit_popup');
+            popup.__close({ 'pageX': findPosX(this), 'pageY': findPosY(this)});
+            popup.__me = this;
+            $('do__popup_msg').focus();
         }
-
         e.preventDefault();
         e.stopPropagation();
         return false;
     }
 
-    // Status toggle
     var slinks = getElementsByClass('plugin_do_status',null,'a');
     for(var i=0; i<slinks.length; i++){
-        addEvent(slinks[i],'click', handle_event);
-    }
-
-    // build commit popup
-    var div = document.createElement('div');
-
-    div.innerHTML = '<div class="title">' +
-                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    getText("finish_popup_title") + '</div>';
-
-    var fieldset = '<fieldset>';
-    fieldset += '<p><label for="do__popup_msg">' + getText("popup_msg") + '</label>'
-              + '<input class="edit" id="do__popup_msg" /></p>';
-
-    div.innerHTML += fieldset + '<p class="plugin_do_insert"><button class="button">'
-                   + getText("finish_popup_submit")
-                   + '</button></p></fieldset>';
-
-    div.id = 'do__commit_popup';
-
-    // hide popup
-    div.style.display = 'none';
-
-    drag.attach(div, div.firstChild);
-
-    // actions
-    var close = function(event)
-    {
-        var div = $('do__commit_popup');
-        if (div.style.display === 'inline')
-        {
-            div.style.display = 'none';
-        }
-        else
-        {
-            select = getSelection($(edid));
-            div.style.display = 'inline';
-            div.style.top  = event.pageY + 'px';
-            div.style.left = event.pageX + 'px';
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-    };
-
-    addEvent(div.firstChild.firstChild,'click',close);
-
-   var page = getElementsByClass('page', document, 'div');
-    if (page) {
-        page[0].appendChild(div);
+        addEvent(slinks[i], 'click', toggle_status);
     }
 
     // get initial task status
-    if (getElementsByClass('plugin_do1', null, 'span').length ||
-        getElementsByClass('plugin_do2', null, 'span').length ||
-        getElementsByClass('plugin_do3', null, 'span').length ||
-        getElementsByClass('plugin_do4', null, 'span').length) {
+    var items = getElementsByClass('plugin_do_item', document, 'span');
+    if (items.length > 0) {
 
         var ajax = new sack(DOKU_BASE + 'lib/exe/ajax.php');
             ajax.AjaxFailedAlert = '';
@@ -495,12 +446,8 @@ addInitEvent(function(){
         ajax.setVar('do_page', JSINFO.id);
         ajax.setVar('call','plugin_do_status');
 
-        var nodes = getElementsByClass('plugin_do_img');
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].parentNode.parentNode.parentNode.tagName === 'TD') {
-                continue;
-            }
-            buildTitle(nodes[i].parentNode.parentNode);
+        for (var i = 0; i < items.length; i++) {
+            buildTitle(items[i]);
         }
 
         ajax.onCompletion = function(){
@@ -511,24 +458,23 @@ addInitEvent(function(){
                     continue;
                 }
 
-                var objs = getElementsByClass('plgdo__'+stat[i].md5);
+                var objs = getElementsByClass('plugin_do_'+stat[i].md5);
 
                 for (var j = 0; j<objs.length; j++) {
                     var obj = objs[j];
                     if(obj){
-                        buildTitle(obj.parentNode, '', '', stat[i].closedby, stat[i].status);
+                        buildTitle(obj, '', '', stat[i].closedby, stat[i].status);
                         obj.className += ' plugin_do_done';
 
-                        obj.parentNode.className = 'plugin_do_done';
-                        var img = getElementsByClass('plugin_do_img',obj.parentNode,'img');
+                        var img = obj.getElementsByTagName('IMG')[0];
                         if (typeof(img) != 'undefined') {
-                            switchDoNr(img[0]);
+                            switchDoNr(img);
                         }
                         if (typeof(stat[i].msg) != 'undefined') {
                             var commitmsg = getElementsByClass('plugin_do_commit',obj.parentNode,'span')[0];
                             var msg = hsc(stat[i].msg);
                             if (msg !== "") {
-                                commitmsg.innerHTML = '(' + getText("note_done") + msg + ')';
+                                commitmsg.innerHTML = '&nbsp;(' + getText("note_done") + msg + ')';
                             }
                         }
                     }

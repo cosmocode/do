@@ -1,5 +1,4 @@
-div.dokuwiki span.plugin_do_done,
-div.dokuwiki span.plugin_do_undone {
+div.dokuwiki span.plugin_do_item {
     background-color: __background_alt__;
     -moz-border-radius: 4px;
     -opera-border-radius: 4px;
@@ -8,19 +7,15 @@ div.dokuwiki span.plugin_do_undone {
     padding: 0 2px;
 }
 
-div.dokuwiki span.plugin_do_done a img,
-div.dokuwiki span.plugin_do_undone a img {
+div.dokuwiki span.plugin_do_item a img {
     margin-bottom: -3px;
 }
 
-div.dokuwiki span.plugin_do_done span {
+div.dokuwiki span.plugin_do_done {
     text-decoration: line-through;
 }
 
-div.dokuwiki div.page a.plugin_do_adone {
-    text-decoration: line-through;
-}
-div.dokuwiki div.page td a.plugin_do_adone {
+div.dokuwiki div.page td.plugin_do_status span.plugin_do_done {
     text-decoration: none;
 }
 
@@ -32,40 +27,39 @@ div.dokuwiki div.page span.plugin_do_done span.plugin_do_commit {
     display: inline;
 }
 
-div.dokuwiki table.plugin_do span.plugin_do_done,
-div.dokuwiki table.plugin_do span.plugin_do_undone {
+div.dokuwiki table.plugin_do span.plugin_do_item {
     background-color: transparent;
 }
 
-#do__popup,
-#do__commit_popup {
+/* POPUPS */
+div.dokuwiki div.plugin_do_popup {
     position:absolute;
     background-color: __background__;
     border:1px solid __border__;
     width:400px;
 }
-#do__popup .title,
-#do__commit_popup .title {
+
+div.dokuwiki div.plugin_do_popup .title {
     background-color: __background_alt__;
     text-align:center;
 }
-#do__popup .title img,
-#do__commit_popup .title img {
+
+div.dokuwiki div.plugin_do_popup .title img {
     float:right;
     cursor:pointer;
 }
-#do__popup fieldset,
-#do__commit_popup fieldset {
+
+div.dokuwiki div.plugin_do_popup fieldset {
     border:0;
     padding-bottom:0.3em;
 }
-#do__popup fieldset p,
-#do__commit_popup fieldset p {
+
+div.dokuwiki div.plugin_do_popup fieldset p {
     margin-bottom:0;
     clear:left;
 }
-#do__popup fieldset p label,
-#do__commit_popup fieldset p label {
+
+div.dokuwiki div.plugin_do_popup fieldset p label {
     display:block;
     width:46%;
     float:left;
@@ -73,21 +67,21 @@ div.dokuwiki table.plugin_do span.plugin_do_undone {
     text-align: right;
     margin-right: 0.1em;
 }
-#do__popup fieldset p input,
-#do__commit_popup fieldset p input {
+
+div.dokuwiki div.plugin_do_popup fieldset p input {
     display:block;
     width:46%;
     float:left;
 }
 
-#do__popup fieldset,
-#do__commit_popup fieldset {
+div.dokuwiki div.plugin_do_popup fieldset {
     width: auto;
 }
-#do__popup p.plugin_do_insert,
-#do__commit_popup p.plugin_do_insert {
+
+div.dokuwiki div.plugin_do_popup .button_wrap {
     text-align:center;
 }
+/* END POPUPS */
 
 div.plugin__do_pagetasks span {
     background: transparent url(pix/toolbar.png) no-repeat top right;

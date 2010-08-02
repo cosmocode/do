@@ -121,18 +121,15 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             list($class, $image, $title) = $data = $this->prepareTaskInfo($row['user'], $row['date'], $row['status'], $row['closedby']);
             $editor = ($row['closedby'])?$hlp->getPrettyUser($row['closedby']):'';
 
-            $R->doc .= '<span class="plugin_do_' . ($row['status']?'done':'undone') . '">'; // outer span
+            $R->doc .= '<span class="plugin_do_item plugin_do_' . $row['md5'] . ($row['status'] ? ' plugin_do_done' : '') . '">'; // outer span
 
             // img link
             $R->doc .= '<a href="'.wl($ID,array('do'=> 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
-            if ($row['status'])
-                $R->doc .= '" class="plugin_do_status plugin_do_adone">';
-            else
-                $R->doc .= '" class="plugin_do_status">';
+            $R->doc .= '" class="plugin_do_status">';
 
-            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$image.'" class="plugin_do_img" title="'.$title.'" />';
+            $R->doc .= '<img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$image.'" />';
             $R->doc .= '</a>';
-            $R->doc .= '<span title="'.$title.'" class="'.$class.' plgdo__'.$row['md5'].'">'.$editor.'</span>';
+            $R->doc .= '<span>'.$editor.'</span>';
 
             $R->doc .= '</span>'; // outer span end
 

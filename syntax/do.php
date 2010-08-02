@@ -119,47 +119,17 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->taskdata['md5']  = $md5;
                 $this->taskdata['text'] = trim(strip_tags($R->doc));
 
-                // put task markup into document
-                $c = '';
-                if ($this->status[$md5]) $c = 'c';
-
-                if($this->taskdata['user'] && $this->taskdata['date']){
-                    $text  = $this->getLang("title1$c");
-                    $class = 'do1';
-                }elseif($this->taskdata['user']){
-                    $text = $this->getLang("title2$c");
-                    $class = 'do2';
-                }elseif($this->taskdata['date']){
-                    $text = $this->getLang("title3$c");
-                    $class = 'do3';
-                }else{
-                    $text = $this->getLang("title4$c");
-                    $class = 'do4';
-                }
                 $param = array(
                     'do' => 'plugin_do',
                     'do_page' => $ID,
                     'do_md5' => $md5
                 );
 
-                $title = sprintf($text,
-                    strip_tags(editorinfo($this->taskdata['user'])),
-                    hsc($this->taskdata['date'])
-                );
-
-                $id = '';
-                if (!in_array($md5, $this->ids)) {
-                    $id = ' id="plgdo__' . $md5 . '"';
-                    $this->ids[] = $md5;
-                }
-
-                $R->doc = '<span class="plugin_do_undone">'
-                        . '<a class="plugin_do_status plugin_do_single" href="'.wl($ID,$param).'">'
-                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" class="plugin_do_img" title="'.$title.'" />'
+                $R->doc = '<span class="plugin_do_item plugin_do_'.$md5.'">'
+                        . '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
+                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
                         . '</a>'
-                        . '<span class="plugin_'.$class.' plgdo__'.$md5.'" title="'.$title.'" '. $id . '>'
                         .   $R->doc
-                        . '</span>'
                         . '<span class="plugin_do_commit">'
                         . ((empty($this->oldStatus[$md5]['msg']))?'':'(' . $this->lang['js']['note_done'] . hsc($this->oldStatus[$md5]['msg']) .')')
                         . '</span>';

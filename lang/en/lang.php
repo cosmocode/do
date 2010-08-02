@@ -8,10 +8,10 @@
 // menu entry for admin plugins
 // $lang['menu'] = 'Your menu entry';
 
-$lang['title1']  = 'Task assigned to %1$s, due on %2$s.';
-$lang['title2']  = 'Task assigned to %1$s, no deadline.';
-$lang['title3']  = 'Unassigned task due on %2$s.';
-$lang['title4']  = 'Unassigned task, no deadline.';
+$lang['js']['title1']  = 'Task assigned to %1$s, due on %2$s.';
+$lang['js']['title2']  = 'Task assigned to %1$s, no deadline.';
+$lang['js']['title3']  = 'Unassigned task due on %2$s.';
+$lang['js']['title4']  = 'Unassigned task, no deadline.';
 
 $lang['title_intime']  = 'There are %1$d open tasks.';
 $lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
@@ -43,6 +43,7 @@ $lang['js']['due'] = 'Due on %s.';
 
 $lang['js']['notloggedin'] = 'You are not logged in.';
 $lang['js']['closedby'] = 'Task was closed by %s.';
+$lang['js']['by_unknown'] = 'an unknown user';
 
 $lang['js']['finish_popup_title'] = 'Close task';
 $lang['js']['finish_popup_submit'] = 'Close';
