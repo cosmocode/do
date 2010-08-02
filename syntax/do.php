@@ -77,7 +77,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $this->_save($data);
             return true;
         }
-        if($mode != 'xhtml') return false;
         global $ID;
 
         // get the helper
@@ -118,6 +117,21 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc.$ID))));
                 $this->taskdata['md5']  = $md5;
                 $this->taskdata['text'] = trim(strip_tags($R->doc));
+
+                if($mode != 'xhtml') {
+                    $text = $R->doc;
+                    $R->doc = '';
+                    $task = $hlp->loadTasks(array('md5' => $md5));
+                    $R->externalmedia(DOKU_URL . 'lib/plugins/do/pix/' .
+                                      ($task[0]['status'] ? '' : 'un') . 'done.png');
+                    $R->cdata($text);
+                    if ($task[0]['msg']) {
+                        $R->cdata(' (' . $task[0]['msg'] . ')');
+                    }
+                    $R->doc = $this->docstash.$R->doc;
+                    $this->docstash = '';
+                    return true;
+                }
 
                 $param = array(
                     'do' => 'plugin_do',

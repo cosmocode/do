@@ -79,6 +79,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *  - status    can be done or undone to filter for (un)completed tasks
      *  - limit     limit the results to a given number of results
      *  - user      all tasks to a given user
+     *  - md5       a single task
      *
      * @param array $args filters to apply
      * @return filtered result.
@@ -130,6 +131,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
             if (isset($args['limit'])) {
                 $limit = ' LIMIT ' . intval($args['limit'][0]);
+            }
+
+            if (isset($args['md5'])) {
+                $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5']);
             }
 
             $argn = array('user', 'creator');
