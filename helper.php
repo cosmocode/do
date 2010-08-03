@@ -142,13 +142,19 @@ class helper_plugin_do extends DokuWiki_Plugin {
             {
                 if (isset($args[$n]))
                 {
-                    if (is_array($args[$n]))
-                    {
-                        $args[$n] = $this->db->quote_and_join($args[$n]);
-                    } else {
-                        $args[$n] = $this->db->quote_string($args[$n]);
+                    if (!is_array($args[$n])) {
+                        $args[$n] = array($args[$n]);
                     }
-                    $where .= sprintf(' AND %s IN (%s)',$n,$args[$n]);
+                    $search = $n;
+
+                    global $auth;
+                    if ($auth && !$auth->isCaseSensitive()) {
+                        $search = "lower($search)";
+                        $args[$n] = array_map('utf8_strtolower', $args[$n]);
+                    }
+                    $args[$n] = $this->db->quote_and_join($args[$n]);
+
+                    $where .= sprintf(' AND %s in (%s)',$search,$args[$n]);
                 }
             }
         }
