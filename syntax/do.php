@@ -16,14 +16,11 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
-    private $docstash;
-    private $taskdata;
     private $run;
     private $status;
     private $oldStatus;
     private $position = 0;
     private $saved = array();
-    private $ids = array();
 
     function getType() {
         return 'formatting';
@@ -60,122 +57,41 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     $data['date'] = $grep[1];
                     $match = trim(str_replace($data['date'],'',$match));
                 }
-                //FIXME call $auth->cleanUser()
-                $data['user'] = $match;
+
+                if ($match !== '') {
+                    //FIXME call $auth->cleanUser()
+                    $data['user'] = $match;
+                }
+
+                $ReWriter = new Doku_Handler_Nest($handler->CallWriter,'plugin_do_do');
+                $handler->CallWriter = & $ReWriter;
+                $handler->addPluginCall('do_do', $data, $state, $pos, $match);
                 break;
 
             case DOKU_LEXER_UNMATCHED:
-                $data['match'] = $match;
-                break;
-        }
-
-        return $data;
-    }
-
-    function render($mode, &$R, $data) {
-        if ($mode === 'metadata') {
-            $this->_save($data);
-            return true;
-        }
-        global $ID;
-
-        // get the helper
-        $hlp = plugin_load('helper', 'do');
-
-        // get the page status if not present
-        if (!$this->status) {
-            $this->status = array();
-            $statuses = $hlp->loadPageStatuses($ID);
-            foreach ($statuses as $state) {
-                $this->status[$state['md5']] = $state;
-            }
-        }
-
-        switch($data['state']){
-            case DOKU_LEXER_ENTER:
-                // move current document data to stack
-                $this->docstash = $R->doc;
-                $R->doc = '';
-
-                // initialize data storage
-                $this->taskdata = array(
-                    'date' => $data['date'],
-                    'user' => $data['user'],
-                    'page' => $ID,
-                );
-
-                break;
-
-            case DOKU_LEXER_UNMATCHED:
-                // plain text, just print it
-                $R->cdata($data['match']);
+                $handler->_addCall('cdata', array($match), $pos);
                 break;
 
             case DOKU_LEXER_EXIT:
                 global $ID;
-                // determine the ID (ignore tags, case and whitespaces)
-                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($R->doc.$ID))));
-                $this->taskdata['md5']  = $md5;
-                $this->taskdata['text'] = trim(strip_tags($R->doc));
+                $data['text'] = trim(strip_tags(p_render('xhtml', array_slice($handler->CallWriter->calls, 1), $ignoreme)));
+                $data['md5'] = md5(utf8_strtolower(preg_replace('/\s/','', $data['text'])) . $ID);
 
-                if($mode != 'xhtml') {
-                    $text = $R->doc;
-                    $R->doc = '';
-                    $task = $hlp->loadTasks(array('md5' => $md5));
-                    $R->externalmedia(DOKU_URL . 'lib/plugins/do/pix/' .
-                                      ($task[0]['status'] ? '' : 'un') . 'done.png');
-                    $R->cdata($text);
-                    if ($task[0]['msg']) {
-                        $R->cdata(' (' . $task[0]['msg'] . ')');
-                    }
-                    $R->doc = $this->docstash.$R->doc;
-                    $this->docstash = '';
-                    return true;
-                }
+                // Add missing data from ENTER and EXIT to the other
+                $handler->CallWriter->calls[0][1][1] += $data;
+                $data += $handler->CallWriter->calls[0][1][1];
 
-                $param = array(
-                    'do' => 'plugin_do',
-                    'do_page' => $ID,
-                    'do_md5' => $md5
-                );
-
-                $R->doc = '<span class="plugin_do_item plugin_do_'.$md5.'">'
-                        . '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
-                        . ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
-                        . '</a>'
-                        .   $R->doc
-                        . '<span class="plugin_do_commit">'
-                        . ((empty($this->oldStatus[$md5]['msg']))?'':'(' . $this->lang['js']['note_done'] . hsc($this->oldStatus[$md5]['msg']) .')')
-                        . '</span>';
-
-                $meta = '';
-                if ($this->taskdata['user'] || $this->taskdata['date']) {
-                    $meta  = ' <span class="plugin_do_meta">(';
-                    if ($this->taskdata['user']) {
-                        $meta .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($this->taskdata['user']).'</span>';
-                        if ($this->taskdata['date']) $meta .= ', ';
-                    }
-                    if ($this->taskdata['date']) {
-                        $meta .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($this->taskdata['date']).'</span>';
-                    }
-                    $meta .=')</span>';
-                }
-                $meta .='</span>';
-                // restore the full document, including our additons
-                $R->doc = $this->docstash.$R->doc.$meta;
-                $this->docstash = '';
-                $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
-
-                // we're done with this task
-                $this->taskdata = array();
-                break;
+                $handler->addPluginCall('do_do', $data, $state, $pos, $match);
+                $handler->CallWriter->process();
+                $ReWriter = & $handler->CallWriter;
+                $handler->CallWriter = & $ReWriter->CallWriter;
         }
-
-        return true;
+        return false;
     }
 
-    function _save($data) {
+    function render($mode, &$R, $data) {
         global $ID;
+        $data['page'] = $ID;
 
         // get the helper
         $hlp = plugin_load('helper', 'do');
@@ -188,7 +104,81 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->oldStatus[$state['md5']] = $state;
             }
         }
+        if (isset($this->oldStatus[$data['md5']])) {
+            $data['creator'] = $this->oldStatus[$data['md5']]['creator'];
+            $data['msg'] = $this->oldStatus[$data['md5']]['msg'];
+        }
 
+        if ($mode === 'metadata') {
+            $this->_save($data, $hlp);
+            return true;
+        }
+
+        // get the page status if not present
+        if (!$this->status) {
+            $this->status = array();
+            $statuses = $hlp->loadPageStatuses($ID);
+            foreach ($statuses as $state) {
+                $this->status[$state['md5']] = $state;
+            }
+        }
+
+        if ($mode != 'xhtml') {
+            switch($data['state']){
+            case DOKU_LEXER_ENTER:
+                $this->task = $hlp->loadTasks(array('md5' => $data['md5']));
+                $R->externalmedia(DOKU_URL . 'lib/plugins/do/pix/' .
+                                  ($this->task[0]['status'] ? '' : 'un') . 'done.png');
+                break;
+
+            case DOKU_LEXER_EXIT:
+                if ($this->task[0]['msg']) {
+                    $R->cdata(' (' . $this->task[0]['msg'] . ')');
+                }
+            }
+            return true;
+        }
+
+        switch($data['state']){
+            case DOKU_LEXER_ENTER:
+                $param = array(
+                    'do' => 'plugin_do',
+                    'do_page' => $ID,
+                    'do_md5' => $data['md5']
+                );
+                $R->doc .= '<span class="plugin_do_item plugin_do_'.$data['md5'].'">'
+                        .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
+                        .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
+                        .  '</a>';
+
+                break;
+
+            case DOKU_LEXER_EXIT:
+
+                $R->doc .= '<span class="plugin_do_commit">'
+                        .  (empty($data['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['msg']) .')')
+                        .  '</span>';
+
+                if (isset($data['user']) || isset($data['date'])) {
+                    $R->doc .= ' <span class="plugin_do_meta">(';
+                    if (isset($data['user'])) {
+                        $R->doc .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($data['user']).'</span>';
+                        if (isset($data['date'])) $R->doc .= ', ';
+                    }
+                    if (isset($data['date'])) {
+                        $R->doc .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($data['date']).'</span>';
+                    }
+                    $R->doc .=')</span>';
+                }
+                $R->doc .= '</span>';
+                break;
+        }
+
+        return true;
+    }
+
+    function _save($data, $hlp) {
+        global $ID;
 
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){
@@ -205,39 +195,19 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             }
         }
 
-        switch($data['state']){
-            case DOKU_LEXER_ENTER:
-                // initialize data storage
-                $this->taskdata = array(
-                    'date' => $data['date'],
-                    'user' => $data['user'],
-                    'page' => $ID,
-                );
-                break;
-            case DOKU_LEXER_UNMATCHED:
-                $this->taskdata['text'] = trim(strip_tags($data['match']));
-                break;
-
-            case DOKU_LEXER_EXIT:
-                global $ID;
-                // determine the ID (ignore tags, case and whitespaces)
-                $md5 = md5(utf8_strtolower(str_replace(' ','',strip_tags($this->taskdata['text'].$ID))));
-                $this->taskdata['md5']  = $md5;
-
-
-                $this->taskdata['msg'] = $this->oldStatus[$md5]['msg'];
-
-                $this->taskdata['pos'] = ++$this->position;
-
-                // save the task data - only when not saved yet.
-                if (!in_array($this->taskdata['md5'], $this->saved)) {
-                    $hlp->saveTask($this->taskdata, $this->oldStatus[$this->taskdata['md5']]['creator']);
-                    $this->saved[] = $this->taskdata['md5'];
-                }
-                // we're done with this task
-                $this->taskdata = array();
-                break;
+        if ($data['state'] !== DOKU_LEXER_EXIT) {
+            return;
         }
+
+        // save the task data - only when not saved yet.
+        if (in_array($data['md5'], $this->saved)) {
+            return;
+        }
+
+        $data['pos'] = ++$this->position;
+
+        $hlp->saveTask($data);
+        $this->saved[] = $data['md5'];
     }
 }
 

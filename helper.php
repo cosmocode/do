@@ -44,16 +44,11 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *
      * @param array  data       task informations as key value array.
      *                          keys are: page, md5, date, user, text, creator, msg
-     *
-     * @param string creator    if the task is has already a knowen creator you can
-     *                          set it here. if it's not set it'll be the current user.
      */
-    function saveTask($data, $creator = ''){
+    function saveTask($data){
         if(!$this->db) return;
 
-        if (!empty($creator)) {
-            $data['creator'] = $creator;
-        } else {
+        if (!isset($data['creator'])) {
             $data['creator'] = $_SERVER['REMOTE_USER'];
         }
         $this->db->query(
