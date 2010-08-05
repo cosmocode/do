@@ -124,6 +124,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         }
 
         if ($mode != 'xhtml') {
+            $R->info['cache'] = false;
             switch($data['state']){
             case DOKU_LEXER_ENTER:
                 $this->task = $hlp->loadTasks(array('md5' => $data['md5']));
