@@ -110,12 +110,8 @@ function addBtnActionDo(btn, props, edid) {
             li.id = 'bureaucracy__user__' + name.replace(/\W/g, '_');
             li._value = name;
         };
-        function styleList(ul, input) {
-            ul.style.position = 'relative';
-            ul.style.clear = 'both';
-        };
 
-        addAutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false, prepareLi, styleList);
+        addAutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false, prepareLi);
     }
     if (typeof calendar !== 'undefined') {
         calendar.set('do__popup_date');
