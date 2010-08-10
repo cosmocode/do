@@ -150,13 +150,13 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $R->doc .= '<span class="plugin_do_item plugin_do_'.$data['md5'].'">'
                         .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
                         .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
-                        .  '</a>';
+                        .  '</a><span class="plugin_do_task">';
 
                 break;
 
             case DOKU_LEXER_EXIT:
 
-                $R->doc .= '<span class="plugin_do_commit">'
+                $R->doc .= '</span><span class="plugin_do_commit">'
                         .  (empty($data['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['msg']) .')')
                         .  '</span>';
 

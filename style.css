@@ -11,16 +11,11 @@ div.dokuwiki span.plugin_do_item a img {
     margin-bottom: -3px;
 }
 
-div.dokuwiki span.plugin_do_done {
+div.dokuwiki span.plugin_do_done span.plugin_do_task {
     text-decoration: line-through;
 }
 
-div.dokuwiki div.page td.plugin_do_status span.plugin_do_done {
-    text-decoration: none;
-}
-
 div.dokuwiki div.page span span.plugin_do_commit {
-    text-decoration: none;
     display: none;
 }
 div.dokuwiki div.page span.plugin_do_done span.plugin_do_commit {
