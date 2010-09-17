@@ -21,6 +21,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $oldStatus;
     private $position = 0;
     private $saved = array();
+    private $ids = array();
 
     function getType() {
         return 'formatting';
@@ -147,7 +148,12 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     'do_page' => $ID,
                     'do_md5' => $data['md5']
                 );
-                $R->doc .= '<span class="plugin_do_item plugin_do_'.$data['md5'].'">'
+                $id = '';
+                if (!in_array($data['md5'], $this->ids)) {
+                    $id = 'id="plgdo__' . $data['md5'] . '" ';
+                    $this->ids[] = $data['md5'];
+                }
+                $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['md5'].'">'
                         .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
                         .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
                         .  '</a><span class="plugin_do_task">';
