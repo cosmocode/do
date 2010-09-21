@@ -66,7 +66,7 @@ function plugin_do__createOverlay(title, id, content, submitcaption, submitactio
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
 function addBtnActionDo(btn, props, edid) {
-    var select = null;
+    var old_select = null;
 
     var fieldset = '';
     var inps = ['assign', 'date'];
@@ -84,7 +84,7 @@ function addBtnActionDo(btn, props, edid) {
         out +='>';
 
         var sel = getSelection($(edid));
-        if(sel.start === 0 && sel.end === 0) sel = select;
+        if(sel.start === 0 && sel.end === 0) sel = old_select;
 
         var stxt = sel.getText();
 
@@ -101,7 +101,10 @@ function addBtnActionDo(btn, props, edid) {
                                        fieldset,
                                        LANG.plugins['do'].popup_submit,
                                        onclick);
-    addEvent(btn,'click', div.__close);
+    addEvent(btn,'click', function (e) {
+        old_select = getSelection($(edid));
+        return div.__close(e);
+    });
 
     if (typeof addAutoCompletion !== 'undefined') {
         function prepareLi(li, value) {
