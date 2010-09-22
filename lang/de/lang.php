@@ -45,4 +45,8 @@ $lang['js']['due']              = 'Fällig am %s.';
 
 $lang['js']['finish_popup_title'] = 'Aufgabe erledigen';
 $lang['js']['finish_popup_submit'] = 'Erledigen';
+
+$lang['mail_subj'] = 'Neue Aufgabe: %s';
+$lang['someone'] = 'Ein Benutzer';
+$lang['nodue'] = 'Kein Fälligkeitsdatum';
 //Setup VIM: ex: et ts=4 enc=utf-8 :

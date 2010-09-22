@@ -17,8 +17,7 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $run;
-    private $status;
-    private $oldStatus;
+    private $oldTasks;
     private $position = 0;
     private $saved = array();
     private $ids = array();
@@ -98,30 +97,21 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         $hlp = plugin_load('helper', 'do');
 
         // hold old status. we need this to keep creator stuff
-        if (!$this->oldStatus) {
-            $this->oldStatus = array();
-            $statuses = $hlp->getAllPageStatuses($ID);
+        if (!$this->oldTasks) {
+            $this->oldTasks = array();
+            $statuses = $hlp->loadTasks(array('id' => $ID));
             foreach ($statuses as $state) {
-                $this->oldStatus[$state['md5']] = $state;
+                $this->oldTasks[$state['md5']] = $state;
             }
         }
-        if (isset($this->oldStatus[$data['md5']])) {
-            $data['creator'] = $this->oldStatus[$data['md5']]['creator'];
-            $data['msg'] = $this->oldStatus[$data['md5']]['msg'];
+        if (isset($this->oldTasks[$data['md5']])) {
+            $data['creator'] = $this->oldTasks[$data['md5']]['creator'];
+            $data['msg'] = $this->oldTasks[$data['md5']]['msg'];
         }
 
         if ($mode === 'metadata') {
             $this->_save($data, $hlp);
             return true;
-        }
-
-        // get the page status if not present
-        if (!$this->status) {
-            $this->status = array();
-            $statuses = $hlp->loadPageStatuses($ID);
-            foreach ($statuses as $state) {
-                $this->status[$state['md5']] = $state;
-            }
         }
 
         if ($mode != 'xhtml') {
@@ -193,15 +183,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $this->run[$ID] = true;
         }
 
-        // get the page status if not present
-        if (!$this->status) {
-            $this->status = array();
-            $statuses = $hlp->loadPageStatuses($ID);
-            foreach ($statuses as $state) {
-                $this->status[$state['md5']] = $state;
-            }
-        }
-
         if ($data['state'] !== DOKU_LEXER_EXIT) {
             return;
         }
@@ -215,6 +196,23 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
         $hlp->saveTask($data);
         $this->saved[] = $data['md5'];
+        global $auth;
+        if (!is_null($auth) && isset($data['user']) &&
+            (!isset($_SERVER['REMOTE_USER']) ||
+             $data['user'] !== $_SERVER['REMOTE_USER']) &&
+            (!isset($this->oldTasks[$data['md5']]) ||
+             $this->oldTasks[$data['md5']]['user'] !== $data['user'])) {
+            global $conf;
+            $info = $auth->getUserData($data['user']);
+            mail_send($info['name'].' <'.$info['mail'].'>',
+                      '['.$conf['title'].'] ' . sprintf($this->getLang('mail_subj'), $data['text']),
+                      sprintf(file_get_contents($this->localFN('mail_body')),
+                              isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : $this->getLang('someone'),
+                              $data['text'],
+                              isset($data['date']) ? $data['date'] : $this->getLang('nodue'),
+                              wl($data['page'], '', true, '&').'#plgdo__'.$data['md5']),
+                      $conf['mailfrom']);
+        }
     }
 }
 

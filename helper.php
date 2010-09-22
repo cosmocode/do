@@ -213,13 +213,6 @@ class helper_plugin_do extends DokuWiki_Plugin {
         }
     }
 
-    /**
-     * load all page stats from a given page.
-     */
-    function loadPageStatuses($page){
-        return $this->getAllPageStatuses($page);
-    }
-
     function _getUser() {
         global $USERINFO;
         if ($USERINFO['name']) return $USERINFO['name'];
@@ -227,6 +220,9 @@ class helper_plugin_do extends DokuWiki_Plugin {
         return $_SERVER['REMOTE_ADDR'];
     }
 
+    /**
+     * load all page stats from a given page.
+     */
 
     function getAllPageStatuses($page){
         if(!$this->db) return array();

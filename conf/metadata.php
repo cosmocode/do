@@ -7,3 +7,4 @@
 
 
 $meta['userpage'] = array('string');
+$meta['notify_assignee'] = array('yesno');

@@ -47,4 +47,8 @@ $lang['js']['by_unknown'] = 'an unknown user';
 
 $lang['js']['finish_popup_title'] = 'Close task';
 $lang['js']['finish_popup_submit'] = 'Close';
+
+$lang['mail_subj'] = 'New task: %s';
+$lang['someone'] = 'Someone';
+$lang['nodue'] = 'None';
 //Setup VIM: ex: et ts=4 enc=utf-8 :

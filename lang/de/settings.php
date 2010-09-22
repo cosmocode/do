@@ -6,5 +6,6 @@
  */
 
 $lang['userpage'] = 'Ein printf-String zur Generierung eines Links auf eine Nutzerseite (fügen Sie ›%s‹ ein wo der Nutzername auftauchen soll)';
+$lang['notify_assignee'] = 'Soll der Benutzer dem eine Aufgabe zugewiesen wurde eine Emailbenachrichtigung erhalten?';
 
 //Setup VIM: ex: et ts=4 enc=utf-8 :

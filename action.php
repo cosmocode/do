@@ -69,7 +69,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
             $JSON = new JSON();
             $hlp = plugin_load('helper', 'do');
-            $status = $hlp->loadPageStatuses(cleanID($_REQUEST['do_page']));
+            $status = $hlp->getAllPageStatuses(cleanID($_REQUEST['do_page']));
             $status = $JSON->encode($status);
 
             header('Content-Type: text/plain; charset=utf-8');

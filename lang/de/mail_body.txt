@@ -1,0 +1,7 @@
+Hallo,
+
+%s hat Ihnen eine Aufgabe zugewiesen. Die Details der Aufgabe sind wie folgt:
+
+Beschreibung: %s
+Fällig zum:   %s
+Wikiseite:    %s

@@ -6,5 +6,6 @@
  */
 
 $lang['userpage'] = 'A printf input string used to generate a link to a userpage (insert ›%s‹ where the user name should appear)';
+$lang['notify_assignee'] = 'Should the assignee of a task get a mail notification?';
 
 //Setup VIM: ex: et ts=4 enc=utf-8 :

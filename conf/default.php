@@ -6,3 +6,4 @@
  */
 
 $conf['userpage'] = '';
+$conf['notify_assignee'] = '0';
