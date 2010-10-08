@@ -47,20 +47,20 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler){
-        $data = array();
-        $data['state'] = $state;
+        $data = array('task'  => array(),
+                      'state' => $state);
         switch($state){
             case DOKU_LEXER_ENTER:
                 $match = trim(substr($match,3,-1));
 
                 if(preg_match('/\b(\d\d\d\d-\d\d-\d\d)\b/',$match,$grep)){
-                    $data['date'] = $grep[1];
-                    $match = trim(str_replace($data['date'],'',$match));
+                    $data['task']['date'] = $grep[1];
+                    $match = trim(str_replace($data['task']['date'],'',$match));
                 }
 
                 if ($match !== '') {
                     //FIXME call $auth->cleanUser()
-                    $data['user'] = $match;
+                    $data['task']['user'] = $match;
                 }
 
                 $ReWriter = new Doku_Handler_Nest($handler->CallWriter,'plugin_do_do');
@@ -74,12 +74,12 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
             case DOKU_LEXER_EXIT:
                 global $ID;
-                $data['text'] = trim(strip_tags(p_render('xhtml', array_slice($handler->CallWriter->calls, 1), $ignoreme)));
-                $data['md5'] = md5(utf8_strtolower(preg_replace('/\s/','', $data['text'])) . $ID);
+                $data['task']['text'] = trim(strip_tags(p_render('xhtml', array_slice($handler->CallWriter->calls, 1), $ignoreme)));
+                $data['task']['md5'] = md5(utf8_strtolower(preg_replace('/\s/','', $data['task']['text'])) . $ID);
 
                 // Add missing data from ENTER and EXIT to the other
-                $handler->CallWriter->calls[0][1][1] += $data;
-                $data += $handler->CallWriter->calls[0][1][1];
+                $handler->CallWriter->calls[0][1][1]['task'] += $data['task'];
+                $data['task'] += $handler->CallWriter->calls[0][1][1]['task'];
 
                 $handler->addPluginCall('do_do', $data, $state, $pos, $match);
                 $handler->CallWriter->process();
@@ -91,7 +91,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
     function render($mode, &$R, $data) {
         global $ID;
-        $data['page'] = $ID;
 
         // get the helper
         $hlp = plugin_load('helper', 'do');
@@ -104,9 +103,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $this->oldTasks[$state['md5']] = $state;
             }
         }
-        if (isset($this->oldTasks[$data['md5']])) {
-            $data['creator'] = $this->oldTasks[$data['md5']]['creator'];
-            $data['msg'] = $this->oldTasks[$data['md5']]['msg'];
+        if (isset($this->oldTasks[$data['task']['md5']])) {
+            $data['task']['creator'] = $this->oldTasks[$data['task']['md5']]['creator'];
+            $data['task']['msg'] = $this->oldTasks[$data['task']['md5']]['msg'];
         }
 
         if ($mode === 'metadata') {
@@ -118,14 +117,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $R->info['cache'] = false;
             switch($data['state']){
             case DOKU_LEXER_ENTER:
-                $this->task = $hlp->loadTasks(array('md5' => $data['md5']));
-                $R->externalmedia(DOKU_URL . 'lib/plugins/do/pix/' .
-                                  ($this->task[0]['status'] ? '' : 'un') . 'done.png');
+                $pre = (isset($this->oldTasks[$data['task']['md5']]) &&
+                        $this->oldTasks[$data['task']['md5']]['status']) ? '' : 'un';
+                $R->externalmedia(DOKU_URL . "lib/plugins/do/pix/${pre}done.png");
                 break;
 
             case DOKU_LEXER_EXIT:
-                if ($this->task[0]['msg']) {
-                    $R->cdata(' (' . $this->task[0]['msg'] . ')');
+                if ($data['task']['msg']) {
+                    $R->cdata(' (' . $data['task']['msg'] . ')');
                 }
             }
             return true;
@@ -136,14 +135,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $param = array(
                     'do' => 'plugin_do',
                     'do_page' => $ID,
-                    'do_md5' => $data['md5']
+                    'do_md5' => $data['task']['md5']
                 );
                 $id = '';
-                if (!in_array($data['md5'], $this->ids)) {
-                    $id = 'id="plgdo__' . $data['md5'] . '" ';
-                    $this->ids[] = $data['md5'];
+                if (!in_array($data['task']['md5'], $this->ids)) {
+                    $id = 'id="plgdo__' . $data['task']['md5'] . '" ';
+                    $this->ids[] = $data['task']['md5'];
                 }
-                $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['md5'].'">'
+                $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['task']['md5'].'">'
                         .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
                         .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
                         .  '</a><span class="plugin_do_task">';
@@ -153,17 +152,17 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             case DOKU_LEXER_EXIT:
 
                 $R->doc .= '</span><span class="plugin_do_commit">'
-                        .  (empty($data['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['msg']) .')')
+                        .  (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
                         .  '</span>';
 
-                if (isset($data['user']) || isset($data['date'])) {
+                if (isset($data['task']['user']) || isset($data['task']['date'])) {
                     $R->doc .= ' <span class="plugin_do_meta">(';
-                    if (isset($data['user'])) {
-                        $R->doc .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($data['user']).'</span>';
-                        if (isset($data['date'])) $R->doc .= ', ';
+                    if (isset($data['task']['user'])) {
+                        $R->doc .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($data['task']['user']).'</span>';
+                        if (isset($data['task']['date'])) $R->doc .= ', ';
                     }
-                    if (isset($data['date'])) {
-                        $R->doc .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($data['date']).'</span>';
+                    if (isset($data['task']['date'])) {
+                        $R->doc .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($data['task']['date']).'</span>';
                     }
                     $R->doc .=')</span>';
                 }
@@ -188,29 +187,29 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         }
 
         // save the task data - only when not saved yet.
-        if (in_array($data['md5'], $this->saved)) {
+        if (in_array($data['task']['md5'], $this->saved)) {
             return;
         }
 
-        $data['pos'] = ++$this->position;
+        $hlp->saveTask($data['task'] +
+                       array('page' => $ID, 'pos' => ++$this->position));
+        $this->saved[] = $data['task']['md5'];
 
-        $hlp->saveTask($data);
-        $this->saved[] = $data['md5'];
         global $auth;
-        if (!is_null($auth) && isset($data['user']) &&
+        if ($auth !== null && isset($data['task']['user']) &&
             (!isset($_SERVER['REMOTE_USER']) ||
-             $data['user'] !== $_SERVER['REMOTE_USER']) &&
-            (!isset($this->oldTasks[$data['md5']]) ||
-             $this->oldTasks[$data['md5']]['user'] !== $data['user'])) {
+             $data['task']['user'] !== $_SERVER['REMOTE_USER']) &&
+            (!isset($this->oldTasks[$data['task']['md5']]) ||
+             $this->oldTasks[$data['task']['md5']]['user'] !== $data['task']['user'])) {
             global $conf;
-            $info = $auth->getUserData($data['user']);
+            $info = $auth->getUserData($data['task']['user']);
             mail_send($info['name'].' <'.$info['mail'].'>',
-                      '['.$conf['title'].'] ' . sprintf($this->getLang('mail_subj'), $data['text']),
+                      '['.$conf['title'].'] ' . sprintf($this->getLang('mail_subj'), $data['task']['text']),
                       sprintf(file_get_contents($this->localFN('mail_body')),
                               isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : $this->getLang('someone'),
-                              $data['text'],
-                              isset($data['date']) ? $data['date'] : $this->getLang('nodue'),
-                              wl($data['page'], '', true, '&').'#plgdo__'.$data['md5']),
+                              $data['task']['text'],
+                              isset($data['task']['date']) ? $data['task']['date'] : $this->getLang('nodue'),
+                              wl($ID, '', true, '&').'#plgdo__'.$data['task']['md5']),
                       $conf['mailfrom']);
         }
     }
