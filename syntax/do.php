@@ -74,8 +74,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
             case DOKU_LEXER_EXIT:
                 global $ID;
-                $data['task']['text'] = trim(strip_tags(p_render('xhtml', array_slice($handler->CallWriter->calls, 1), $ignoreme)));
-                $data['task']['md5'] = md5(utf8_strtolower(preg_replace('/\s/','', $data['task']['text'])) . $ID);
+                $data['task']['text'] = $this->_textContent(p_render('xhtml',
+                                                                     array_slice($handler->CallWriter->calls, 1),
+                                                                     $ignoreme));
+                $data['task']['md5'] = md5(utf8_strtolower(preg_replace('/\s/', '', $data['task']['text'])) . $ID);
 
                 // Add missing data from ENTER and EXIT to the other
                 $handler->CallWriter->calls[0][1][1]['task'] += $data['task'];
@@ -87,6 +89,12 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $handler->CallWriter = & $ReWriter->CallWriter;
         }
         return false;
+    }
+
+    /* Return the plain-text content of an html blob, similar to
+       node.textContent, but trimmed */
+    function _textContent($text) {
+        return trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
     }
 
     function render($mode, &$R, $data) {

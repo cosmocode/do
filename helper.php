@@ -58,7 +58,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
              $data['md5'],
              $data['date'],
              $data['user'],
-             strip_tags($data['text']),
+             $data['text'],
              $data['creator'],
              strip_tags($data['msg']),
              $data['pos']
