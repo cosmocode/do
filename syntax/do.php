@@ -51,16 +51,16 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                       'state' => $state);
         switch($state){
             case DOKU_LEXER_ENTER:
-                $match = trim(substr($match,3,-1));
+                $content = trim(substr($match,3,-1));
 
-                if(preg_match('/\b(\d\d\d\d-\d\d-\d\d)\b/',$match,$grep)){
+                if(preg_match('/\b(\d\d\d\d-\d\d-\d\d)\b/', $content, $grep)){
                     $data['task']['date'] = $grep[1];
-                    $match = trim(str_replace($data['task']['date'],'',$match));
+                    $content = trim(str_replace($data['task']['date'],'',$content));
                 }
 
-                if ($match !== '') {
+                if ($content !== '') {
                     //FIXME call $auth->cleanUser()
-                    $data['task']['user'] = $match;
+                    $data['task']['user'] = $content;
                 }
 
                 $ReWriter = new Doku_Handler_Nest($handler->CallWriter,'plugin_do_do');
