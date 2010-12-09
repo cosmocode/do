@@ -77,6 +77,12 @@ div.dokuwiki div.plugin_do_popup fieldset {
 div.dokuwiki div.plugin_do_popup .button_wrap {
     text-align:center;
 }
+
+/* Show autocompletion even with core’s c44e5a88*/
+div.dokuwiki div.plugin_do_popup fieldset div.JSpopup {
+    position: static;
+}
+
 /* END POPUPS */
 
 div.plugin__do_pagetasks span {
