@@ -113,7 +113,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         }
         if (isset($this->oldTasks[$data['task']['md5']])) {
             $data['task']['creator'] = $this->oldTasks[$data['task']['md5']]['creator'];
-            $data['task']['msg'] = $this->oldTasks[$data['task']['md5']]['msg'];
         }
 
         if ($mode === 'metadata') {
