@@ -1,7 +1,7 @@
 base   do
 author Andreas Gohr
-email  gohr@cosmocode.de
-date   2010-02-04
+email  dokuwiki@cosmocode.de
+date   2011-02-01
 name   do plugin
 desc   Assign tasks within the wiki
 url    http://www.dokuwiki.org/plugin:do
