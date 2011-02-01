@@ -279,7 +279,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                         isset($user) ? $user : $this->getLang('someone'),
                         isset($task['date']) ? $task['date'] : $this->getLang('nodue'),
                         $task['text'],
-                        wl($ID, '', true, '&').'#plgdo__'.$task['md5'],
+                        wl($task['page'], '', true, '&').'#plgdo__'.$task['md5'],
                         $msg,
                         DOKU_URL
                     ),
