@@ -61,7 +61,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
              $data['creator'],
              $data['pos']
         );
-        foreach ($data['users'] as $userName) {
+        foreach ((array)$data['users'] as $userName) {
             $this->db->query(
                 'INSERT INTO task_assignees (page,md5,user) VALUES (?,?,?)',
                 $data['page'],
