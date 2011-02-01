@@ -51,9 +51,6 @@ class helper_plugin_do extends DokuWiki_Plugin {
     function saveTask($data){
         if(!$this->db) return;
 
-        if (!isset($data['creator'])) {
-            $data['creator'] = $_SERVER['REMOTE_USER'];
-        }
         $this->db->query(
             'INSERT INTO tasks (page,md5,date,text,creator,pos)
              VALUES (?, ?, ?, ?, ?, ?)',
@@ -222,22 +219,82 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $this->db->res2row($res);
         $stat = $stat['status'];
 
+        // load task details and determine notify receivers
+        $task = array_shift($this->loadTasks(array('id' => $ID, 'md5' => $md5)));
+        $recs = (array) $task['users'];
+        array_push($recs, $task['creator']);
+        $recs = array_unique($recs);
+        $recs = array_diff($recs,array($_SERVER['REMOTE_USER']));
+
         if(!$stat){
+            // close the task
             $name = $_SERVER['REMOTE_USER'];
             $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
                                     (page, md5, status, closedby, msg)
                                     VALUES (?, ?, ?, ?, ?)',
                                     $page, $md5, $stat, $name, $commitmsg);
+
+            $this->sendMail($recs,'close',$task,$name,$commitmsg);
             return $stat;
         }else{
+            // reopen the task
             $this->db->query('DELETE FROM task_status
                                WHERE page = ?
                                AND md5  = ?',
                                $page, $md5);
+            $this->sendMail($recs,'reopen',$task,$_SERVER['REMOTE_USER']);
             return false;
         }
     }
+
+    /**
+     * Notify assignees or creators of new tasks and status changes
+     */
+    function sendMail($receivers,$type,$task,$user='',$msg=''){
+        global $conf;
+        global $auth;
+
+        if(!$auth) return;
+        if(!$this->getConf('notify_assignee')) return;
+        $receivers = (array) $receivers;
+        if(!count($receivers)) return;
+
+        // prepare subject
+        $subj  = '['.$conf['title'].'] ';
+        $subj .= sprintf($this->getLang('mail_'.$type), $task['text']);
+
+        // prepare text
+        $text  = file_get_contents($this->localFN('mail_'.$type));
+        $text  = str_replace(
+                    array(
+                        '@@USER@@',
+                        '@@DATE@@',
+                        '@@TASK@@',
+                        '@@TASKURL@@',
+                        '@@MSG@@',
+                    ),
+                    array(
+                        isset($user) ? $user : $this->getLang('someone'),
+                        isset($task['date']) ? $task['date'] : $this->getLang('nodue'),
+                        $task['text'],
+                        wl($ID, '', true, '&').'#plgdo__'.$task['md5'],
+                        $msg
+                    ),
+                    $text
+                );
+        #FIXME add default replacements
+
+        // send mails
+        foreach($receivers as $receiver){
+            $info = $auth->getUserData($receiver);
+            $to = $info['name'].' <'.$info['mail'].'>';
+
+            mail_send($to,$subj,$text,$conf['mailfrom']);
+        }
+    }
+
+
 
     function _getUser() {
         global $USERINFO;

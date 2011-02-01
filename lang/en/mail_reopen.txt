@@ -1,0 +1,7 @@
+Hello,
+
+@@USER@@ reopened a task and assigned it to you. The task details are as following:
+
+Description: @@TASK@@
+Due date:    @@DATE@@
+Wiki page:   @@TASKURL@@

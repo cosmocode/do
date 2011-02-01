@@ -1,0 +1,7 @@
+Hello,
+
+@@USER@@ closed a task: "@@MSG@@"
+
+Description: @@TASK@@
+Due date:    @@DATE@@
+Wiki page:   @@TASKURL@@

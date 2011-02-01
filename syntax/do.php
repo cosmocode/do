@@ -223,6 +223,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             return;
         }
 
+        if (!isset($data['task']['creator'])) {
+            $data['task']['creator'] = $_SERVER['REMOTE_USER'];
+        }
+
         $hlp->saveTask($data['task'] +
                        array('page' => $ID, 'pos' => ++$this->position));
         $this->saved[] = $data['task']['md5'];
@@ -230,7 +234,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         // now decide if we should mail anyone
         if(!$auth) return;
         if(!isset($data['task']['users'])) return;
-        if(!$this->getConf('notify_assignee') return;
+        if(!$this->getConf('notify_assignee')) return;
 
         // don't mail current or original editor or old assignees
         $receivers = array_diff(
@@ -239,18 +243,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         array($_SERVER['REMOTE_USER'],$data['creator']));
 
         // now mail any new assignees
-        if(!count($receivers)) foreach($receivers as $receiver){
-            $info = $auth->getUserData($receiver);
-
-            mail_send($info['name'].' <'.$info['mail'].'>',
-                      '['.$conf['title'].'] ' . sprintf($this->getLang('mail_subj'), $data['task']['text']),
-                      sprintf(file_get_contents($this->localFN('mail_body')),
-                              isset($data['creator']) ? $data['creator'] : $this->getLang('someone'),
-                              $data['task']['text'],
-                              isset($data['task']['date']) ? $data['task']['date'] : $this->getLang('nodue'),
-                              wl($ID, '', true, '&').'#plgdo__'.$data['task']['md5']),
-                      $conf['mailfrom']);
-        }
+        $hlp->sendMail($receivers,'open',$data['task'],$data['task']['creator']);
     }
 }
 

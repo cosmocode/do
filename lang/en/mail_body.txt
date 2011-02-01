@@ -1,7 +1,0 @@
-Hello,
-
-%s assigned a task to you. The task details are as following:
-
-Description: %s
-Due date:    %s
-Wiki page:   %s
