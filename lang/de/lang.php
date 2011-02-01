@@ -46,8 +46,8 @@ $lang['js']['due']              = 'Fällig am %s.';
 $lang['js']['finish_popup_title'] = 'Aufgabe erledigen';
 $lang['js']['finish_popup_submit'] = 'Erledigen';
 
-$lang['mail_open']   = 'Aufgabe angelegt: %s';
-$lang['mail_reopen'] = 'Aufgabe wiedereröffnet: %s';
+$lang['mail_open']   = 'Neue Aufgabe: %s';
+$lang['mail_reopen'] = 'Wiedereröffnet: %s';
 $lang['mail_close']  = 'Aufgabe abgeschlossen: %s';
 
 $lang['someone'] = 'Ein Benutzer';

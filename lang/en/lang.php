@@ -46,8 +46,8 @@ $lang['js']['by_unknown'] = 'an unknown user';
 $lang['js']['finish_popup_title'] = 'Close task';
 $lang['js']['finish_popup_submit'] = 'Close';
 
-$lang['mail_open']   = 'Task opened: %s';
-$lang['mail_reopen'] = 'Task reopened: %s';
+$lang['mail_open']   = 'New Task: %s';
+$lang['mail_reopen'] = 'Reopened: %s';
 $lang['mail_close']  = 'Task closed: %s';
 
 $lang['someone'] = 'Someone';
