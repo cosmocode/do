@@ -115,7 +115,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .=   '<td class="plugin_do_page">';
             $R->doc .=     '<a title="' . $row['page'] .'" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .=   '</td>';
-            $R->doc .=   '<td class="plugin_do_assigne"' . $userstyle . '>';
+            $R->doc .=   '<td class="plugin_do_assignee"' . $userstyle . '>';
             foreach ($row['users'] as &$user) {
                 $user = $hlp->getPrettyUser($user);
             }
