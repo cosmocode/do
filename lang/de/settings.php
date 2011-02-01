@@ -6,5 +6,5 @@
  */
 
 $lang['userpage'] = 'Ein printf-String zur Generierung eines Links auf eine Nutzerseite (fügen Sie ›%s‹ ein wo der Nutzername auftauchen soll)';
-$lang['notify_assignee'] = 'Soll der Benutzer dem eine Aufgabe zugewiesen wurde eine Emailbenachrichtigung erhalten?';
+$lang['notify_assignee'] = 'Mails bei neuen Aufgaben und Statusänderungen an betroffene Nutzer senden.';
 
