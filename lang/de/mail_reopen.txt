@@ -1,0 +1,11 @@
+Hallo,
+
+@USER@ hat eine Ihnen zugewiesene Aufgabe erneut geöffnet.
+
+Beschreibung: @TASK@
+Fällig zum:   @DATE@
+Wikiseite:    @TASKURL@
+
+-- 
+Diese Mail kommt vom DokuWiki auf
+@DOKUWIKIURL@

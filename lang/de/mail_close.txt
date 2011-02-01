@@ -1,0 +1,11 @@
+Hallo,
+
+@USER@ hat eine Aufgabe abgeschlossen: "@MSG@"
+
+Beschreibung: @TASK@
+Fällig zum:   @DATE@
+Wikiseite:    @TASKURL@
+
+-- 
+Diese Mail kommt vom DokuWiki auf
+@DOKUWIKIURL@

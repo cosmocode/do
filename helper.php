@@ -268,22 +268,23 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $text  = file_get_contents($this->localFN('mail_'.$type));
         $text  = str_replace(
                     array(
-                        '@@USER@@',
-                        '@@DATE@@',
-                        '@@TASK@@',
-                        '@@TASKURL@@',
-                        '@@MSG@@',
+                        '@USER@',
+                        '@DATE@',
+                        '@TASK@',
+                        '@TASKURL@',
+                        '@MSG@',
+                        '@DOKUWIKIURL@'
                     ),
                     array(
                         isset($user) ? $user : $this->getLang('someone'),
                         isset($task['date']) ? $task['date'] : $this->getLang('nodue'),
                         $task['text'],
                         wl($ID, '', true, '&').'#plgdo__'.$task['md5'],
-                        $msg
+                        $msg,
+                        DOKU_URL
                     ),
                     $text
                 );
-        #FIXME add default replacements
 
         // send mails
         foreach($receivers as $receiver){

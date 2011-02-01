@@ -5,8 +5,6 @@
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
 
-// menu entry for admin plugins
-// $lang['menu'] = 'Your menu entry';
 
 $lang['js']['title1']  = 'Task assigned to %1$s. Due on %2$s.';
 $lang['js']['title2']  = 'Task assigned to %1$s. No deadline.';
@@ -38,7 +36,7 @@ $lang['js']['popup_title'] = 'Create task';
 $lang['js']['popup_msg'] = 'Completion message';
 $lang['js']['note_done'] = 'Completed: ';
 
-$lang['js']['assigne'] = 'Task is assigned to %s.';
+$lang['js']['assignee'] = 'Task is assigned to %s.';
 $lang['js']['due'] = 'Due on %s.';
 
 $lang['js']['notloggedin'] = 'You are not logged in.';
