@@ -116,7 +116,7 @@ function addBtnActionDo(btn, props, edid) {
             li._value = name;
         };
 
-        addAutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', false, prepareLi);
+        addAutoCompletion($('do__popup_assign'), 'bureaucracy_user_field', true, prepareLi);
     }
     if (typeof calendar !== 'undefined') {
         calendar.set('do__popup_date');

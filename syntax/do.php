@@ -71,6 +71,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         $data['task']['users'] = array_map(array($auth,'cleanUser'),$data['task']['users']);
                     }
                     $data['task']['users'] = array_unique($data['task']['users']);
+                    $data['task']['users'] = array_filter($data['task']['users']);
                 }
 
                 $ReWriter = new Doku_Handler_Nest($handler->CallWriter,'plugin_do_do');
