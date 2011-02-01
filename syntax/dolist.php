@@ -4,8 +4,8 @@
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Andreas Gohr <gohr@cosmocode.de>
- * @author Adrian Lang <lang@cosmocode.de>
- * @author Dominik Eckelmann <eckelmann@cosmocode.de>
+ * @author  Adrian Lang <lang@cosmocode.de>
+ * @author  Dominik Eckelmann <eckelmann@cosmocode.de>
  */
 
 // must be run within Dokuwiki
@@ -116,10 +116,10 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $R->doc .=     '<a title="' . $row['page'] .'" href="'.wl($row['page']).'#plgdo__'.$row['md5'].'" class="wikilink1">'.hsc($row['text']).'</a>';
             $R->doc .=   '</td>';
             $R->doc .=   '<td class="plugin_do_assigne"' . $userstyle . '>';
-            foreach ($row['user'] as &$user) {
+            foreach ($row['users'] as &$user) {
                 $user = $hlp->getPrettyUser($user);
             }
-            $R->doc .= implode(', ', $row['user']);
+            $R->doc .= implode(', ', $row['users']);
             $R->doc .= '</td>';
             $R->doc .=   '<td class="plugin_do_date">'.hsc($row['date']).'</td>';
             $R->doc .=   '<td class="plugin_do_status" align="center">';

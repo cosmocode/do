@@ -43,7 +43,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
     /**
-     * save a task.
+     * Save a task.
      *
      * @param array  data       task informations as key value array.
      *                          keys are: page, md5, date, user, text, creator
@@ -64,10 +64,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
              $data['creator'],
              $data['pos']
         );
-        $users = explode(',', $data['user']);
-        foreach ($users as $userName) {
-            $userName = trim($userName);
-            if (empty($userName)) continue;
+        foreach ($data['users'] as $userName) {
             $this->db->query(
                 'INSERT INTO task_assignees (page,md5,user) VALUES (?,?,?)',
                 $data['page'],
@@ -95,8 +92,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!$this->db) return array();
         $where = '';
         $limit = '';
-        if (isset($args))
-        {
+        if (isset($args)) {
             $where .= ' WHERE 1=1';
 
             if (isset($args['ns'])) {
@@ -125,10 +121,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 $where .= sprintf(' AND A.page = %s',$this->db->quote_string($args['id']));
             }
 
-            if (isset($args['status']))
-            {
-                if ($args['status'][0] == 'done')
-                {
+            if (isset($args['status'])) {
+                if ($args['status'][0] == 'done') {
                     $where .= ' AND B.status IS NOT null';
                 } elseif ($args['status'][0] == 'undone') {
                     $where .= ' AND B.status IS null';
@@ -145,10 +139,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
             }
 
             $argn = array('user', 'creator');
-            foreach ($argn as $n)
-            {
-                if (isset($args[$n]))
-                {
+            foreach ($argn as $n) {
+                if (isset($args[$n])) {
                     if (!is_array($args[$n])) {
                         $args[$n] = array($args[$n]);
                     }
@@ -184,15 +176,15 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                    ORDER BY A.page, A.pos' . $limit);
         $res = $this->db->res2arr($res);
 
+        // merge assignees into users array
         $index = array();
         $result = array();
         $i = 0;
-
         foreach ($res as $row) {
             $key = $row['page'] . $row['md5'];
             if (!isset($index[$key])) {
 
-                $row['user'] = array($row['user']);
+                $row['users'] = array($row['user']);
 
                 $index[$key] = $i;
                 $result[$i] = $row;
@@ -201,7 +193,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 continue;
             }
 
-            $result[$index[$key]]['user'][] = $row['user'];
+            $result[$index[$key]]['users'][] = $row['user'];
+            unset($result[$index[$key]]['user']);
         }
         return $result;
     }

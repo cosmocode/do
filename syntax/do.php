@@ -49,20 +49,28 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler){
+        global $auth;
+
         $data = array('task'  => array(),
                       'state' => $state);
         switch($state){
             case DOKU_LEXER_ENTER:
                 $content = trim(substr($match,3,-1));
 
+                // get the assignment date
                 if(preg_match('/\b(\d\d\d\d-\d\d-\d\d)\b/', $content, $grep)){
                     $data['task']['date'] = $grep[1];
                     $content = trim(str_replace($data['task']['date'],'',$content));
                 }
 
+                // get the assigned users
                 if ($content !== '') {
-                    //FIXME call $auth->cleanUser()
-                    $data['task']['user'] = $content;
+                    $data['task']['users'] = explode(',',$content);
+                    $data['task']['users'] = array_map('trim',$data['task']['users']);
+                    if($auth){
+                        $data['task']['users'] = array_map(array($auth,'cleanUser'),$data['task']['users']);
+                    }
+                    $data['task']['users'] = array_unique($data['task']['users']);
                 }
 
                 $ReWriter = new Doku_Handler_Nest($handler->CallWriter,'plugin_do_do');
@@ -93,8 +101,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return false;
     }
 
-    /* Return the plain-text content of an html blob, similar to
-       node.textContent, but trimmed */
+    /**
+     * Return the plain-text content of an html blob, similar to
+     * node.textContent, but trimmed
+     */
     function _textContent($text) {
         return trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
     }
@@ -105,7 +115,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         // get the helper
         $hlp = plugin_load('helper', 'do');
 
-        // hold old status. we need this to keep creator stuff
+        // hold old tasks. we need this to keep creator info and old asignees
         if (!$this->oldTasks) {
             $this->oldTasks = array();
             $statuses = $hlp->loadTasks(array('id' => $ID));
@@ -118,11 +128,13 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $data['task']['msg'] = $this->oldTasks[$data['task']['md5']]['msg'];
         }
 
+        // save data to sqlite during meta data run
         if ($mode === 'metadata') {
             $this->_save($data, $hlp);
             return true;
         }
 
+        // show simple task with status icon for export renderers
         if ($mode != 'xhtml') {
             $R->info['cache'] = false;
             switch($data['state']){
@@ -140,6 +152,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             return true;
         }
 
+        // handle XHTML output with status management
         switch($data['state']){
             case DOKU_LEXER_ENTER:
                 $param = array(
@@ -165,18 +178,18 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         .  (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
                         .  '</span>';
 
-                if (isset($data['task']['user']) || isset($data['task']['date'])) {
+                if (isset($data['task']['users']) || isset($data['task']['date'])) {
                     $R->doc .= ' <span class="plugin_do_meta">(';
-                    if (isset($data['task']['user'])) {
+                    if (isset($data['task']['users'])) {
                         $R->doc .= $this->getLang('user');
-                        $users = explode(',',$data['task']['user']);
+
+                        $users     = $data['task']['users'];
                         $userCount = count($users);
                         for ($i=0; $i<$userCount; $i++) {
-                            $users[$i]=trim($users[$i]);
                             $R->doc .= ' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($users[$i]).'</span>';
                             if ($i <$userCount-1) $R->doc .= ', ';
                         }
-                        if (isset($data['task']['date'])) $R->doc .= ', ';
+                        if (isset($data['task']['date'])) $R->doc .= '. ';
                     }
                     if (isset($data['task']['date'])) {
                         $R->doc .= $this->getLang('date').' <span class="plugin_do_meta_date">'.hsc($data['task']['date']).'</span>';
@@ -192,6 +205,8 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
     function _save($data, $hlp) {
         global $ID;
+        global $auth;
+        global $conf;
 
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){
@@ -212,18 +227,25 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                        array('page' => $ID, 'pos' => ++$this->position));
         $this->saved[] = $data['task']['md5'];
 
-        global $auth;
-        if ($auth !== null && isset($data['task']['user']) &&
-            (!isset($_SERVER['REMOTE_USER']) ||
-             $data['task']['user'] !== $_SERVER['REMOTE_USER']) &&
-            (!isset($this->oldTasks[$data['task']['md5']]) ||
-             $this->oldTasks[$data['task']['md5']]['user'] !== $data['task']['user'])) {
-            global $conf;
-            $info = $auth->getUserData($data['task']['user']);
+        // now decide if we should mail anyone
+        if(!$auth) return;
+        if(!isset($data['task']['users'])) return;
+        if(!$this->getConf('notify_assignee') return;
+
+        // don't mail current or original editor or old assignees
+        $receivers = array_diff(
+                        $data['task']['users'],
+                        (array) $this->oldTasks[$data['task']['md5']]['users'],
+                        array($_SERVER['REMOTE_USER'],$data['creator']));
+
+        // now mail any new assignees
+        if(!count($receivers)) foreach($receivers as $receiver){
+            $info = $auth->getUserData($receiver);
+
             mail_send($info['name'].' <'.$info['mail'].'>',
                       '['.$conf['title'].'] ' . sprintf($this->getLang('mail_subj'), $data['task']['text']),
                       sprintf(file_get_contents($this->localFN('mail_body')),
-                              isset($_SERVER['REMOTE_USER']) ? $_SERVER['REMOTE_USER'] : $this->getLang('someone'),
+                              isset($data['creator']) ? $data['creator'] : $this->getLang('someone'),
                               $data['task']['text'],
                               isset($data['task']['date']) ? $data['task']['date'] : $this->getLang('nodue'),
                               wl($ID, '', true, '&').'#plgdo__'.$data['task']['md5']),

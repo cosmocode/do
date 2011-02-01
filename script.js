@@ -1,3 +1,5 @@
+
+
 function plugin_do__createOverlay(title, id, content, submitcaption, submitaction) {
     var div = document.createElement('div');
     content = '<div class="title">' +
@@ -159,28 +161,38 @@ addInitEvent(function(){
     }
 
     /**
-     * set the titles.
-     * @param rootNode the surrounding span.
+     * Set the task title
+     *
+     * @param DOMObject   rootNode    the surrounding span.
+     * @param [string]    assignees   assignees for the task, undefined for autodetect
+     * @param string      due         the task's due date, undefined for autodetect
+     * @param string      closedby    who closed the task, undefined for not closed, yet
+     * @param string      closedon    when was the task closed, undefined for not closed, yet
+     * @param [DOMObject] applyto     where to add the title tag, undefinded for rootNode
      */
-    function buildTitle (rootNode, assigne, due, closedby, closedon, applyto) {
+    function buildTitle (rootNode, assignees, due, closedby, closedon, applyto) {
         var newTitle = 4;
 
         var table = rootNode.parentNode.tagName === 'TD';
 
-        // determine assigne
-        if (isUndefined(assigne) || isEmpty(assigne)) {
+        // determine assignees
+        if (isUndefined(assignees) || isEmpty(assignees)) {
+            var assigneeobjs = null;
+            assignees = new Array();
             if (table) {
-                assigne = getInnerHtmlByClass('plugin_do_assigne', rootNode.parentNode.parentNode, 'td');
+                assigneeobjs = getElementsByClass('plugin_do_assignee', rootNode.parentNode.parentNode, 'td');
             } else {
-                assigne = getInnerHtmlByClass('plugin_do_meta_user', rootNode, 'span');
+                assigneeobjs = getElementsByClass('plugin_do_meta_user', rootNode, 'span');
             }
-            assigne = stripTags(assigne);
+            for(var i=0; i<assigneeobjs.length; i++){
+                assignees.push(stripTags(assigneeobjs[i].innerHTML));
+            }
         }
-        if (assigne !== '') {
+        if (assignees.length != 0) {
             newTitle -= 2;
         }
 
-        // determine due
+        // determine due date
         if (isUndefined(due)|| isEmpty(due)) {
             if (table) {
                 due = getInnerHtmlByClass('plugin_do_date', rootNode.parentNode.parentNode, 'td');
@@ -192,19 +204,21 @@ addInitEvent(function(){
         if (due !== '') {
             newTitle -= 1;
         }
-        newTitle = LANG.plugins['do']['title' + newTitle].replace(/%(1\$)?s/, assigne).replace(/%(2\$)?s/, due);
+        newTitle = LANG.plugins['do']['title' + newTitle].replace(/%(1\$)?s/, assignees.join(', ')).replace(/%(2\$)?s/, due);
 
+        // is closed?
         if (!isUndefined(closedon)) newTitle += ' ' + getText('done', closedon);
 
+        // who closed it?
         if (!isUndefined(closedby)) {
             if (closedby === '') closedby = LANG.plugins['do'].by_unknown;
             newTitle += ' ' + getText('closedby', closedby);
         }
 
+        // apply the title
         if (isUndefined(applyto)) {
             applyto = [rootNode];
         }
-
         for (var j = 0; j < applyto.length; j++) {
             applyto[j].title = newTitle;
         }

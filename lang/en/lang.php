@@ -8,8 +8,8 @@
 // menu entry for admin plugins
 // $lang['menu'] = 'Your menu entry';
 
-$lang['js']['title1']  = 'Task assigned to %1$s, due on %2$s.';
-$lang['js']['title2']  = 'Task assigned to %1$s, no deadline.';
+$lang['js']['title1']  = 'Task assigned to %1$s. Due on %2$s.';
+$lang['js']['title2']  = 'Task assigned to %1$s. No deadline.';
 $lang['js']['title3']  = 'Unassigned task due on %2$s.';
 $lang['js']['title4']  = 'Unassigned task, no deadline.';
 
@@ -31,8 +31,8 @@ $lang['none']    = 'No tasks found';
 $lang['js']['done'] = 'This task was completed on %s.';
 $lang['js']['open'] = 'This task hasn\'t been completed, yet.';
 $lang['js']['toolbar_title'] = 'Insert new task';
-$lang['js']['popup_assign'] = 'Assign to (username)';
-$lang['js']['popup_date'] = 'Due on (YYYY-MM-DD)';
+$lang['js']['popup_assign'] = 'Assign to <small>(username(s))</small>';
+$lang['js']['popup_date'] = 'Due on <small>(YYYY-MM-DD)</small>';
 $lang['js']['popup_submit'] = 'Insert';
 $lang['js']['popup_title'] = 'Create task';
 $lang['js']['popup_msg'] = 'Completion message';
