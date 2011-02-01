@@ -166,7 +166,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 if (isset($data['task']['user']) || isset($data['task']['date'])) {
                     $R->doc .= ' <span class="plugin_do_meta">(';
                     if (isset($data['task']['user'])) {
-                        $R->doc .= $this->getLang('user').' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($data['task']['user']).'</span>';
+                        $R->doc .= $this->getLang('user');
+                        $users = explode(',',$data['task']['user']);
+                        $userCount = count($users);
+                        for ($i=0; $i<$userCount; $i++) {
+                            $users[$i]=trim($users[$i]);
+                            $R->doc .= ' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($users[$i]).'</span>';
+                            if ($i <$userCount-1) $R->doc .= ', ';
+                        }
                         if (isset($data['task']['date'])) $R->doc .= ', ';
                     }
                     if (isset($data['task']['date'])) {

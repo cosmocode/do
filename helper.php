@@ -37,6 +37,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     function cleanPageTasks($id){
         if(!$this->db) return;
         $this->db->query('DELETE FROM tasks WHERE page = ?',$id);
+        $this->db->query('DELETE FROM task_assignees WHERE page = ?',$id);
     }
 
     /**
@@ -52,16 +53,26 @@ class helper_plugin_do extends DokuWiki_Plugin {
             $data['creator'] = $_SERVER['REMOTE_USER'];
         }
         $this->db->query(
-            'INSERT INTO tasks (page,md5,date,user,text,creator,pos)
-             VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO tasks (page,md5,date,text,creator,pos)
+             VALUES (?, ?, ?, ?, ?, ?)',
              $data['page'],
              $data['md5'],
              $data['date'],
-             $data['user'],
              $data['text'],
              $data['creator'],
              $data['pos']
         );
+        $users = explode(',', $data['user']);
+        foreach ($users as $userName) {
+            $userName = trim($userName);
+            if (empty($userName)) continue;
+            $this->db->query(
+                'INSERT INTO task_assignees (page,md5,user) VALUES (?,?,?)',
+                $data['page'],
+                $data['md5'],
+                $userName
+            );
+        }
     }
 
     /**
@@ -155,19 +166,42 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $res = $this->db->query('SELECT A.page     AS page,
                                         A.md5      AS md5,
                                         A.date     AS date,
-                                        A.user     AS user,
                                         A.text     AS text,
                                         A.creator  AS creator,
                                         B.msg      AS msg,
                                         B.status   AS status,
-                                        B.closedby AS closedby
+                                        B.closedby AS closedby,
+                                        C.user     AS user
                                    FROM tasks A LEFT JOIN task_status B
                                      ON A.page = B.page
                                      AND A.md5 = B.md5
+                                   LEFT JOIN task_assignees C
+                                     ON A.page = C.page
+                                     AND A.md5 = C.md5
                                      '.$where.'
                                    ORDER BY A.page, A.pos' . $limit);
         $res = $this->db->res2arr($res);
-        return $res;
+
+        $index = array();
+        $result = array();
+        $i = 0;
+
+        foreach ($res as $row) {
+            $key = $row['page'] . $row['md5'];
+            if (!isset($index[$key])) {
+
+                $row['user'] = array($row['user']);
+
+                $index[$key] = $i;
+                $result[$i] = $row;
+
+                ++$i;
+                continue;
+            }
+
+            $result[$index[$key]]['user'][] = $row['user'];
+        }
+        return $result;
     }
 
     /**
