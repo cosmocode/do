@@ -51,4 +51,3 @@ $lang['js']['finish_popup_submit'] = 'Close';
 $lang['mail_subj'] = 'New task: %s';
 $lang['someone'] = 'Someone';
 $lang['nodue'] = 'None';
-//Setup VIM: ex: et ts=4 enc=utf-8 :

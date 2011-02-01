@@ -115,4 +115,3 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
 }
 
-// vim:ts=4:sw=4:et:enc=utf-8:
