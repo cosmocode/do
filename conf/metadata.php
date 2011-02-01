@@ -9,4 +9,4 @@
 
 
 $meta['userpage'] = array('string');
-$meta['notify_assignee'] = array('yesno');
+$meta['notify_assignee'] = array('onoff');
