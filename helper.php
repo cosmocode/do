@@ -4,6 +4,8 @@
  *
  * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Andreas Gohr <gohr@cosmocode.de>
+ * @author  Adrian Lang <lang@cosmocode.de>
+ * @author  Dominik Eckelmann <eckelmann@cosmocode.de>
  */
 
 // must be run within Dokuwiki
