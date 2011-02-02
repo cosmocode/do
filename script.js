@@ -478,7 +478,7 @@ addInitEvent(function(){
             send(this);
         } else {
             var popup = $('do__commit_popup');
-            popup.__close({ 'pageX': findPosX(this), 'pageY': findPosY(this)});
+            popup.toggle({ 'pageX': findPosX(this), 'pageY': findPosY(this)});
             popup.__me = this;
             $('do__popup_msg').focus();
         }
