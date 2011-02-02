@@ -289,8 +289,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
         // send mails
         foreach($receivers as $receiver){
             $info = $auth->getUserData($receiver);
+            if(!$info['mail']) continue;
             $to = $info['name'].' <'.$info['mail'].'>';
-
             mail_send($to,$subj,$text,$conf['mailfrom']);
         }
     }
