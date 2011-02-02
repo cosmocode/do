@@ -1,40 +1,49 @@
 
-
+/**
+ * Create a floating, draggable overlay
+ *
+ * @param string title          The title line
+ * @param string id             The id to assign to the overlay
+ * @param string content        Content of the fieldset as HTML
+ * @param string submitcaption  Label for the submit button
+ * @param callback submitaction What to do when submit is pressed
+ * @returns DOMObject           The created overlay
+ */
 function plugin_do__createOverlay(title, id, content, submitcaption, submitaction) {
+    // create overlay div
     var div = document.createElement('div');
-    content = '<div class="title">' +
-                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' +
-                    title + '</div><fieldset>' + content;
-
-    content += '<p class="button_wrap"><button class="button">' +
-               submitcaption + '</button></p>';
-
-    div.innerHTML = content + '</fieldset>';
-
+    div.innerHTML = '<div class="title">' +
+                    '<img src="' + DOKU_BASE + 'lib/images/close.png">' + title +
+                    '</div>' +
+                    '<fieldset>' +
+                    content +
+                    '<p class="button_wrap"><button class="button">' +
+                    submitcaption +
+                    '</button></p>' +
+                    '</fieldset>';
     div.id        = id;
     div.className = 'plugin_do_popup';
+    div.style.display = 'none'; // hide popup
 
-    // hide popup
-    div.style.display = 'none';
-
-    div.__close = function(event)
-    {
-        if (div.style.display === 'inline')
-        {
+    /**
+     * Toggle the overlay
+     */
+    div.toggle = function(event) {
+        if (div.style.display === 'inline') {
             div.style.display = 'none';
-        }
-        else
-        {
+        } else {
             div.style.display = 'inline';
             div.style.top  = event.pageY + 'px';
             div.style.left = event.pageX + 'px';
         }
     };
 
-    addEvent(div.firstChild.firstChild,'click',div.__close);
+    // add event handlers
+
+    addEvent(div.firstChild.firstChild,'click',div.toggle); // close button
     addEvent(div.lastChild.lastChild.lastChild,'click',function(e){
         submitaction();
-        div.__close();
+        div.toggle();
 
         e.preventDefault();
         return false;
@@ -46,14 +55,14 @@ function plugin_do__createOverlay(title, id, content, submitcaption, submitactio
         }
 
         submitaction();
-        div.__close();
+        div.toggle();
 
         e.preventDefault();
         e.stopPropagation();
         return false;
     });
 
-    drag.attach(div, div.firstChild);
+    drag.attach(div, div.firstChild); // title bar
     getElementsByClass('dokuwiki', document.body, 'div')[0].appendChild(div);
     return div;
 }
@@ -74,40 +83,73 @@ function addBtnActionDo(btn, props, edid) {
     var inps = ['assign', 'date'];
     for (var i = 0 ; i < inps.length ; ++i) {
         fieldset += '<p><label for="do__popup_' + inps[i] + '">' +
-                          LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
-                          '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
+                    LANG.plugins['do']['popup_' + inps[i]] + '</label>' +
+                    '<input class="edit" id="do__popup_' + inps[i] + '" /></p>';
     }
 
+    /**
+     * The submit action
+     */
     function onclick() {
         // Validate data
-        var out = '<do';
-        if ($('do__popup_date').value && $('do__popup_date').value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)) out += ' ' + $('do__popup_date').value;
-        if ($('do__popup_assign').value)  out += ' ' + $('do__popup_assign').value;
-        out +='>';
+        var pre = '<do';
+        if ($('do__popup_date').value && $('do__popup_date').value.match(/^[0-9]{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])/)) pre += ' ' + $('do__popup_date').value;
+        if ($('do__popup_assign').value)  pre += ' ' + $('do__popup_assign').value;
+        pre +='>';
 
         var sel = getSelection($(edid));
         if(sel.start === 0 && sel.end === 0) sel = old_select;
 
         var stxt = sel.getText();
 
-        if(stxt) out += stxt;
-        out          += '</do>';
+        //strip any previous do tags
+        var m = stxt.match(/<do ([^>]*)>[\s\S]*<\/do>/);
+        if(m){
+            // we have previous tags, replace them
+            stxt = stxt.replace(/<do ([^>]*)>/,pre);
+        }else{
+            // no selection or previous tags, add them
+            stxt = pre + stxt + '</do>';
+        }
 
-        pasteText(sel,out);
+        pasteText(sel,stxt);
         $('do__popup_date').value         = '';
         $('do__popup_assign').value       = '';
     }
 
+    // prepare hidden overlay
     var div = plugin_do__createOverlay(LANG.plugins['do'].popup_title,
                                        'do__popup',
                                        fieldset,
                                        LANG.plugins['do'].popup_submit,
                                        onclick);
+
+    // add toolbar button action
     addEvent(btn,'click', function (e) {
         old_select = getSelection($(edid));
-        return div.__close(e);
+
+        //check if a task was selected and load it's data
+        var txt = old_select.getText();
+        $('do__popup_date').value   = '';
+        $('do__popup_assign').value = '';
+        var m = txt.match(/<do ([^>]*)>[\s\S]*<\/do>/);
+        if(m){
+            var users = m[1];
+            m = users.match(/\d\d\d\d-\d\d-\d\d/);
+            if(m){
+                var date = m[0];
+                users = users.replace(date,'');
+                $('do__popup_date').value = date;
+            }
+            users = users.replace(/^\s+/,'');
+            users = users.replace(/\s+$/,'');
+            $('do__popup_assign').value = users;
+        }
+
+        return div.toggle(e);
     });
 
+    // if the bureaucracy plugin is installed, use its user and date autocompletion
     if (typeof addAutoCompletion !== 'undefined') {
         function prepareLi(li, value) {
             var name = value[0];
@@ -125,6 +167,9 @@ function addBtnActionDo(btn, props, edid) {
     return true;
 }
 
+/**
+ * Append button to toolbar
+ */
 if (typeof window.toolbar !== 'undefined') {
     window.toolbar.push({
         "type":"do",
