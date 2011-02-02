@@ -227,9 +227,11 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if (!isset($data['task']['creator'])) {
             $data['task']['creator'] = $_SERVER['REMOTE_USER'];
         }
+        $data['task']['page'] = $ID;
+        $data['task']['pos']  = ++$this->position;
 
-        $hlp->saveTask($data['task'] +
-                       array('page' => $ID, 'pos' => ++$this->position));
+
+        $hlp->saveTask($data['task']);
         $this->saved[] = $data['task']['md5'];
 
         // now decide if we should mail anyone
