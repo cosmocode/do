@@ -244,7 +244,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         $receivers = array_diff(
                         $data['task']['users'],
                         (array) $this->oldTasks[$data['task']['md5']]['users'],
-                        array($_SERVER['REMOTE_USER'],$data['creator']));
+                        array($_SERVER['REMOTE_USER'],$data['task']['creator']));
 
         // now mail any new assignees if task is still open
         if(!$data['task']['status']){

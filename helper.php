@@ -226,9 +226,9 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $recs = array_unique($recs);
         $recs = array_diff($recs,array($_SERVER['REMOTE_USER']));
 
+        $name = $_SERVER['REMOTE_USER'];
         if(!$stat){
             // close the task
-            $name = $_SERVER['REMOTE_USER'];
             $stat = date('Y-m-d',time());
             $this->db->query('INSERT INTO task_status
                                     (page, md5, status, closedby, msg)
@@ -243,13 +243,18 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                WHERE page = ?
                                AND md5  = ?',
                                $page, $md5);
-            $this->sendMail($recs,'reopen',$task,$_SERVER['REMOTE_USER']);
+            $this->sendMail($recs,'reopen',$task,$name);
             return false;
         }
     }
 
     /**
      * Notify assignees or creators of new tasks and status changes
+     *
+     * @param array   $recievers  list of user names to notify
+     * @param string  $type       type of notification (open|reopen|close)
+     * @param string  $user       user who triggered the notification
+     * @param string  $mgs        the closing message if any
      */
     function sendMail($receivers,$type,$task,$user='',$msg=''){
         global $conf;

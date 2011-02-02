@@ -176,7 +176,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $title = '';
 
         if ($user) {
-            $title .= $this->getJsText('assigne', $user);
+            $title .= $this->getJsText('assignee', $user);
         }
 
         if ($date) {
