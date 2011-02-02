@@ -126,7 +126,8 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         }
         if (isset($this->oldTasks[$data['task']['md5']])) {
             $data['task']['creator'] = $this->oldTasks[$data['task']['md5']]['creator'];
-            $data['task']['msg'] = $this->oldTasks[$data['task']['md5']]['msg'];
+            $data['task']['msg']     = $this->oldTasks[$data['task']['md5']]['msg'];
+            $data['task']['status']  = $this->oldTasks[$data['task']['md5']]['status'];
         }
 
         // save data to sqlite during meta data run
@@ -245,8 +246,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         (array) $this->oldTasks[$data['task']['md5']]['users'],
                         array($_SERVER['REMOTE_USER'],$data['creator']));
 
-        // now mail any new assignees
-        $hlp->sendMail($receivers,'open',$data['task'],$data['task']['creator']);
+        // now mail any new assignees if task is still open
+        if(!$data['task']['status']){
+            $hlp->sendMail($receivers,'open',$data['task'],$data['task']['creator']);
+        }
     }
 }
 
