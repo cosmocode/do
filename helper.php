@@ -193,6 +193,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
             $result[$index[$key]]['users'][] = $row['user'];
             unset($result[$index[$key]]['user']);
         }
+
         return $result;
     }
 

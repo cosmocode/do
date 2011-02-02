@@ -18,11 +18,16 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
+    private $hlp = null;
     private $run;
     private $oldTasks;
     private $position = 0;
     private $saved = array();
     private $ids = array();
+
+    function syntax_plugin_do_do(){
+        $this->hlp = plugin_load('helper', 'do');
+    }
 
     function getType() {
         return 'formatting';
@@ -110,29 +115,34 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
     }
 
+    function _oldTask($page,$md5){
+        // initialize task cache
+        if(!$this->oldTasks) $this->oldTasks = array();
+        if(!isset($this->oldTasks[$page])){
+            $statuses = $this->hlp->loadTasks(array('id' => $ID));
+            foreach ($statuses as $state) {
+                $this->oldTasks[$page][$state['md5']] = $state;
+            }
+        }
+
+        return (array) $this->oldTasks[$page][$md5];
+    }
+
+
     function render($mode, &$R, $data) {
         global $ID;
 
-        // get the helper
-        $hlp = plugin_load('helper', 'do');
-
-        // hold old tasks. we need this to keep creator info and old asignees
-        if (!$this->oldTasks) {
-            $this->oldTasks = array();
-            $statuses = $hlp->loadTasks(array('id' => $ID));
-            foreach ($statuses as $state) {
-                $this->oldTasks[$state['md5']] = $state;
-            }
-        }
-        if (isset($this->oldTasks[$data['task']['md5']])) {
-            $data['task']['creator'] = $this->oldTasks[$data['task']['md5']]['creator'];
-            $data['task']['msg']     = $this->oldTasks[$data['task']['md5']]['msg'];
-            $data['task']['status']  = $this->oldTasks[$data['task']['md5']]['status'];
+        // augment current task with original creator info and old assignees
+        $oldtask = $this->_oldTask($ID,$data['task']['md5']);
+        if($oldtask){
+            $data['task']['creator'] = $oldtask['creator'];
+            $data['task']['msg']     = $oldtask['msg'];
+            $data['task']['status']  = $oldtask['status'];
         }
 
         // save data to sqlite during meta data run
         if ($mode === 'metadata') {
-            $this->_save($data, $hlp);
+            $this->_save($data);
             return true;
         }
 
@@ -141,8 +151,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $R->info['cache'] = false;
             switch($data['state']){
             case DOKU_LEXER_ENTER:
-                $pre = (isset($this->oldTasks[$data['task']['md5']]) &&
-                        $this->oldTasks[$data['task']['md5']]['status']) ? '' : 'un';
+                $pre = ($oldtask && $oldtask['status']) ? '' : 'un';
                 $R->externalmedia(DOKU_URL . "lib/plugins/do/pix/${pre}done.png");
                 break;
 
@@ -188,7 +197,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                         $users     = $data['task']['users'];
                         $userCount = count($users);
                         for ($i=0; $i<$userCount; $i++) {
-                            $R->doc .= ' <span class="plugin_do_meta_user">'.$hlp->getPrettyUser($users[$i]).'</span>';
+                            $R->doc .= ' <span class="plugin_do_meta_user">'.$this->hlp->getPrettyUser($users[$i]).'</span>';
                             if ($i <$userCount-1) $R->doc .= ', ';
                         }
                         if (isset($data['task']['date'])) $R->doc .= '. ';
@@ -205,14 +214,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
-    function _save($data, $hlp) {
+    function _save($data) {
         global $ID;
         global $auth;
         global $conf;
 
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){
-            $hlp->cleanPageTasks($ID);
+            $this->hlp->cleanPageTasks($ID);
             $this->run[$ID] = true;
         }
 
@@ -232,7 +241,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         $data['task']['pos']  = ++$this->position;
 
 
-        $hlp->saveTask($data['task']);
+        $this->hlp->saveTask($data['task']);
         $this->saved[] = $data['task']['md5'];
 
         // now decide if we should mail anyone
@@ -241,14 +250,15 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if(!$this->getConf('notify_assignee')) return;
 
         // don't mail current or original editor or old assignees
+        $oldtask = $this->_oldTask($ID,$data['task']['md5']);
         $receivers = array_diff(
                         $data['task']['users'],
-                        (array) $this->oldTasks[$data['task']['md5']]['users'],
+                        (array) $oldtask['users'],
                         array($_SERVER['REMOTE_USER'],$data['task']['creator']));
 
         // now mail any new assignees if task is still open
         if(!$data['task']['status']){
-            $hlp->sendMail($receivers,'open',$data['task'],$data['task']['creator']);
+            $this->hlp->sendMail($receivers,'open',$data['task'],$data['task']['creator']);
         }
     }
 }
