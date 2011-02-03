@@ -18,12 +18,13 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
-    private $hlp = null;
-    private $run;
-    private $oldTasks;
+    private $hlp = null;         // helper plugin
     private $position = 0;
-    private $saved = array();
-    private $ids = array();
+
+    private $run      = array(); // page run cache
+    private $oldTasks = array(); // old task cache
+    private $saved    = array(); // save state cache
+    private $ids      = array();
 
     function syntax_plugin_do_do(){
         $this->hlp = plugin_load('helper', 'do');
@@ -115,9 +116,15 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
     }
 
+    /**
+     * Return the task as it was before this rendering run
+     *
+     * @param    string $page - the current page
+     * @param    string $md5  - the task identifier
+     * @returns  array        - the task data (empty for new tasks)
+     */
     function _oldTask($page,$md5){
         // initialize task cache
-        if(!$this->oldTasks) $this->oldTasks = array();
         if(!isset($this->oldTasks[$page])){
             $statuses = $this->hlp->loadTasks(array('id' => $ID));
             foreach ($statuses as $state) {
@@ -126,6 +133,20 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         }
 
         return (array) $this->oldTasks[$page][$md5];
+    }
+
+    /**
+     * Decide if a task needs to be saved.
+     *
+     * Returns true on the first call, false on subsequent calls
+     * for a given task
+     */
+    function _needsSave($page,$md5){
+        if(isset($this->saved[$page][$md5])){
+            return false;
+        }
+        $this->saved[$page][$md5] = 1;
+        return true;
     }
 
 
@@ -225,24 +246,21 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $this->run[$ID] = true;
         }
 
-        if ($data['state'] !== DOKU_LEXER_EXIT) {
-            return;
-        }
+        // we save at the end of our instructions
+        if ($data['state'] !== DOKU_LEXER_EXIT) return;
 
-        // save the task data - only when not saved yet.
-        if (in_array($data['task']['md5'], $this->saved)) {
-            return;
-        }
+        // did we save already?
+        if(!$this->_needsSave($ID,$data['task']['md5'])) return;
 
+        // make sure data is complete
         if (!isset($data['task']['creator'])) {
             $data['task']['creator'] = $_SERVER['REMOTE_USER'];
         }
         $data['task']['page'] = $ID;
         $data['task']['pos']  = ++$this->position;
 
-
+        // save it
         $this->hlp->saveTask($data['task']);
-        $this->saved[] = $data['task']['md5'];
 
         // now decide if we should mail anyone
         if(!$auth) return;
