@@ -22,7 +22,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $position = 0;
 
     private $run      = array(); // page run cache
-    private $oldTasks = array(); // old task cache
     private $saved    = array(); // save state cache
     private $ids      = array();
 
@@ -124,15 +123,19 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      * @returns  array        - the task data (empty for new tasks)
      */
     function _oldTask($page,$md5){
-        // initialize task cache
-        if(!isset($this->oldTasks[$page])){
+        static $oldTasks = null; // old task cache
+        static $curPage  = null; // what page are we working on?
+
+        // reinit the cache whenever the page changes
+        if($curPage != $page){
+            $oldTasks = array();
             $statuses = $this->hlp->loadTasks(array('id' => $ID));
             foreach ($statuses as $state) {
-                $this->oldTasks[$page][$state['md5']] = $state;
+                $oldTasks[$state['md5']] = $state;
             }
         }
 
-        return (array) $this->oldTasks[$page][$md5];
+        return (array) $this->oldTasks[$md5];
     }
 
     /**
