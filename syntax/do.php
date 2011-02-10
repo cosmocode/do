@@ -128,6 +128,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
 
         // reinit the cache whenever the page changes
         if($curPage != $page){
+            $curPage  = $page;
             $oldTasks = array();
             $statuses = $this->hlp->loadTasks(array('id' => $ID));
             foreach ($statuses as $state) {
