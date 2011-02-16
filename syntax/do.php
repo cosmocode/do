@@ -136,7 +136,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             }
         }
 
-        return (array) $this->oldTasks[$md5];
+        return (array) $oldTasks[$md5];
     }
 
     /**
