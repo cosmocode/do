@@ -157,6 +157,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     function render($mode, &$R, $data) {
         global $ID;
 
+        // we don't care for QC FIXME we probably should ignore even more renderers
+        if($mode == 'qc') return false;
+
         // augment current task with original creator info and old assignees
         $oldtask = $this->_oldTask($ID,$data['task']['md5']);
         if($oldtask){
