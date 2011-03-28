@@ -98,21 +98,19 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     function handle_delete(&$event, $param){
-        if (preg_match('/<do[^>]*>.*<\/do>/i',$event->data[0][1]) === 1) {
-            // Only run if syntax plugin did not
+        if (preg_match('/<do[^>]*>.*<\/do>/i',$event->data[0][1])) {
+            // Only run if all tasks where removed from the page
             return;
         }
 
-        global $ID;
-
-        if(isset($this->run[$ID])){
+        if(isset($this->run[$event->data[2]])){
             // Only execute on the first run
             return;
         }
 
         $hlp = plugin_load('helper', 'do');
-        $hlp->cleanPageTasks($ID);
-        $this->run[$ID] = true;
+        $hlp->cleanPageTasks($event->data[2]);
+        $this->run[$event->data[2]] = true;
     }
 
 }

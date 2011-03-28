@@ -130,12 +130,11 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         if($curPage != $page){
             $curPage  = $page;
             $oldTasks = array();
-            $statuses = $this->hlp->loadTasks(array('id' => $ID));
+            $statuses = $this->hlp->loadTasks(array('id' => $page));
             foreach ($statuses as $state) {
                 $oldTasks[$state['md5']] = $state;
             }
         }
-
         return (array) $oldTasks[$md5];
     }
 

@@ -154,6 +154,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                 }
             }
         }
+
         $res = $this->db->query('SELECT A.page     AS page,
                                         A.md5      AS md5,
                                         A.date     AS date,
@@ -172,7 +173,6 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                      '.$where.'
                                    ORDER BY A.page, A.pos' . $limit);
         $res = $this->db->res2arr($res);
-
         // merge assignees into users array
         $index = array();
         $result = array();
