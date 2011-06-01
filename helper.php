@@ -173,28 +173,23 @@ class helper_plugin_do extends DokuWiki_Plugin {
                                      '.$where.'
                                    ORDER BY A.page, A.pos' . $limit);
         $res = $this->db->res2arr($res);
+
         // merge assignees into users array
-        $index = array();
         $result = array();
-        $i = 0;
         foreach ($res as $row) {
             $key = $row['page'] . $row['md5'];
-            if (!isset($index[$key])) {
-
-                $row['users'] = array($row['user']);
-
-                $index[$key] = $i;
-                $result[$i] = $row;
-
-                ++$i;
-                continue;
+            if (!isset($result[$key])) {
+                $result[$key] = $row;
+                unset($result[$key]['user']);
+                $result[$key]['users'] = array();
             }
 
-            $result[$index[$key]]['users'][] = $row['user'];
-            unset($result[$index[$key]]['user']);
+            if ($row['user'] !== null) {
+                $result[$key]['users'][] = $row['user'];
+            }
         }
 
-        return $result;
+        return array_values($result);
     }
 
     /**
