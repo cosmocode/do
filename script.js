@@ -344,7 +344,8 @@ addInitEvent(function(){
 
         var param = me.search.substring(1).replace(/&do=/,'&call=').replace(/^do=/,'call=');
 
-        var tablemode = (me.parentNode.parentNode.tagName == 'TD');
+        var tablemode = (me.parentNode.parentNode.tagName == 'TD' &&
+                         me.parentNode.parentNode.className.match(/\bplugin_do_\w+\b/));
         var done = me.parentNode.className.match(/\bplugin_do_done\b/);
 
         if (!done) {
