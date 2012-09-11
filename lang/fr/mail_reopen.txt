@@ -1,0 +1,11 @@
+Bonjour,
+
+@USER@ a réouvert une tâche et vous l'a assignée.
+
+Description : @TASK@
+Date limite : @DATE@
+Page wiki :   @TASKURL@
+
+-- 
+Cet e-mail a été généré par DokuWiki.
+@DOKUWIKIURL@
