@@ -26,65 +26,6 @@ div.dokuwiki table.plugin_do span.plugin_do_item {
     background-color: transparent;
 }
 
-/* POPUPS */
-div.dokuwiki div.plugin_do_popup {
-    position:absolute;
-    background-color: __background__;
-    border:1px solid __border__;
-    width:400px;
-    z-index: 45;
-}
-
-div.dokuwiki div.plugin_do_popup .title {
-    background-color: __background_alt__;
-    text-align:center;
-}
-
-div.dokuwiki div.plugin_do_popup .title img {
-    float:right;
-    cursor:pointer;
-}
-
-div.dokuwiki div.plugin_do_popup fieldset {
-    border:0;
-    padding-bottom:0.3em;
-}
-
-div.dokuwiki div.plugin_do_popup fieldset p {
-    margin-bottom:0;
-    clear:left;
-}
-
-div.dokuwiki div.plugin_do_popup fieldset p label {
-    display:block;
-    width:46%;
-    float:left;
-    line-height:25px;
-    text-align: right;
-    margin-right: 0.1em;
-}
-
-div.dokuwiki div.plugin_do_popup fieldset p input {
-    display:block;
-    width:46%;
-    float:left;
-}
-
-div.dokuwiki div.plugin_do_popup fieldset {
-    width: auto;
-}
-
-div.dokuwiki div.plugin_do_popup .button_wrap {
-    text-align:center;
-}
-
-/* Show autocompletion even with core’s c44e5a88*/
-div.dokuwiki div.plugin_do_popup fieldset div.JSpopup {
-    position: static;
-}
-
-/* END POPUPS */
-
 div.plugin__do_pagetasks span {
     background: transparent url(pix/toolbar.png) no-repeat top right;
     padding-right:17px;
@@ -93,3 +34,16 @@ div.plugin__do_pagetasks span {
 .plugin__do_pagetasks span.do_done   { background-image: url(pix/tasklist_green.png); }
 .plugin__do_pagetasks span.do_undone { background-image: url(pix/tasklist_yellow.png); }
 .plugin__do_pagetasks span.do_late   { background-image: url(pix/tasklist_red.png); }
+
+
+/* Dialog */
+#plugin__do__dialog {
+    font-size: 10pt;
+    width: auto;
+}
+
+#plugin__do__dialog fieldset {
+    border: 0;
+    width: auto;
+    min-width: 170px;
+}
