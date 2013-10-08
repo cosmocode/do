@@ -1,0 +1,10 @@
+Saluton,
+
+@USER@ remalfermis taskon kaj donis ĝin al vi.
+
+Priskribo: @TASK@
+Limdato: @DATE@
+Vikipaĝo: @TASKURL@
+
+-- 
+Tiu ĉi mesaĝo kreiĝis de DokuWiki ĉe @DOKUWIKIURL@

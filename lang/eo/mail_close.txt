@@ -1,0 +1,10 @@
+Saluton,
+
+@USER@ fermis taskon: "@MSG@"
+
+Priskribo: @TASK@
+Limdato: @DATE@
+Vikipaĝo: @TASKURL@
+
+-- 
+Tiu ĉi mesaĝo kreiĝis de DokuWiki ĉe @DOKUWIKIURL@
