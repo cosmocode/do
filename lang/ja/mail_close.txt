@@ -1,0 +1,9 @@
+@USER@ が作業を完了させました。"@MSG@"
+ 
+説明：　　　　@TASK@
+期日：　　　　@DATE@
+Wikiページ：　@TASKURL@
+ 
+-- 
+このメールは DokuWiki が作成しました。
+@DOKUWIKIURL@
