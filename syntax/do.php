@@ -236,6 +236,11 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
+    /**
+     * Save data in the metadata renderer
+     *
+     * @param array $data
+     */
     function _save($data) {
         global $ID;
         global $auth;

@@ -30,7 +30,16 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $this->Lexer->addSpecialPattern('{{dolist>.*?}}',$mode,'plugin_do_dolist');
     }
 
-    function handle($match, $state, $pos, &$handler){
+    /**
+     * Handler to prepare matched data for the rendering process
+     *
+     * @param   string        $match   The text matched by the patterns
+     * @param   int           $state   The lexer state for the match
+     * @param   int           $pos     The character position of the matched text
+     * @param   Doku_Handler &$handler Reference to the Doku_Handler object
+     * @return  array Return an array with all data you want to use in render()
+     */
+    function handle($match, $state, $pos, Doku_Handler &$handler){
         // parse the given match
         $match = substr($match, 9, -2);
 
@@ -71,7 +80,15 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         return $args;
     }
 
-    function render($mode, &$R, $data) {
+    /**
+     * Create output
+     *
+     * @param string         $mode output format being rendered
+     * @param Doku_Renderer &$R    reference to the current renderer object
+     * @param array          $data data created by handler()
+     * @return bool
+     */
+    function render($mode, Doku_Renderer &$R, $data) {
         if($mode != 'xhtml') return false;
         $R->info['cache'] = false;
         global $ID;
@@ -151,7 +168,15 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
-
+    /**
+     * Returns array with some task info
+     *
+     * @param string $user user id
+     * @param string $date due date
+     * @param string $status null or closing date
+     * @param string $closedBy user id
+     * @return array with class, image name and title
+     */
     function prepareTaskInfo($user, $date, $status, $closedBy) {
         $result = array();
         if($user && $date) {
@@ -192,6 +217,13 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         return $result;
     }
 
+    /**
+     * Returns localized string from js strings and performs placeholder replacement
+     *
+     * @param string $str key of localized string
+     * @param string $arg placeholder value
+     * @return string
+     */
     function getJsText($str, $arg) {
         return sprintf($this->lang['js'][$str], $arg) . ' ';
     }
