@@ -11,12 +11,9 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
 class helper_plugin_do extends DokuWiki_Plugin {
 
+    /** @var helper_plugin_sqlite */
     private $db = null;
 
     /**
@@ -45,7 +42,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Save a task.
      *
-     * @param array  data       task informations as key value array.
+     * @param array  $data       task informations as key value array.
      *                          keys are: page, md5, date, user, text, creator
      */
     function saveTask($data){
@@ -83,7 +80,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *  - md5       a single task
      *
      * @param array $args filters to apply
-     * @return filtered result.
+     * @return array filtered result.
      */
     function loadTasks($args = null){
         if(!$this->db) return array();
@@ -143,6 +140,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
                     }
                     $search = $n;
 
+                    /** @var DokuWiki_Auth_Plugin $auth */
                     global $auth;
                     if ($auth && !$auth->isCaseSensitive()) {
                         $search = "lower($search)";
@@ -198,9 +196,11 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param string $page          page id of the task
      * @param string $md5           tasks md5 hash
      * @param string $commitmsg     a optional message to the task completion
-     * @return false on undone a task or timestamp on task completion
+     * @return bool false on undone a task or timestamp on task completion
      */
     function toggleTaskStatus($page, $md5, $commitmsg = ''){
+        global $ID;
+
         if(!$this->db) return array();
         $md5 = trim($md5);
         if(!$page || !$md5) return array();
@@ -247,13 +247,15 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Notify assignees or creators of new tasks and status changes
      *
-     * @param array   $recievers  list of user names to notify
+     * @param array   $receivers  list of user names to notify
      * @param string  $type       type of notification (open|reopen|close)
+     * @param array   $task
      * @param string  $user       user who triggered the notification
-     * @param string  $mgs        the closing message if any
+     * @param string  $msg        the closing message if any
      */
     function sendMail($receivers,$type,$task,$user='',$msg=''){
         global $conf;
+        /** @var DokuWiki_Auth_Plugin $auth */
         global $auth;
 
         if(!$auth) return;
@@ -403,11 +405,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * get a pretty userlink
      * @param string $user users loginname
-     * @return username with possible links
+     * @return string username with possible links
      */
     function getPrettyUser($user) {
         $userpage = $this->getConf('userpage');
-        $res = '';
         if ($userpage !== '' && $user !== '') {
             return p_get_renderer('xhtml')->internallink(sprintf($userpage, $user),
                                                          '', '', true, 'navigation');
