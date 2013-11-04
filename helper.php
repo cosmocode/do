@@ -110,15 +110,19 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
             if (isset($args['id'])) {
                 global $ID;
+                if (!is_array($args['id'])) {
+                    $args['id'] = array($args['id']);
+                }
                 $exists = false;
-                resolve_pageid(getNS($ID), $args['id'], $exists);
-                $where .= sprintf(' AND A.page = %s',$this->db->quote_string($args['id']));
+                resolve_pageid(getNS($ID), $args['id'][0], $exists);
+                $where .= sprintf(' AND A.page = %s',$this->db->quote_string($args['id'][0]));
             }
 
             if (isset($args['status'])) {
-                if ($args['status'][0] == 'done') {
+                $status = utf8_strtolower($args['status'][0]);
+                if ($status == 'done') {
                     $where .= ' AND B.status IS NOT null';
-                } elseif ($args['status'][0] == 'undone') {
+                } elseif ($status == 'undone') {
                     $where .= ' AND B.status IS null';
                 }
 
@@ -129,7 +133,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
             }
 
             if (isset($args['md5'])) {
-                $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5']);
+                if (!is_array($args['md5'])) {
+                    $args['md5'] = array($args['md5']);
+                }
+                $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5'][0]);
             }
 
             $argn = array('user', 'creator');
