@@ -38,7 +38,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         //
         // if there is no ? but a & the user has probably forgot the ? befor the first arg.
         // in this case we'll replace the first & to a ?
-        if (!strpos($match,'?')) {
+        if (strpos($match,'?') === false) {
             $pos = strpos($match,'&');
             if (is_int($pos)) {
                 $match[$pos] = '?';
