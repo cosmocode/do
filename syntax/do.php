@@ -11,13 +11,8 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
-require_once(DOKU_PLUGIN.'syntax.php');
-
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
+    /** @var helper_plugin_do */
     private $hlp = null;         // helper plugin
     private $position = 0;
 
@@ -120,7 +115,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      *
      * @param    string $page - the current page
      * @param    string $md5  - the task identifier
-     * @returns  array        - the task data (empty for new tasks)
+     * @return  array        - the task data (empty for new tasks)
      */
     function _oldTask($page,$md5){
         static $oldTasks = null; // old task cache
@@ -244,7 +239,6 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     function _save($data) {
         global $ID;
         global $auth;
-        global $conf;
 
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){

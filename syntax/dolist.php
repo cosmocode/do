@@ -11,12 +11,6 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
-require_once(DOKU_PLUGIN.'syntax.php');
-
 class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
     function getType() {
@@ -87,6 +81,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
         $userstyle    = isset($data['user']) ? ' style="display: none;"' : '';
         $creatorstyle = isset($data['creator']) ? ' style="display: none;"' : '';
 
+        /** @var helper_plugin_do $hlp */
         $hlp = plugin_load('helper', 'do');
         $data = $hlp->loadTasks($data);
 
