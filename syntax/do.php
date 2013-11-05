@@ -198,9 +198,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     $id = 'id="plgdo__' . $data['task']['md5'] . '" ';
                     $this->ids[] = $data['task']['md5'];
                 }
+                $pre = ($oldtask && $oldtask['status']) ? '' : 'un';
                 $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['task']['md5'].'">'
                         .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
-                        .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
+                        .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$pre.'done.png" />'
                         .  '</a><span class="plugin_do_task">';
 
                 break;
