@@ -10,6 +10,8 @@
 
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
+require_once(DOKU_INC.'inc/JSON.php');
+
 
 class action_plugin_do extends DokuWiki_Action_Plugin {
 
@@ -52,47 +54,43 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      */
     function handle_ajax_call(&$event, $param) {
         if($event->data == 'plugin_do'){
+            // toggle status of a single task
+
+            $event->preventDefault();
+            $event->stopPropagation();
 
             $id = cleanID($_REQUEST['do_page']);
 
             if (auth_quickaclcheck($id) < AUTH_EDIT) {
                 echo -1;
-                $event->preventDefault();
-                $event->stopPropagation();
-                return false;
+                return;
             }
-            // toggle status of a single task
+
             /** @var helper_plugin_do $hlp */
             $hlp = plugin_load('helper', 'do');
             $status = $hlp->toggleTaskStatus($id, $_REQUEST['do_md5'], $_REQUEST['do_commit']);
 
             // rerender the page
-            p_get_metadata(cleanID($_REQUEST['do_page']),'',true);
+            p_get_metadata($id, '', true);
 
-            header('Content-Type: text/plain; charset=utf-8');
-            echo $status;
+            header('Content-Type: application/json; charset=utf-8');
+            $JSON = new JSON();
+            echo $JSON->encode($status);;
+
+        }elseif($event->data == 'plugin_do_status'){
+            // read status for a bunch of tasks
 
             $event->preventDefault();
             $event->stopPropagation();
-            return false;
-        }elseif($event->data == 'plugin_do_status'){
-            // read status for a bunch of tasks
-            require_once(DOKU_INC.'inc/JSON.php');
 
-            $JSON = new JSON();
             /** @var helper_plugin_do $hlp */
             $hlp = plugin_load('helper', 'do');
             $status = $hlp->getAllPageStatuses(cleanID($_REQUEST['do_page']));
-            $status = $JSON->encode($status);
 
-            header('Content-Type: text/plain; charset=utf-8');
-            echo $status;
-
-            $event->preventDefault();
-            $event->stopPropagation();
-            return false;
+            header('Content-Type: application/json; charset=utf-8');
+            $JSON = new JSON();
+            echo $JSON->encode($status);
         }
-        return true;
     }
 
     /**

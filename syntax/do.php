@@ -200,16 +200,18 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 }
                 $pre = ($oldtask && $oldtask['status']) ? '' : 'un';
                 $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['task']['md5'].'">'
-                        .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
-                        .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$pre.'done.png" />'
-                        .  '</a><span class="plugin_do_task">';
+                        .  '    <a class="plugin_do_status" href="'.wl($ID,$param).'">'
+                        .  '        <img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$pre.'done.png" />'
+                        .  '    </a>'
+                        .  '    <span class="plugin_do_task">';
 
                 break;
 
             case DOKU_LEXER_EXIT:
 
-                $R->doc .= '</span><span class="plugin_do_commit">'
-                        .  (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
+                $R->doc .= '</span>'
+                        .  '<span class="plugin_do_commit">'
+                        .      (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
                         .  '</span>';
 
                 if (isset($data['task']['users']) || isset($data['task']['date'])) {
