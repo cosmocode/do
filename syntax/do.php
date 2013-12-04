@@ -11,13 +11,8 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
-require_once(DOKU_PLUGIN.'syntax.php');
-
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
+    /** @var helper_plugin_do */
     private $hlp = null;         // helper plugin
     private $position = 0;
 
@@ -120,7 +115,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      *
      * @param    string $page - the current page
      * @param    string $md5  - the task identifier
-     * @returns  array        - the task data (empty for new tasks)
+     * @return  array        - the task data (empty for new tasks)
      */
     function _oldTask($page,$md5){
         static $oldTasks = null; // old task cache
@@ -203,17 +198,20 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                     $id = 'id="plgdo__' . $data['task']['md5'] . '" ';
                     $this->ids[] = $data['task']['md5'];
                 }
+                $pre = ($oldtask && $oldtask['status']) ? '' : 'un';
                 $R->doc .= '<span ' . $id . 'class="plugin_do_item plugin_do_'.$data['task']['md5'].'">'
-                        .  '<a class="plugin_do_status" href="'.wl($ID,$param).'">'
-                        .  ' <img src="'.DOKU_BASE.'lib/plugins/do/pix/undone.png" />'
-                        .  '</a><span class="plugin_do_task">';
+                        .  '    <a class="plugin_do_status" href="'.wl($ID,$param).'">'
+                        .  '        <img src="'.DOKU_BASE.'lib/plugins/do/pix/'.$pre.'done.png" />'
+                        .  '    </a>'
+                        .  '    <span class="plugin_do_task">';
 
                 break;
 
             case DOKU_LEXER_EXIT:
 
-                $R->doc .= '</span><span class="plugin_do_commit">'
-                        .  (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
+                $R->doc .= '</span>'
+                        .  '<span class="plugin_do_commit">'
+                        .      (empty($data['task']['msg'])?'':'(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) .')')
                         .  '</span>';
 
                 if (isset($data['task']['users']) || isset($data['task']['date'])) {
@@ -241,10 +239,14 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
+    /**
+     * Save data in the metadata renderer
+     *
+     * @param array $data
+     */
     function _save($data) {
         global $ID;
         global $auth;
-        global $conf;
 
         // on the first run for this page, clean up
         if(!isset($this->run[$ID])){

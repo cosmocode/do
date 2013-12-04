@@ -17,7 +17,8 @@ $lang['title_late']    = 'Il y a %1$d tâches en cours, dont %2$d sont en retard
 $lang['title_alldone'] = 'Il n’y a rien à faire.';
 
 $lang['js']['title_done']   = 'Toutes les tâches sont clôturées.';
-$lang['js']['title_undone'] = 'Il reste des tâches en cours.';
+$lang['js']['title_undone'] = 'Il y a %1$d tâches en cours.';
+$lang['js']['title_late']   = 'Il y a %1$d tâches en cours, dont %2$d sont en retard.';
 
 $lang['task']    = 'Tâche';
 $lang['user']    = 'Assignée à';

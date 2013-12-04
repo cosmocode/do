@@ -16,7 +16,8 @@ $lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
 $lang['title_alldone'] = 'All tasks done.';
 
 $lang['js']['title_done']   = 'All tasks done.';
-$lang['js']['title_undone'] = 'There are unfinished tasks.';
+$lang['js']['title_undone']  = 'There are %1$d open tasks.';
+$lang['js']['title_late']    = 'There are %1$d open tasks, %2$d are late.';
 
 $lang['task']    = 'Task';
 $lang['user']    = 'Assigned to';
