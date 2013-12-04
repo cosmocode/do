@@ -18,7 +18,8 @@ $lang['title_late']    = '%1$d unerledigte Aufgebe(n) von denen %2$d Überfälli
 $lang['title_alldone'] = 'Alle Aufgaben erledigt.';
 
 $lang['js']['title_done']   = 'Alle Aufgaben erledigt.';
-$lang['js']['title_undone'] = 'Es gibt unerledigte Aufgaben.';
+$lang['js']['title_undone'] = '%1$d unerledigte Aufgabe(n).';
+$lang['js']['title_late']   = '%1$d unerledigte Aufgebe(n) von denen %2$d Überfällig sind.';
 
 $lang['task']    = 'Aufgabe';
 $lang['user']    = 'zugewiesen an';
