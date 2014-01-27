@@ -1,0 +1,11 @@
+Hallo,
+
+@USER@ heropende een taak en wees die toe aan jou.
+
+Beschrijving:  @TASK@
+Vervaldatum: @DATE@
+Wikipagina:    @TASKURL@
+
+-- 
+Deze e-mail was gegenereerd door DokuWiki op
+@DOKUWIKIURL@
