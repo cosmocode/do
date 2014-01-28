@@ -1,0 +1,11 @@
+Hallo,
+
+@USER@ sloot een taak: "@MSG@"
+
+Beschrijving:  @TASK@
+Vervaldatum: @DATE@
+Wikipagina:    @TASKURL@
+
+-- 
+Deze e-mail was gegenereerd door DokuWiki op
+@DOKUWIKIURL@
