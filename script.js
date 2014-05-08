@@ -14,7 +14,7 @@ function addBtnActionDo($btn, props, edid) {
 
     // add toolbar button action
     $btn.click(function(e) {
-        PluginDo.toggleToolbarDialog(e)
+        PluginDo.toggleToolbarDialog(e);
     });
 
     return true;
@@ -24,10 +24,10 @@ function addBtnActionDo($btn, props, edid) {
  * Append button to toolbar
  */
 if (typeof window.toolbar !== 'undefined') {
+    // icon from Yusuke Kamiyamane - http://www.pinvoke.com/
     window.toolbar.push({
         type: "do",
-        title: LANG.plugins.do.toolbar_title,
-        // icon from Yusuke Kamiyamane - http://www.pinvoke.com/
+        title: LANG.plugins['do'].toolbar_title,
         icon: '../../plugins/do/pix/toolbar.png'
     });
 }
@@ -43,10 +43,10 @@ jQuery(function () {
         '</p>';
 
     PluginDo.createOverlay(
-        LANG.plugins.do.finish_popup_title,
+        LANG.plugins['do'].finish_popup_title,
         'do__commit_popup',
         fieldsetcontent,
-        LANG.plugins.do.finish_popup_submit,
+        LANG.plugins['do'].finish_popup_submit,
         PluginDo.closeSingleTask
     );
 
@@ -213,7 +213,7 @@ var PluginDo = {
         if (!assignees || !assignees.length) {
             //take the assignees of the first task or table row when tasks are duplicated
             var $assigneeobjs = $applyto.first().find('span.plugin_do_meta_user');
-            if($assigneeobjs.length == 0) {
+            if($assigneeobjs.length === 0) {
                 $assigneeobjs = $applyto.parent('td').parent().first().find('td.plugin_do_assignee');
             }
             assignees = [];
@@ -228,7 +228,7 @@ var PluginDo = {
         // determine due date
         if (!due) {
             var $due = $applyto.first().find('span.plugin_do_meta_date');
-            if($due.length == 0) {
+            if($due.length === 0) {
                 $due = $applyto.parent('td').parent().first().find('td.plugin_do_date');
             }
             due = PluginDo.stripTags($due.length ? $due.html() : '');
@@ -324,8 +324,8 @@ var PluginDo = {
      */
     urlParam: function (url, keyname) {
         var results = new RegExp('[\\?&]' + keyname + '=([^&#]*)').exec(url);
-        if (results == null) {
-            return null
+        if (results === null) {
+            return null;
         } else {
             return results[1] || 0;
         }
