@@ -542,7 +542,7 @@ var PluginDo = {
     },
 
     toggleToolbarDialog: function (e) {
-        PluginDo.old_select = getSelection(PluginDo.textarea);
+        PluginDo.old_select = DWgetSelection(PluginDo.textarea);
         var $popup_date = jQuery('#do__popup_date');
         var $popup_assign = jQuery('#do__popup_assign');
 
@@ -589,7 +589,7 @@ var PluginDo = {
         }
         pre += '>';
 
-        var sel = getSelection(PluginDo.textarea);
+        var sel = DWgetSelection(PluginDo.textarea);
         if (sel.start === 0 && sel.end === 0) sel = PluginDo.old_select;
 
         var stxt = sel.getText();
