@@ -4,9 +4,10 @@
  * Add button action for the do button
  *
  * @param  {jQuery} $btn   Button element to add the action to
- * @param  {Array}       props Associative array of button properties
- * @param  {string}      edid  ID of the editor textarea
- * @return boolean    If button should be appended
+ * @param  {Array}  props Associative array of button properties
+ * @param  {string} edid  ID of the editor textarea
+ * @return {string} If button should be appended return the id for in aria-controls, otherwise an empty string
+ *
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
 function addBtnActionDo($btn, props, edid) {
@@ -17,7 +18,7 @@ function addBtnActionDo($btn, props, edid) {
         PluginDo.toggleToolbarDialog(e);
     });
 
-    return true;
+    return 'do';
 }
 
 /**
