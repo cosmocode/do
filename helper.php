@@ -19,7 +19,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Constructor. Initializes the SQLite DB Connection
      */
-    function helper_plugin_do() {
+    public function helper_plugin_do() {
         $this->db = plugin_load('helper', 'sqlite');
         if(!$this->db) {
             msg('The do plugin requires the sqlite plugin. Please install it');
@@ -35,7 +35,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *
      * @param string $id page id
      */
-    function cleanPageTasks($id) {
+    public function cleanPageTasks($id) {
         if(!$this->db) return;
         $this->db->query('DELETE FROM tasks WHERE page = ?', $id);
         $this->db->query('DELETE FROM task_assignees WHERE page = ?', $id);
@@ -47,7 +47,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param array $data task informations as key value array.
      *                    keys are: page, md5, date, user, text, creator
      */
-    function saveTask($data) {
+    public function saveTask($data) {
         if(!$this->db) return;
 
         $this->db->query(
@@ -86,7 +86,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param bool $checkAccess yes: check if item is hidden or blocked by ACL, false: skip this check
      * @return array filtered result.
      */
-    function loadTasks($args = null, $checkAccess = true) {
+    public function loadTasks($args = null, $checkAccess = true) {
         if(!$this->db) return array();
         $where = ' WHERE 1=1';
         $limit = '';
@@ -214,7 +214,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *          or timestamp on task completion
      *          or -2 if not allowed
      */
-    function toggleTaskStatus($page, $md5, $commitmsg = '') {
+    public function toggleTaskStatus($page, $md5, $commitmsg = '') {
         global $ID;
 
         if(!$this->db) return -2; //not allowed
@@ -282,7 +282,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param string $user user who triggered the notification
      * @param string $msg the closing message if any
      */
-    function sendMail($receivers, $type, $task, $user = '', $msg = '') {
+    public function sendMail($receivers, $type, $task, $user = '', $msg = '') {
         global $conf;
         /** @var DokuWiki_Auth_Plugin $auth */
         global $auth;
@@ -335,7 +335,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param string $page page id
      * @return array
      */
-    function getAllPageStatuses($page) {
+    public function getAllPageStatuses($page) {
         if(!$this->db) return array();
         if(!$page) return array();
 
@@ -369,7 +369,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param string $id String  Id of the wiki page - if no id is given the current page will be used.
      * @return array
      */
-    function getPageTaskCount($id = '') {
+    public function getPageTaskCount($id = '') {
         if(!$id) {
             global $ID;
             $id = $ID;
@@ -411,7 +411,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param bool $return if true return html, otherwise print the html
      * @return string|void
      */
-    function tpl_pageTasks($id = '', $return = false) {
+    public function tpl_pageTasks($id = '', $return = false) {
         $count = $this->getPageTaskCount($id);
         if($count['count'] == 0) return;
 
@@ -440,7 +440,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      * @param string $user users loginname
      * @return string username with possible links
      */
-    function getPrettyUser($user) {
+    public function getPrettyUser($user) {
         $userpage = $this->getConf('userpage');
         if($userpage !== '' && $user !== '') {
             return p_get_renderer('xhtml')->internallink(

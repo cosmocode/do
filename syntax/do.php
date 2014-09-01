@@ -13,42 +13,42 @@ if(!defined('DOKU_INC')) die();
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     /** @var helper_plugin_do */
-    private $hlp = null; // helper plugin
-    private $position = 0;
+    protected $hlp = null; // helper plugin
+    protected $position = 0;
 
     private $run = array(); // page run cache
     private $saved = array(); // save state cache
     private $ids = array();
 
-    function syntax_plugin_do_do() {
+    public function syntax_plugin_do_do() {
         $this->hlp = plugin_load('helper', 'do');
     }
 
-    function getType() {
+    public function getType() {
         return 'formatting';
     }
 
-    function getPType() {
+    public function getPType() {
         return 'normal';
     }
 
-    function getSort() {
+    public function getSort() {
         return 155;
     }
 
-    function getAllowedTypes() {
+    public function getAllowedTypes() {
         return array('formatting');
     }
 
-    function connectTo($mode) {
+    public function connectTo($mode) {
         $this->Lexer->addEntryPattern('<do.*?>(?=.*?</do>)', $mode, 'plugin_do_do');
     }
 
-    function postConnect() {
+    public function postConnect() {
         $this->Lexer->addExitPattern('</do>', 'plugin_do_do');
     }
 
-    function handle($match, $state, $pos, &$handler) {
+    public function handle($match, $state, $pos, &$handler) {
         global $auth;
 
         $data = array(
@@ -112,7 +112,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      * Return the plain-text content of an html blob, similar to
      * node.textContent, but trimmed
      */
-    function _textContent($text) {
+    protected function _textContent($text) {
         return trim(html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8'));
     }
 
@@ -123,7 +123,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      * @param    string $md5 - the task identifier
      * @return  array        - the task data (empty for new tasks)
      */
-    function _oldTask($page, $md5) {
+    protected function _oldTask($page, $md5) {
         static $oldTasks = null; // old task cache
         static $curPage = null; // what page are we working on?
 
@@ -145,7 +145,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      * Returns true on the first call, false on subsequent calls
      * for a given task
      */
-    function _needsSave($page, $md5) {
+    protected function _needsSave($page, $md5) {
         if(isset($this->saved[$page][$md5])) {
             return false;
         }
@@ -153,7 +153,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
-    function render($mode, &$R, $data) {
+    public function render($mode, &$R, $data) {
         global $ID;
 
         // we don't care for QC FIXME we probably should ignore even more renderers
@@ -249,7 +249,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
      *
      * @param array $data
      */
-    function _save($data) {
+    protected function _save($data) {
         global $ID;
         global $auth;
 

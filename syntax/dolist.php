@@ -13,19 +13,19 @@ if(!defined('DOKU_INC')) die();
 
 class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
-    function getType() {
+    public function getType() {
         return 'substition';
     }
 
-    function getPType() {
+    public function getPType() {
         return 'block';
     }
 
-    function getSort() {
+    public function getSort() {
         return 155;
     }
 
-    function connectTo($mode) {
+    public function connectTo($mode) {
         $this->Lexer->addSpecialPattern('{{dolist>.*?}}', $mode, 'plugin_do_dolist');
     }
 
@@ -38,7 +38,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * @param   Doku_Handler &$handler Reference to the Doku_Handler object
      * @return  array Return an array with all data you want to use in render()
      */
-    function handle($match, $state, $pos, Doku_Handler &$handler) {
+    public function handle($match, $state, $pos, Doku_Handler &$handler) {
         // parse the given match
         $match = substr($match, 9, -2);
 
@@ -87,7 +87,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * @param array          $data data created by handler()
      * @return bool
      */
-    function render($mode, Doku_Renderer &$R, $data) {
+    public function render($mode, Doku_Renderer &$R, $data) {
         if($mode != 'xhtml') return false;
         $R->info['cache'] = false;
         global $ID;
@@ -176,7 +176,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * @param string $closedBy user id
      * @return array with class, image name and title
      */
-    function prepareTaskInfo($user, $date, $status, $closedBy) {
+    protected function prepareTaskInfo($user, $date, $status, $closedBy) {
         $result = array();
         if($user && $date) {
             $result[] = 'plugin_do1';
@@ -223,7 +223,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * @param string $arg placeholder value
      * @return string
      */
-    function getJsText($str, $arg) {
+    protected function getJsText($str, $arg) {
         return sprintf($this->lang['js'][$str], $arg) . ' ';
     }
 }

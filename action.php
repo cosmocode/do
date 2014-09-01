@@ -19,8 +19,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      *
      * @param Doku_Event_Handler $controller
      */
-    function register(Doku_Event_Handler $controller) {
-
+    public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
         $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
         $controller->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'handle_delete');
@@ -31,7 +30,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      * @param Doku_Event $event event object by reference
      * @param null       $param the parameters passed to register_hook when this handler was registered
      */
-    function _adduser(&$event, $param) {
+    public function _adduser(&$event, $param) {
         if(!isset($_SERVER['REMOTE_USER'])) {
             return;
         }
@@ -48,7 +47,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      * @param null       $param the parameters passed to register_hook when this handler was registered
      * @return bool
      */
-    function handle_ajax_call(&$event, $param) {
+    public function handle_ajax_call(&$event, $param) {
         if($event->data == 'plugin_do') {
             // toggle status of a single task
             global $INPUT;
@@ -105,7 +104,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      * @param null       $param the parameters passed to register_hook when this handler was registered
      * @return bool
      */
-    function handle_act_preprocess(&$event, $param) {
+    public function handle_act_preprocess(&$event, $param) {
 
         if($event->data != 'plugin_do') return true;
         global $INPUT;
@@ -148,7 +147,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      * @param Doku_Event $event event object by reference
      * @param null       $param the parameters passed to register_hook when this handler was registered
      */
-    function handle_delete(&$event, $param) {
+    public function handle_delete(&$event, $param) {
         if(preg_match('/<do[^>]*>.*<\/do>/i', $event->data[0][1])) {
             // Only run if all tasks where removed from the page
             return;
