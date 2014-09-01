@@ -35,10 +35,10 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * @param   string        $match   The text matched by the patterns
      * @param   int           $state   The lexer state for the match
      * @param   int           $pos     The character position of the matched text
-     * @param   Doku_Handler &$handler Reference to the Doku_Handler object
+     * @param   Doku_Handler  $handler Reference to the Doku_Handler object
      * @return  array Return an array with all data you want to use in render()
      */
-    public function handle($match, $state, $pos, Doku_Handler &$handler) {
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
         // parse the given match
         $match = substr($match, 9, -2);
 
@@ -83,11 +83,11 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
      * Create output
      *
      * @param string         $mode output format being rendered
-     * @param Doku_Renderer &$R    reference to the current renderer object
+     * @param Doku_Renderer  $R    reference to the current renderer object
      * @param array          $data data created by handler()
      * @return bool
      */
-    public function render($mode, Doku_Renderer &$R, $data) {
+    public function render($mode, Doku_Renderer $R, $data) {
         if($mode != 'xhtml') return false;
         $R->info['cache'] = false;
         global $ID;

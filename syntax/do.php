@@ -48,7 +48,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         $this->Lexer->addExitPattern('</do>', 'plugin_do_do');
     }
 
-    public function handle($match, $state, $pos, &$handler) {
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
         global $auth;
 
         $data = array(
@@ -153,7 +153,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         return true;
     }
 
-    public function render($mode, &$R, $data) {
+    public function render($mode, Doku_Renderer $R, $data) {
         global $ID;
 
         // we don't care for QC FIXME we probably should ignore even more renderers
