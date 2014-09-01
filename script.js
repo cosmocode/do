@@ -442,8 +442,13 @@ var PluginDo = {
         var updateSingleTask = function (response) {
             var closedby = null,
                 closedon = null;
-            if (response == "-1") {
-                alert(PluginDo.getLang("notloggedin"));
+            if (response == "-1" || response == "-2") {
+                var langkey = 'notallowed';
+                if(response == "-1") {
+                    langkey = "notloggedin";
+                }
+                alert(PluginDo.getLang(langkey));
+
                 //remove throbber
                 PluginDo.switchDoNr(!donr, $me);
                 return;

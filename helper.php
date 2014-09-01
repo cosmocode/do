@@ -80,15 +80,14 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *  - md5       a single task
      *
      * @param array $args filters to apply
+     * @param bool $checkAccess yes: check if item is hidden or blocked by ACL, false: skip this check
      * @return array filtered result.
      */
-    function loadTasks($args = null){
+    function loadTasks($args = null, $checkAccess = true){
         if(!$this->db) return array();
-        $where = '';
+        $where = ' WHERE 1=1';
         $limit = '';
         if (isset($args)) {
-            $where .= ' WHERE 1=1';
-
             if (isset($args['ns'])) {
                 // Whatever you do here, test it against the following mappings
                 // (current ID has to be NS1:NS2:PAGE):
@@ -158,25 +157,29 @@ class helper_plugin_do extends DokuWiki_Plugin {
                     $where .= sprintf(' AND %s in (%s)',$search,$args[$n]);
                 }
             }
-        }
 
-        $res = $this->db->query('SELECT A.page     AS page,
-                                        A.md5      AS md5,
-                                        A.date     AS date,
-                                        A.text     AS text,
-                                        A.creator  AS creator,
-                                        B.msg      AS msg,
-                                        B.status   AS status,
-                                        B.closedby AS closedby,
-                                        C.user     AS user
-                                   FROM tasks A LEFT JOIN task_status B
-                                     ON A.page = B.page
-                                     AND A.md5 = B.md5
-                                   LEFT JOIN task_assignees C
-                                     ON A.page = C.page
-                                     AND A.md5 = C.md5
-                                     '.$where.'
-                                   ORDER BY A.page, A.pos' . $limit);
+        }
+        if($checkAccess) {
+            $where .= ' AND GETACCESSLEVEL(A.page) >= ' . AUTH_READ;
+        }
+        $query = 'SELECT A.page     AS page,
+                        A.md5      AS md5,
+                        A.date     AS date,
+                        A.text     AS text,
+                        A.creator  AS creator,
+                        B.msg      AS msg,
+                        B.status   AS status,
+                        B.closedby AS closedby,
+                        C.user     AS user
+                   FROM tasks A LEFT JOIN task_status B
+                     ON A.page = B.page
+                     AND A.md5 = B.md5
+                   LEFT JOIN task_assignees C
+                     ON A.page = C.page
+                     AND A.md5 = C.md5
+                     ' .$where. '
+                   ORDER BY A.page, A.pos' . $limit;
+        $res = $this->db->query($query);
         $res = $this->db->res2arr($res);
 
         // merge assignees into users array
@@ -198,28 +201,37 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
     /**
-     * toggles a tasks status.
+     * Toggles a tasks status.
      *
      * @param string $page          page id of the task
      * @param string $md5           tasks md5 hash
      * @param string $commitmsg     a optional message to the task completion
-     * @return bool false on undone a task or timestamp on task completion
+     * @return bool|string|int
+     *          false on undone a task
+     *          or timestamp on task completion
+     *          or -2 if not allowed
      */
     function toggleTaskStatus($page, $md5, $commitmsg = ''){
         global $ID;
 
-        if(!$this->db) return array();
+        if(!$this->db) return -2; //not allowed
         $md5 = trim($md5);
-        if(!$page || !$md5) return array();
+        if(!$page || !$md5) return -2; //not allowed
 
         $commitmsg = strip_tags($commitmsg);
 
-        $res = $this->db->query('SELECT status
-                                   FROM task_status
-                                  WHERE page = ?
-                                    AND md5  = ?',
+        $res = $this->db->query('SELECT A.page AS page,
+                                        B.status AS status
+                                   FROM tasks A LEFT JOIN task_status B
+                                     ON A.page = B.page
+                                     AND A.md5 = B.md5
+                                  WHERE A.page = ?
+                                    AND A.md5  = ?',
                                 $page, $md5);
         $stat = $this->db->res2row($res);
+        if($stat == false) {
+            return -2; //not allowed, task don't exist
+        }
         $stat = $stat['status'];
 
         // load task details and determine notify receivers
@@ -306,18 +318,23 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
 
-
-    function _getUser() {
-        global $USERINFO;
-        if ($USERINFO['name']) return $USERINFO['name'];
-        if ($_SERVER['REMOTE_USER']) return $_SERVER['REMOTE_USER'];
-        return $_SERVER['REMOTE_ADDR'];
-    }
+//    //Not used anymore?
+//
+//    function _getUser() {
+//        global $USERINFO;
+//        if ($USERINFO['name']) return $USERINFO['name'];
+//        if ($_SERVER['REMOTE_USER']) return $_SERVER['REMOTE_USER'];
+//        return $_SERVER['REMOTE_ADDR'];
+//    }
 
     /**
      * load all page stats from a given page.
+     *
+     * Note: doesn't check ACL
+     *
+     * @param string $page page id
+     * @return array
      */
-
     function getAllPageStatuses($page){
         if(!$this->db) return array();
         if(!$page) return array();
@@ -349,7 +366,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *   done   - number of all finished tasks
      *   undone - number of all tasks to do
      *
-     * @param $id   String  Id of the wiki page - if no id is given the current page will be used.
+     * @param string $id   String  Id of the wiki page - if no id is given the current page will be used.
      * @return array
      */
     function getPageTaskCount($id = '') {
@@ -357,8 +374,12 @@ class helper_plugin_do extends DokuWiki_Plugin {
             global $ID;
             $id = $ID;
         }
-
-        $tasks = $this->loadTasks(array('id'=>$id));
+        if(auth_quickaclcheck($id) < AUTH_READ) {
+            $tasks = array();
+        } else {
+            //for improving performance skip the access check in the query
+            $tasks = $this->loadTasks(array('id'=>$id), $checkAccess = false);
+        }
 
         $result = array(
             'count'  => count($tasks),
@@ -385,6 +406,10 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
     /**
      * displays a small page task status view
+     *
+     * @param string $id     page id
+     * @param bool   $return if true return html, otherwise print the html
+     * @return string|void
      */
     function tpl_pageTasks($id = '', $return = false) {
         $count = $this->getPageTaskCount($id);
@@ -410,7 +435,8 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
     /**
-     * get a pretty userlink
+     * Get a pretty userlink
+     *
      * @param string $user users loginname
      * @return string username with possible links
      */

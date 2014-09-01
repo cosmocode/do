@@ -41,6 +41,7 @@ $lang['js']['assignee'] = 'Task is assigned to %s.';
 $lang['js']['due'] = 'Due on %s.';
 
 $lang['js']['notloggedin'] = 'You are not logged in.';
+$lang['js']['notallowed'] = 'Action not allowed';
 $lang['js']['closedby'] = 'Task was closed by %s.';
 $lang['js']['by_unknown'] = 'an unknown user';
 
