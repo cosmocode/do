@@ -9,9 +9,8 @@
  */
 
 // must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-require_once(DOKU_INC.'inc/JSON.php');
-
+if(!defined('DOKU_INC')) die();
+require_once(DOKU_INC . 'inc/JSON.php');
 
 class action_plugin_do extends DokuWiki_Action_Plugin {
 
@@ -25,15 +24,15 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
         $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, 'handle_ajax_call');
         $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'handle_act_preprocess');
         $controller->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'handle_delete');
-        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER',  $this, '_adduser');
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER', $this, '_adduser');
     }
 
     /**
-     * @param Doku_Event $event  event object by reference
-     * @param null      $param  the parameters passed to register_hook when this handler was registered
+     * @param Doku_Event $event event object by reference
+     * @param null       $param the parameters passed to register_hook when this handler was registered
      */
     function _adduser(&$event, $param) {
-        if (!isset($_SERVER['REMOTE_USER'])) {
+        if(!isset($_SERVER['REMOTE_USER'])) {
             return;
         }
         global $JSINFO;
@@ -45,12 +44,12 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     /**
-     * @param Doku_Event $event  event object by reference
-     * @param null      $param  the parameters passed to register_hook when this handler was registered
+     * @param Doku_Event $event event object by reference
+     * @param null       $param the parameters passed to register_hook when this handler was registered
      * @return bool
      */
     function handle_ajax_call(&$event, $param) {
-        if($event->data == 'plugin_do'){
+        if($event->data == 'plugin_do') {
             // toggle status of a single task
             global $INPUT;
 
@@ -59,7 +58,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
             $id = cleanID($_REQUEST['do_page']);
 
-            if (auth_quickaclcheck($id) < AUTH_EDIT) {
+            if(auth_quickaclcheck($id) < AUTH_EDIT) {
                 if($INPUT->server->has('REMOTE_USER')) {
                     echo -2; //not allowed
                 } else {
@@ -79,7 +78,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
             $JSON = new JSON();
             echo $JSON->encode($status);
 
-        }elseif($event->data == 'plugin_do_status'){
+        } elseif($event->data == 'plugin_do_status') {
             // read status for a bunch of tasks
 
             $event->preventDefault();
@@ -87,7 +86,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
             $page = cleanID($_REQUEST['do_page']);
 
-            if (auth_quickaclcheck($page) < AUTH_READ) {
+            if(auth_quickaclcheck($page) < AUTH_READ) {
                 $status = array();
             } else {
                 /** @var helper_plugin_do $hlp */
@@ -102,8 +101,8 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     /**
-     * @param Doku_Event $event  event object by reference
-     * @param null      $param  the parameters passed to register_hook when this handler was registered
+     * @param Doku_Event $event event object by reference
+     * @param null       $param the parameters passed to register_hook when this handler was registered
      * @return bool
      */
     function handle_act_preprocess(&$event, $param) {
@@ -113,7 +112,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
 
         $pageid = cleanID($_REQUEST['do_page']);
         $status = '';
-        if (auth_quickaclcheck($pageid) < AUTH_EDIT) {
+        if(auth_quickaclcheck($pageid) < AUTH_EDIT) {
             $lvl = -1;
             $key = 'notloggedin';
             if($INPUT->server->has('REMOTE_USER')) {
@@ -146,16 +145,16 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     /**
-     * @param Doku_Event $event  event object by reference
-     * @param null      $param  the parameters passed to register_hook when this handler was registered
+     * @param Doku_Event $event event object by reference
+     * @param null       $param the parameters passed to register_hook when this handler was registered
      */
-    function handle_delete(&$event, $param){
-        if (preg_match('/<do[^>]*>.*<\/do>/i',$event->data[0][1])) {
+    function handle_delete(&$event, $param) {
+        if(preg_match('/<do[^>]*>.*<\/do>/i', $event->data[0][1])) {
             // Only run if all tasks where removed from the page
             return;
         }
 
-        if(isset($this->run[$event->data[2]])){
+        if(isset($this->run[$event->data[2]])) {
             // Only execute on the first run
             return;
         }
