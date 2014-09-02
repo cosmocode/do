@@ -9,7 +9,7 @@
  */
 
 // must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
+if(!defined('DOKU_INC')) die();
 
 class helper_plugin_do extends DokuWiki_Plugin {
 
@@ -19,48 +19,51 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Constructor. Initializes the SQLite DB Connection
      */
-    function helper_plugin_do() {
+    public function helper_plugin_do() {
         $this->db = plugin_load('helper', 'sqlite');
-        if(!$this->db){
+        if(!$this->db) {
             msg('The do plugin requires the sqlite plugin. Please install it');
             return;
         }
-        if(!$this->db->init('do',dirname(__FILE__).'/db/')){
+        if(!$this->db->init('do', dirname(__FILE__) . '/db/')) {
             $this->db = null;
         }
     }
 
     /**
      * Delete the all tasks from a given page id
+     *
+     * @param string $id page id
      */
-    function cleanPageTasks($id){
+    public function cleanPageTasks($id) {
         if(!$this->db) return;
-        $this->db->query('DELETE FROM tasks WHERE page = ?',$id);
-        $this->db->query('DELETE FROM task_assignees WHERE page = ?',$id);
+        $this->db->query('DELETE FROM tasks WHERE page = ?', $id);
+        $this->db->query('DELETE FROM task_assignees WHERE page = ?', $id);
     }
 
     /**
      * Save a task.
      *
-     * @param array  $data       task informations as key value array.
-     *                          keys are: page, md5, date, user, text, creator
+     * @param array $data task informations as key value array.
+     *                    keys are: page, md5, date, user, text, creator
      */
-    function saveTask($data){
+    public function saveTask($data) {
         if(!$this->db) return;
 
         $this->db->query(
             'INSERT INTO tasks (page,md5,date,text,creator,pos)
              VALUES (?, ?, ?, ?, ?, ?)',
-             $data['page'],
-             $data['md5'],
-             $data['date'],
-             $data['text'],
-             $data['creator'],
-             $data['pos']
+            $data['page'],
+            $data['md5'],
+            $data['date'],
+            $data['text'],
+            $data['creator'],
+            $data['pos']
         );
-        foreach ((array)$data['users'] as $userName) {
+        foreach((array) $data['users'] as $userName) {
             $this->db->query(
-                'INSERT INTO task_assignees (page,md5,user) VALUES (?,?,?)',
+                'INSERT INTO task_assignees (page,md5,user)
+                 VALUES (?,?,?)',
                 $data['page'],
                 $data['md5'],
                 $userName
@@ -80,16 +83,15 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *  - md5       a single task
      *
      * @param array $args filters to apply
+     * @param bool $checkAccess yes: check if item is hidden or blocked by ACL, false: skip this check
      * @return array filtered result.
      */
-    function loadTasks($args = null){
+    public function loadTasks($args = null, $checkAccess = true) {
         if(!$this->db) return array();
-        $where = '';
+        $where = ' WHERE 1=1';
         $limit = '';
-        if (isset($args)) {
-            $where .= ' WHERE 1=1';
-
-            if (isset($args['ns'])) {
+        if(isset($args)) {
+            if(isset($args['ns'])) {
                 // Whatever you do here, test it against the following mappings
                 // (current ID has to be NS1:NS2:PAGE):
                 // '..:..' => ''
@@ -100,96 +102,100 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
                 global $ID;
                 $ns = trim(resolve_id(getNS($ID), $args['ns'], false), ':');
-                if (strlen($ns) > 0) {
+                if(strlen($ns) > 0) {
                     // Do not match NSbla with NS, but only NS:bla
                     $ns .= ':';
                 }
 
-                $where .= sprintf(' AND A.page LIKE %s',$this->db->quote_string($ns.'%'));
+                $where .= sprintf(' AND A.page LIKE %s', $this->db->quote_string($ns . '%'));
             }
 
-            if (isset($args['id'])) {
+            if(isset($args['id'])) {
                 global $ID;
-                if (!is_array($args['id'])) {
+                if(!is_array($args['id'])) {
                     $args['id'] = array($args['id']);
                 }
                 $exists = false;
                 resolve_pageid(getNS($ID), $args['id'][0], $exists);
-                $where .= sprintf(' AND A.page = %s',$this->db->quote_string($args['id'][0]));
+                $where .= sprintf(' AND A.page = %s', $this->db->quote_string($args['id'][0]));
             }
 
-            if (isset($args['status'])) {
+            if(isset($args['status'])) {
                 $status = utf8_strtolower($args['status'][0]);
-                if ($status == 'done') {
+                if($status == 'done') {
                     $where .= ' AND B.status IS NOT null';
-                } elseif ($status == 'undone') {
+                } elseif($status == 'undone') {
                     $where .= ' AND B.status IS null';
                 }
 
             }
 
-            if (isset($args['limit'])) {
+            if(isset($args['limit'])) {
                 $limit = ' LIMIT ' . intval($args['limit'][0]);
             }
 
-            if (isset($args['md5'])) {
-                if (!is_array($args['md5'])) {
+            if(isset($args['md5'])) {
+                if(!is_array($args['md5'])) {
                     $args['md5'] = array($args['md5']);
                 }
                 $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5'][0]);
             }
 
             $argn = array('user', 'creator');
-            foreach ($argn as $n) {
-                if (isset($args[$n])) {
-                    if (!is_array($args[$n])) {
+            foreach($argn as $n) {
+                if(isset($args[$n])) {
+                    if(!is_array($args[$n])) {
                         $args[$n] = array($args[$n]);
                     }
                     $search = $n;
 
                     /** @var DokuWiki_Auth_Plugin $auth */
                     global $auth;
-                    if ($auth && !$auth->isCaseSensitive()) {
+                    if($auth && !$auth->isCaseSensitive()) {
                         $search = "lower($search)";
                         $args[$n] = array_map('utf8_strtolower', $args[$n]);
                     }
                     $args[$n] = $this->db->quote_and_join($args[$n]);
 
-                    $where .= sprintf(' AND %s in (%s)',$search,$args[$n]);
+                    $where .= sprintf(' AND %s in (%s)', $search, $args[$n]);
                 }
             }
-        }
 
-        $res = $this->db->query('SELECT A.page     AS page,
-                                        A.md5      AS md5,
-                                        A.date     AS date,
-                                        A.text     AS text,
-                                        A.creator  AS creator,
-                                        B.msg      AS msg,
-                                        B.status   AS status,
-                                        B.closedby AS closedby,
-                                        C.user     AS user
-                                   FROM tasks A LEFT JOIN task_status B
-                                     ON A.page = B.page
-                                     AND A.md5 = B.md5
-                                   LEFT JOIN task_assignees C
-                                     ON A.page = C.page
-                                     AND A.md5 = C.md5
-                                     '.$where.'
-                                   ORDER BY A.page, A.pos' . $limit);
+        }
+        if($checkAccess) {
+            $where .= ' AND GETACCESSLEVEL(A.page) >= ' . AUTH_READ;
+        }
+        $query = 'SELECT A.page     AS page,
+                        A.md5      AS md5,
+                        A.date     AS date,
+                        A.text     AS text,
+                        A.creator  AS creator,
+                        B.msg      AS msg,
+                        B.status   AS status,
+                        B.closedby AS closedby,
+                        C.user     AS user
+                   FROM tasks A LEFT JOIN task_status B
+                     ON A.page = B.page
+                     AND A.md5 = B.md5
+                   LEFT JOIN task_assignees C
+                     ON A.page = C.page
+                     AND A.md5 = C.md5
+                     ' . $where . '
+                   ORDER BY A.page, A.pos' . $limit;
+        $res = $this->db->query($query);
         $res = $this->db->res2arr($res);
 
         // merge assignees into users array
         $result = array();
-        foreach ($res as $row) {
+        foreach($res as $row) {
             $key = $row['page'] . $row['md5'];
-            if (!isset($result[$key])) {
+            if(!isset($result[$key])) {
                 $result[$key] = $row;
                 unset($result[$key]['user']);
                 $result[$key]['users'] = array();
             }
 
-            if ($row['user'] !== null) {
+            if($row['user'] !== null) {
                 $result[$key]['users'][] = $row['user'];
             }
         }
@@ -198,28 +204,39 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
     /**
-     * toggles a tasks status.
+     * Toggles a tasks status.
      *
-     * @param string $page          page id of the task
-     * @param string $md5           tasks md5 hash
-     * @param string $commitmsg     a optional message to the task completion
-     * @return bool false on undone a task or timestamp on task completion
+     * @param string $page page id of the task
+     * @param string $md5 tasks md5 hash
+     * @param string $commitmsg a optional message to the task completion
+     * @return bool|string|int
+     *          false on undone a task
+     *          or timestamp on task completion
+     *          or -2 if not allowed
      */
-    function toggleTaskStatus($page, $md5, $commitmsg = ''){
+    public function toggleTaskStatus($page, $md5, $commitmsg = '') {
         global $ID;
 
-        if(!$this->db) return array();
+        if(!$this->db) return -2; //not allowed
         $md5 = trim($md5);
-        if(!$page || !$md5) return array();
+        if(!$page || !$md5) return -2; //not allowed
 
         $commitmsg = strip_tags($commitmsg);
 
-        $res = $this->db->query('SELECT status
-                                   FROM task_status
-                                  WHERE page = ?
-                                    AND md5  = ?',
-                                $page, $md5);
+        $res = $this->db->query(
+            'SELECT A.page AS page,
+                    B.status AS status
+               FROM tasks A LEFT JOIN task_status B
+                 ON A.page = B.page
+                 AND A.md5 = B.md5
+              WHERE A.page = ?
+                AND A.md5  = ?',
+            $page, $md5
+        );
         $stat = $this->db->res2row($res);
+        if($stat == false) {
+            return -2; //not allowed, task don't exist
+        }
         $stat = $stat['status'];
 
         // load task details and determine notify receivers
@@ -227,26 +244,31 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $recs = (array) $task['users'];
         array_push($recs, $task['creator']);
         $recs = array_unique($recs);
-        $recs = array_diff($recs,array($_SERVER['REMOTE_USER']));
+        $recs = array_diff($recs, array($_SERVER['REMOTE_USER']));
 
         $name = $_SERVER['REMOTE_USER'];
-        if(!$stat){
+        if(!$stat) {
             // close the task
-            $stat = date('Y-m-d',time());
-            $this->db->query('INSERT INTO task_status
-                                    (page, md5, status, closedby, msg)
-                                    VALUES (?, ?, ?, ?, ?)',
-                                    $page, $md5, $stat, $name, $commitmsg);
+            $stat = date('Y-m-d', time());
+            $this->db->query(
+                'INSERT INTO task_status
+                     (page, md5, status, closedby, msg)
+                 VALUES
+                     (?, ?, ?, ?, ?)',
+                $page, $md5, $stat, $name, $commitmsg
+            );
 
-            $this->sendMail($recs,'close',$task,$name,$commitmsg);
+            $this->sendMail($recs, 'close', $task, $name, $commitmsg);
             return $stat;
-        }else{
+        } else {
             // reopen the task
-            $this->db->query('DELETE FROM task_status
-                               WHERE page = ?
-                               AND md5  = ?',
-                               $page, $md5);
-            $this->sendMail($recs,'reopen',$task,$name);
+            $this->db->query(
+                'DELETE FROM task_status
+                 WHERE page = ?
+                   AND md5  = ?',
+                $page, $md5
+            );
+            $this->sendMail($recs, 'reopen', $task, $name);
             return false;
         }
     }
@@ -254,13 +276,13 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Notify assignees or creators of new tasks and status changes
      *
-     * @param array   $receivers  list of user names to notify
-     * @param string  $type       type of notification (open|reopen|close)
-     * @param array   $task
-     * @param string  $user       user who triggered the notification
-     * @param string  $msg        the closing message if any
+     * @param array $receivers list of user names to notify
+     * @param string $type type of notification (open|reopen|close)
+     * @param array $task
+     * @param string $user user who triggered the notification
+     * @param string $msg the closing message if any
      */
-    function sendMail($receivers,$type,$task,$user='',$msg=''){
+    public function sendMail($receivers, $type, $task, $user = '', $msg = '') {
         global $conf;
         /** @var DokuWiki_Auth_Plugin $auth */
         global $auth;
@@ -271,59 +293,54 @@ class helper_plugin_do extends DokuWiki_Plugin {
         if(!count($receivers)) return;
 
         // prepare subject
-        $subj  = '['.$conf['title'].'] ';
-        $subj .= sprintf($this->getLang('mail_'.$type), $task['text']);
+        $subj = '[' . $conf['title'] . '] ';
+        $subj .= sprintf($this->getLang('mail_' . $type), $task['text']);
 
         // prepare text
-        $text  = file_get_contents($this->localFN('mail_'.$type));
-        $text  = str_replace(
-                    array(
-                        '@USER@',
-                        '@DATE@',
-                        '@TASK@',
-                        '@TASKURL@',
-                        '@MSG@',
-                        '@DOKUWIKIURL@'
-                    ),
-                    array(
-                        isset($user) ? $user : $this->getLang('someone'),
-                        isset($task['date']) ? $task['date'] : $this->getLang('nodue'),
-                        $task['text'],
-                        wl($task['page'], '', true, '&').'#plgdo__'.$task['md5'],
-                        $msg,
-                        DOKU_URL
-                    ),
-                    $text
-                );
+        $text = file_get_contents($this->localFN('mail_' . $type));
+        $text = str_replace(
+            array(
+                '@USER@',
+                '@DATE@',
+                '@TASK@',
+                '@TASKURL@',
+                '@MSG@',
+                '@DOKUWIKIURL@'
+            ),
+            array(
+                isset($user) ? $user : $this->getLang('someone'),
+                isset($task['date']) ? $task['date'] : $this->getLang('nodue'),
+                $task['text'],
+                wl($task['page'], '', true, '&') . '#plgdo__' . $task['md5'],
+                $msg,
+                DOKU_URL
+            ),
+            $text
+        );
 
         // send mails
-        foreach($receivers as $receiver){
+        foreach($receivers as $receiver) {
             $info = $auth->getUserData($receiver);
             if(!$info['mail']) continue;
-            $to = $info['name'].' <'.$info['mail'].'>';
-            mail_send($to,$subj,$text,$conf['mailfrom']);
+            $to = $info['name'] . ' <' . $info['mail'] . '>';
+            mail_send($to, $subj, $text, $conf['mailfrom']);
         }
-    }
-
-
-
-    function _getUser() {
-        global $USERINFO;
-        if ($USERINFO['name']) return $USERINFO['name'];
-        if ($_SERVER['REMOTE_USER']) return $_SERVER['REMOTE_USER'];
-        return $_SERVER['REMOTE_ADDR'];
     }
 
     /**
      * load all page stats from a given page.
+     *
+     * Note: doesn't check ACL
+     *
+     * @param string $page page id
+     * @return array
      */
-
-    function getAllPageStatuses($page){
+    public function getAllPageStatuses($page) {
         if(!$this->db) return array();
         if(!$page) return array();
 
-        $res = $this->db->query('
-            SELECT
+        $res = $this->db->query(
+           'SELECT
                 A.page     AS page,
                 A.creator  AS creator,
                 A.md5      AS md5,
@@ -349,32 +366,36 @@ class helper_plugin_do extends DokuWiki_Plugin {
      *   done   - number of all finished tasks
      *   undone - number of all tasks to do
      *
-     * @param $id   String  Id of the wiki page - if no id is given the current page will be used.
+     * @param string $id String  Id of the wiki page - if no id is given the current page will be used.
      * @return array
      */
-    function getPageTaskCount($id = '') {
-        if (!$id) {
+    public function getPageTaskCount($id = '') {
+        if(!$id) {
             global $ID;
             $id = $ID;
         }
-
-        $tasks = $this->loadTasks(array('id'=>$id));
+        if(auth_quickaclcheck($id) < AUTH_READ) {
+            $tasks = array();
+        } else {
+            //for improving performance skip the access check in the query
+            $tasks = $this->loadTasks(array('id' => $id), $checkAccess = false);
+        }
 
         $result = array(
-            'count'  => count($tasks),
-            'done'   => 0,
+            'count' => count($tasks),
+            'done' => 0,
             'undone' => 0,
-            'late'   => 0,
+            'late' => 0,
         );
 
-        foreach ($tasks as $task) {
-            if (empty($task['status'])) {
+        foreach($tasks as $task) {
+            if(empty($task['status'])) {
                 $result['undone']++;
             } else {
                 $result['done']++;
             }
-            if (!empty($task['date']) && empty($task['status'])) {
-                if (strtotime($task['date']) < time()) {
+            if(!empty($task['date']) && empty($task['status'])) {
+                if(strtotime($task['date']) < time()) {
                     $result['late']++;
                 }
             }
@@ -385,40 +406,47 @@ class helper_plugin_do extends DokuWiki_Plugin {
 
     /**
      * displays a small page task status view
+     *
+     * @param string $id page id
+     * @param bool $return if true return html, otherwise print the html
+     * @return string|void
      */
-    function tpl_pageTasks($id = '', $return = false) {
+    public function tpl_pageTasks($id = '', $return = false) {
         $count = $this->getPageTaskCount($id);
-        if ($count['count'] == 0) return;
+        if($count['count'] == 0) return;
 
-        if ($count['undone'] == 0) {// all tasks done
-            $class   = 'do_done';
+        if($count['undone'] == 0) { // all tasks done
+            $class = 'do_done';
             $title = $this->getLang('title_alldone');
-        } elseif ($count['late'] == 0) { // open tasks - no late
-            $class   = 'do_undone';
+        } elseif($count['late'] == 0) { // open tasks - no late
+            $class = 'do_undone';
             $title = sprintf($this->getLang('title_intime'), $count['undone']);
         } else { // late tasks
-            $class   = 'do_late';
+            $class = 'do_late';
             $title = sprintf($this->getLang('title_late'), $count['undone'], $count['late']);
         }
 
-        $out = '<div class="plugin__do_pagetasks" title="'.$title.'"><span class="'.$class.'">';
+        $out = '<div class="plugin__do_pagetasks" title="' . $title . '"><span class="' . $class . '">';
         $out .= $count['undone'];
         $out .= '</span></div>';
 
-        if ($return) return $out;
+        if($return) return $out;
         echo $out;
     }
 
     /**
-     * get a pretty userlink
+     * Get a pretty userlink
+     *
      * @param string $user users loginname
      * @return string username with possible links
      */
-    function getPrettyUser($user) {
+    public function getPrettyUser($user) {
         $userpage = $this->getConf('userpage');
-        if ($userpage !== '' && $user !== '') {
-            return p_get_renderer('xhtml')->internallink(sprintf($userpage, $user),
-                                                         '', '', true, 'navigation');
+        if($userpage !== '' && $user !== '') {
+            return p_get_renderer('xhtml')->internallink(
+                sprintf($userpage, $user),
+                '', '', true, 'navigation'
+            );
 
         } else {
             return editorinfo($user);

@@ -4,4 +4,4 @@ email  dokuwiki@cosmocode.de
 date   2014-05-24
 name   do plugin
 desc   Assign tasks within the wiki
-url    http://www.dokuwiki.org/plugin:do
+url    https://www.dokuwiki.org/plugin:do
