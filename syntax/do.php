@@ -159,6 +159,10 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
         // we don't care for QC FIXME we probably should ignore even more renderers
         if($mode == 'qc') return false;
 
+        if($mode === 'metadata') {
+            return true;
+        }
+
         // augment current task with original creator info and old assignees
         $oldtask = $this->_oldTask($ID, $data['task']['md5']);
         if($oldtask) {
@@ -167,10 +171,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
             $data['task']['status'] = $oldtask['status'];
         }
 
-        // save data to sqlite during meta data run
-        if($mode === 'metadata') {
+        // save data to sqlite during xhtml run
+        if($mode === 'xhtml') {
             $this->_save($data);
-            return true;
         }
 
         // show simple task with status icon for export renderers
