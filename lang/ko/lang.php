@@ -24,6 +24,7 @@ $lang['js']['note_done']       = '완료됨:';
 $lang['js']['assignee']        = '작업은 %s에게 할당되었습니다.';
 $lang['js']['due']             = '%s에 마감됩니다.';
 $lang['js']['notloggedin']     = '로그인되어 있지 않습니다.';
+$lang['js']['notallowed']      = '동작이 허용되지 않습니다';
 $lang['js']['closedby']        = '작업은 %s 사용자가 마쳤습니다.';
 $lang['js']['by_unknown']      = '알 수 없는 사용자';
 $lang['js']['finish_popup_title'] = '작업 마치기';
