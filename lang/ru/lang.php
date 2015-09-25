@@ -4,19 +4,32 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * 
  * @author Aleksandr Selivanov <alexgearbox@gmail.com>
+ * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  */
+$lang['js']['title1']          = 'Назначена для %1$s. Срок: до %2$s.';
+$lang['js']['title2']          = 'Назначена для %1$s. Без крайнего срока.';
+$lang['js']['title3']          = 'Никому не назначенная задача сроком до %2$s.';
+$lang['js']['title4']          = 'Никому не назначена; без крайнего срока.';
 $lang['js']['title_done']      = 'Все задачи выполнены.';
+$lang['js']['done']            = 'Задача завершена %s.';
 $lang['js']['toolbar_title']   = 'Добавить новую задачу';
+$lang['js']['popup_assign']    = 'Назначить для <small>(имя пользователя (-ей))</small>';
+$lang['js']['popup_date']      = 'Срок: до <small>(YYYY-MM-DD)</small>';
 $lang['js']['popup_submit']    = 'Добавить';
 $lang['js']['popup_title']     = 'Создать задачу';
+$lang['js']['popup_msg']       = 'Пояснение';
 $lang['js']['note_done']       = 'Выполнено: ';
+$lang['js']['assignee']        = 'Задача назначена для %s.';
+$lang['js']['due']             = 'Срок: до %s.';
 $lang['js']['notloggedin']     = 'Вы не залогинены.';
+$lang['js']['notallowed']      = 'Дейстивие не разрешено';
+$lang['js']['closedby']        = 'Задачу закрыл (-а) %s.';
 $lang['js']['finish_popup_title'] = 'Закрыть задачу';
 $lang['js']['finish_popup_submit'] = 'Закрыть';
 $lang['title_alldone']         = 'Все задачи выполнены.';
 $lang['task']                  = 'Задача';
 $lang['user']                  = 'Назначена для';
-$lang['date']                  = 'Срок';
+$lang['date']                  = 'Срок: до';
 $lang['status']                = 'Статус';
 $lang['creator']               = 'Автор';
 $lang['none']                  = 'Задачи не найдены';
