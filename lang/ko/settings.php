@@ -2,7 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
  * @author Myeongjin <aranet100@gmail.com>
  */
 $lang['userpage']              = '사용자 문서에 링크를 생성하는 데 사용되는 printf 입력 문자열 (사용자 이름이 나타나야할 곳에 ›%s‹를 넣으세요)';
