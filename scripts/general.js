@@ -52,9 +52,7 @@ jQuery(function () {
     );
 
     //clickable tasks
-    jQuery('a.plugin_do_status').each(function (i, slink) {
-        jQuery(slink).click(PluginDo.toggle_status);
-    });
+    jQuery(document).on('click', 'a.plugin_do_status', PluginDo.toggle_status);
 
     //update do items at page, so changes after last page render are shown
     var $items = jQuery('span.plugin_do_item');
