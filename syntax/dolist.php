@@ -112,14 +112,14 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
     /**
      * @param array $tasks
-     * @param bool  $showUser
-     * @param bool  $showCreator
+     * @param bool  $hideUser
+     * @param bool  $hideCreator
      *
      * @return string
      */
-    public function buildTasklistHTML (array $tasks, $showUser, $showCreator) {
-        $userstyle = $showUser ? ' style="display: none;"' : '';
-        $creatorstyle = $showCreator ? ' style="display: none;"' : '';
+    public function buildTasklistHTML (array $tasks, $hideUser, $hideCreator) {
+        $userstyle = $hideUser ? ' style="display: none;"' : '';
+        $creatorstyle = $hideCreator ? ' style="display: none;"' : '';
 
         $table = '<table class="inline plugin_do">';
         $table .= '    <tr>';
