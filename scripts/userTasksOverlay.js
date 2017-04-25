@@ -22,7 +22,7 @@
         ).done(function showUserTasksOverlay(data) {
             var $wrapper = jQuery('<div class="plugin__do_usertasks_list"></div>');
             $wrapper.css({'display': 'inline-block', 'position': 'absolute'});
-            $wrapper.append(jQuery(data.html));
+            $wrapper.append(jQuery(data));
             $wrapper.appendTo('.dokuwiki');
             $wrapper.position({
                 my: 'middle top',

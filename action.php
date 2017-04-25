@@ -115,8 +115,8 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
             /** @var syntax_plugin_do_dolist $syntax */
             $syntax = plugin_load('syntax', 'do_dolist');
             $html = $syntax->buildTasklistHTML($tasks, true, false);
-            header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(array('html' => $html));
+            header('Content-Type: text/html; charset=utf-8');
+            echo $html;
         }
     }
 
