@@ -23,7 +23,7 @@
             var $wrapper = jQuery('<div class="plugin__do_usertasks_list"></div>');
             $wrapper.css({'display': 'inline-block', 'position': 'absolute'});
             $wrapper.append(jQuery(data.html));
-            $wrapper.appendTo('#dokuwiki__header');
+            $wrapper.appendTo('.dokuwiki');
             $wrapper.position({
                 my: 'middle top',
                 at: 'right bottom',
