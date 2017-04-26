@@ -18,7 +18,7 @@
             DOKU_BASE + 'lib/exe/ajax.php',
             {
                 call: 'plugin_do_userTasksOverlay',
-            },
+            }
         ).done(function showUserTasksOverlay(data) {
             var $wrapper = jQuery('<div class="plugin__do_usertasks_list"></div>');
             $wrapper.css({'display': 'inline-block', 'position': 'absolute'});
