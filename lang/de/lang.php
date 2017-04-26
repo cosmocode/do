@@ -16,6 +16,9 @@ $lang['js']['title4']  = 'Aufgabe ist nicht zugeordnet und hat kein Fälligkeits
 $lang['title_intime']  = '%1$d unerledigte Aufgabe(n).';
 $lang['title_late']    = '%1$d unerledigte Aufgebe(n) von denen %2$d Überfällig sind.';
 $lang['title_alldone'] = 'Alle Aufgaben erledigt.';
+$lang['tasks_user_none']            = 'Sie haben keine offenen Aufgaben.';
+$lang['tasks_user_intime']          = 'Sie haben %1$d offene Aufgaben.';
+$lang['prefix_tasks_user']          = 'Ihre offenen Aufgaben: ';
 
 $lang['js']['title_done']   = 'Alle Aufgaben erledigt.';
 $lang['js']['title_undone'] = '%1$d unerledigte Aufgabe(n).';

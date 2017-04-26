@@ -14,6 +14,9 @@ $lang['js']['title4']  = 'Unassigned task, no deadline.';
 $lang['title_intime']  = 'There are %1$d open tasks.';
 $lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
 $lang['title_alldone'] = 'All tasks done.';
+$lang['tasks_user_none']            = 'You have no open tasks.';
+$lang['tasks_user_intime']          = 'You have %1$d open tasks.';
+$lang['prefix_tasks_user']          = 'your open tasks: ';
 
 $lang['js']['title_done']   = 'All tasks done.';
 $lang['js']['title_undone']  = 'There are %1$d open tasks.';

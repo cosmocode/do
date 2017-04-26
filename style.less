@@ -93,3 +93,31 @@ div.plugin__do_pagetasks span {
 .plugin__do_pagetasks span.do_done   { background-image: url(pix/tasklist_green.png); }
 .plugin__do_pagetasks span.do_undone { background-image: url(pix/tasklist_yellow.png); }
 .plugin__do_pagetasks span.do_late   { background-image: url(pix/tasklist_red.png); }
+
+.plugin__do_usertasks {
+    svg {
+        width: 12px;
+        vertical-align: text-top;
+
+        path {
+            fill: @ini_link;
+        }
+    }
+    &:hover {
+        &:not(.noopentasks) {
+            border-bottom: 1px solid @ini_link;
+        }
+    }
+    cursor: pointer;
+
+    &.noopentasks {
+        cursor: inherit;
+    }
+}
+.plugin__do_usertasks_list {
+    background-color: @ini_background;
+
+    table {
+        margin: 0;
+    }
+}

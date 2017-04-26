@@ -48,7 +48,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
      * @return bool
      */
     public function handle_ajax_call(&$event, $param) {
-        if($event->data == 'plugin_do') {
+        if($event->data == 'plugin_do') { // FIXME: refactor this into early return and switch
             // toggle status of a single task
             global $INPUT;
 
@@ -96,6 +96,27 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
             header('Content-Type: application/json; charset=utf-8');
             $JSON = new JSON();
             echo $JSON->encode($status);
+        } elseif ($event->data === 'plugin_do_userTasksOverlay') {
+            $event->preventDefault();
+            $event->stopPropagation();
+
+            global $INPUT;
+
+            if (!$INPUT->server->has('REMOTE_USER')) {
+                http_status(401, 'login required');
+                return false;
+            }
+
+            $user = $INPUT->server->str('REMOTE_USER');
+
+            /** @var helper_plugin_do $hlp */
+            $hlp = plugin_load('helper', 'do');
+            $tasks = $hlp->loadTasks(array('status' => array('undone'),'user' => $user));
+            /** @var syntax_plugin_do_dolist $syntax */
+            $syntax = plugin_load('syntax', 'do_dolist');
+            $html = $syntax->buildTasklistHTML($tasks, true, false);
+            header('Content-Type: text/html; charset=utf-8');
+            echo $html;
         }
     }
 

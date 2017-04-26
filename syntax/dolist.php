@@ -90,28 +90,12 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
     public function render($mode, Doku_Renderer $R, $data) {
         if($mode != 'xhtml') return false;
         $R->info['cache'] = false;
-        global $ID;
-
-        $this->setupLocale();
-
-        $userstyle = isset($data['user']) ? ' style="display: none;"' : '';
-        $creatorstyle = isset($data['creator']) ? ' style="display: none;"' : '';
 
         /** @var helper_plugin_do $hlp */
         $hlp = plugin_load('helper', 'do');
-        $data = $hlp->loadTasks($data);
+        $tasks = $hlp->loadTasks($data);
 
-        $R->doc .= '<table class="inline plugin_do">';
-        $R->doc .= '    <tr>';
-        $R->doc .= '    <th>' . $this->getLang('task') . '</th>';
-        $R->doc .= '    <th' . $userstyle . '>' . $this->getLang('user') . '</th>';
-        $R->doc .= '    <th>' . $this->getLang('date') . '</th>';
-        $R->doc .= '    <th>' . $this->getLang('status') . '</th>';
-        $R->doc .= '    <th' . $creatorstyle . '>' . $this->getLang('creator') . '</th>';
-        $R->doc .= '    <th>' . $this->lang['js']['popup_msg'] . '</th>';
-        $R->doc .= '  </tr>';
-
-        if(count($data) === 0) {
+        if(count($tasks) === 0) {
             $R->tablerow_open();
             $R->tablecell_open(6, 'center');
             $R->cdata($this->getLang('none'));
@@ -121,50 +105,80 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             return true;
         }
 
-        foreach($data as $row) {
-            $R->doc .= '<tr>';
-            $R->doc .= '<td class="plugin_do_page">';
-            $R->doc .= '<a title="' . $row['page'] . '" href="' . wl($row['page']) . '#plgdo__' . $row['md5'] . '" class="wikilink1">' . hsc($row['text']) . '</a>';
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_assignee"' . $userstyle . '>';
+        $R->doc .= $this->buildTasklistHTML($tasks, isset($data['user']), isset($data['creator']));
+
+        return true;
+    }
+
+    /**
+     * @param array $tasks
+     * @param bool  $hideUser
+     * @param bool  $hideCreator
+     *
+     * @return string
+     */
+    public function buildTasklistHTML (array $tasks, $hideUser, $hideCreator) {
+        $userstyle = $hideUser ? ' style="display: none;"' : '';
+        $creatorstyle = $hideCreator ? ' style="display: none;"' : '';
+
+        $table = '<table class="inline plugin_do">';
+        $table .= '    <tr>';
+        $table .= '    <th>' . $this->getLang('task') . '</th>';
+        $table .= '    <th' . $userstyle . '>' . $this->getLang('user') . '</th>';
+        $table .= '    <th>' . $this->getLang('date') . '</th>';
+        $table .= '    <th>' . $this->getLang('status') . '</th>';
+        $table .= '    <th' . $creatorstyle . '>' . $this->getLang('creator') . '</th>';
+        $table .= '    <th>' . $this->lang['js']['popup_msg'] . '</th>';
+        $table .= '  </tr>';
+
+        global $ID;
+        /** @var helper_plugin_do $hlp */
+        $hlp = plugin_load('helper', 'do');
+
+        foreach($tasks as $row) {
+            $table .= '<tr>';
+            $table .= '<td class="plugin_do_page">';
+            $table .= '<a title="' . $row['page'] . '" href="' . wl($row['page']) . '#plgdo__' . $row['md5'] . '" class="wikilink1">' . hsc($row['text']) . '</a>';
+            $table .= '</td>';
+            $table .= '<td class="plugin_do_assignee"' . $userstyle . '>';
             foreach($row['users'] as &$user) {
                 $user = $hlp->getPrettyUser($user);
             }
-            $R->doc .= implode(', ', $row['users']);
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_date">' . hsc($row['date']) . '</td>';
-            $R->doc .= '<td class="plugin_do_status" align="center">';
+            unset($user);
+            $table .= implode(', ', $row['users']);
+            $table .= '</td>';
+            $table .= '<td class="plugin_do_date">' . hsc($row['date']) . '</td>';
+            $table .= '<td class="plugin_do_status" align="center">';
 
             // task status icon...
             list($class, $image, $title) = $data = $this->prepareTaskInfo($row['user'], $row['date'], $row['status'], $row['closedby']);
             $editor = ($row['closedby']) ? $hlp->getPrettyUser($row['closedby']) : '';
 
-            $R->doc .= '<span class="plugin_do_item plugin_do_' . $row['md5'] . ($row['status'] ? ' plugin_do_done' : '') . '">'; // outer span
+            $table .= '<span class="plugin_do_item plugin_do_' . $row['md5'] . ($row['status'] ? ' plugin_do_done' : '') . '">'; // outer span
 
             // img link
-            $R->doc .= '<a href="' . wl($ID, array('do' => 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
-            $R->doc .= '" class="plugin_do_status">';
+            $table .= '<a href="' . wl($ID, array('do' => 'plugin_do', 'do_page' => $row['page'], 'do_md5' => $row['md5']));
+            $table .= '" class="plugin_do_status">';
 
-            $R->doc .= '<img src="' . DOKU_BASE . 'lib/plugins/do/pix/' . $image . '" />';
-            $R->doc .= '</a>';
-            $R->doc .= '<span>' . $editor . '</span>';
+            $table .= '<img src="' . DOKU_BASE . 'lib/plugins/do/pix/' . $image . '" />';
+            $table .= '</a>';
+            $table .= '<span>' . $editor . '</span>';
 
-            $R->doc .= '</span>'; // outer span end
+            $table .= '</span>'; // outer span end
 
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_creator"' . $creatorstyle . '>';
-            $R->doc .= $hlp->getPrettyUser($row['creator']);
-            $R->doc .= '</td>';
-            $R->doc .= '<td class="plugin_do_commit">';
-            $R->doc .= hsc($row['msg']);
-            $R->doc .= '</td>';
+            $table .= '</td>';
+            $table .= '<td class="plugin_do_creator"' . $creatorstyle . '>';
+            $table .= $hlp->getPrettyUser($row['creator']);
+            $table .= '</td>';
+            $table .= '<td class="plugin_do_commit">';
+            $table .= hsc($row['msg']);
+            $table .= '</td>';
 
-            $R->doc .= '  </tr>';
+            $table .= '  </tr>';
         }
 
-        $R->doc .= '</table>';
-
-        return true;
+        $table .= '</table>';
+        return $table;
     }
 
     /**

@@ -435,6 +435,36 @@ class helper_plugin_do extends DokuWiki_Plugin {
     }
 
     /**
+     * Get the html for an icon showing the user's open tasks
+     *
+     * If the user has open tasks, a js-overlay is shown on click.
+     *
+     * @return string the icon-html
+     */
+    public function tpl_getUserTasksIconHTML() {
+        global $INPUT;
+        if (!$INPUT->server->has('REMOTE_USER')) {
+            return '';
+        }
+        $user = $INPUT->server->str('REMOTE_USER');
+        $tasks = $this->loadTasks(array('status' => array('undone'),'user'   => $user));
+        $num = count($tasks);
+
+        $svg = inlineSVG(__DIR__ . '/pix/clipboard-text.svg');
+
+        $doInner = '<span class="a11y">' . $this->getLang('prefix_tasks_user') . " </span>$svg<span class=\"num\">".count($tasks). '</span>';
+        if ($user && $num > 0) {
+            $title = sprintf($this->getLang('tasks_user_intime'), $num);
+            $link = '<a class="plugin__do_usertasks" title="'.$title.'">'.$doInner.'</a>';
+        } else {
+            $title = $this->getLang('tasks_user_none');
+            $link = '<span class="plugin__do_usertasks noopentasks" title="'.$title.'">'.$doInner.'</span>';
+        }
+
+        return $link;
+    }
+
+    /**
      * Get a pretty userlink
      *
      * @param string $user users loginname
