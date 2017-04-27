@@ -2,7 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
  * @author Hideaki SAWADA <chuno@live.jp>
  */
 $lang['js']['title1']          = '%1$s が担当・%2$s が期限の作業';
@@ -24,6 +24,7 @@ $lang['js']['note_done']       = '完了：';
 $lang['js']['assignee']        = '担当者は %s です。';
 $lang['js']['due']             = '期日は %s です。';
 $lang['js']['notloggedin']     = 'ログインしていません。';
+$lang['js']['notallowed']      = '操作不可';
 $lang['js']['closedby']        = '%s が作業を完了しました。';
 $lang['js']['by_unknown']      = '不明なユーザー';
 $lang['js']['finish_popup_title'] = '作業の完了';
@@ -31,6 +32,9 @@ $lang['js']['finish_popup_submit'] = '完了';
 $lang['title_intime']          = '未完の作業が %1$d 件あります。';
 $lang['title_late']            = '未完の作業が %1$d 件、遅延の作業が %2$d 件あります。';
 $lang['title_alldone']         = '全作業が完了しています。';
+$lang['tasks_user_none']       = '未完の作業はありまません。';
+$lang['tasks_user_intime']     = '未完の作業が %1$d 件あります。';
+$lang['prefix_tasks_user']     = '未完の作業：';
 $lang['task']                  = '作業';
 $lang['user']                  = '担当者';
 $lang['date']                  = '期日';
