@@ -1,4 +1,5 @@
-(function() {
+// eslint-disable-next-line func-names
+jQuery(function () {
     'use strict';
 
     var $userTasksButtons = jQuery('a.plugin__do_usertasks');
@@ -21,7 +22,7 @@
             }
         ).done(function showUserTasksOverlay(data) {
             var $wrapper = jQuery('<div class="plugin__do_usertasks_list"></div>');
-            $wrapper.css({'display': 'inline-block', 'position': 'absolute'});
+            $wrapper.css({ display: 'inline-block', position: 'absolute' });
             $wrapper.append(jQuery(data));
             $wrapper.appendTo('.dokuwiki');
             $wrapper.position({
@@ -31,4 +32,4 @@
             });
         });
     });
-})();
+});
