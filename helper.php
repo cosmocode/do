@@ -455,7 +455,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $doInner = '<span class="a11y">' . $this->getLang('prefix_tasks_user') . " </span>$svg<span class=\"num\">".count($tasks). '</span>';
         if ($user && $num > 0) {
             $title = sprintf($this->getLang('tasks_user_intime'), $num);
-            $link = '<a class="plugin__do_usertasks" title="'.$title.'">'.$doInner.'</a>';
+            $link = '<button class="plugin__do_usertasks" title="'.$title.'">'.$doInner.'</button>';
         } else {
             $title = $this->getLang('tasks_user_none');
             $link = '<span class="plugin__do_usertasks noopentasks" title="'.$title.'">'.$doInner.'</span>';

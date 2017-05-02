@@ -95,6 +95,12 @@ div.plugin__do_pagetasks span {
 .plugin__do_pagetasks span.do_late   { background-image: url(pix/tasklist_red.png); }
 
 .plugin__do_usertasks {
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    border-bottom: 1px solid transparent;
+
     svg {
         width: 12px;
         vertical-align: text-top;
@@ -103,7 +109,13 @@ div.plugin__do_pagetasks span {
             fill: @ini_link;
         }
     }
-    &:hover {
+
+    &:hover,
+    &:focus,
+    &:active {
+        background: none;
+        border: none;
+
         &:not(.noopentasks) {
             border-bottom: 1px solid @ini_link;
         }
