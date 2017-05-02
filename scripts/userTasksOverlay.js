@@ -2,7 +2,7 @@
 jQuery(function () {
     'use strict';
 
-    var $userTasksButtons = jQuery('a.plugin__do_usertasks');
+    var $userTasksButtons = jQuery('button.plugin__do_usertasks');
     $userTasksButtons.click(function handleUserTasksButtonClick(event) {
         var $this;
         event.stopPropagation();
