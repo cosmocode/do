@@ -2,8 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
- * @author Aleksandr Selivanov <alexgearbox@gmail.com>
+ *
  * @author Aleksandr Selivanov <alexgearbox@yandex.ru>
  */
 $lang['js']['title1']          = 'Назначена для %1$s. Срок: до %2$s.';
@@ -27,6 +26,7 @@ $lang['js']['closedby']        = 'Задачу закрыл (-а) %s.';
 $lang['js']['finish_popup_title'] = 'Закрыть задачу';
 $lang['js']['finish_popup_submit'] = 'Закрыть';
 $lang['title_alldone']         = 'Все задачи выполнены.';
+$lang['tasks_user_none']       = 'У вас нет открытых задач.';
 $lang['task']                  = 'Задача';
 $lang['user']                  = 'Назначена для';
 $lang['date']                  = 'Срок: до';
