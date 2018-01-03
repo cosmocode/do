@@ -1,0 +1,11 @@
+Hej,
+
+@USER@ stängde en uppgift: "@MSG@"
+
+Beskrivning:    @TASK@
+Förfallodatum: @DATE@
+Wikisida:          @TASKURL@
+
+-- 
+Detta e-brev genererades av DokuWiki på
+@DOKUWIKIURL@

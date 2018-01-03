@@ -1,0 +1,11 @@
+Hej,
+
+@USER@ återöppnade en uppgift och tilldelade den till dig.
+
+Beskrivning:    @TASK@
+Förfallodatum: @DATE@
+Wikisida:          @TASKURL@
+
+-- 
+Detta e-brev genererades av DokuWiki på
+@DOKUWIKIURL@
