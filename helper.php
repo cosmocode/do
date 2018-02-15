@@ -19,7 +19,7 @@ class helper_plugin_do extends DokuWiki_Plugin {
     /**
      * Constructor. Initializes the SQLite DB Connection
      */
-    public function helper_plugin_do() {
+    public function __construct() {
         $this->db = plugin_load('helper', 'sqlite');
         if(!$this->db) {
             msg('The do plugin requires the sqlite plugin. Please install it');

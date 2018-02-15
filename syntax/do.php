@@ -20,7 +20,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
     private $saved = array(); // save state cache
     private $ids = array();
 
-    public function syntax_plugin_do_do() {
+    public function __construct() {
         $this->hlp = plugin_load('helper', 'do');
     }
 
