@@ -2,10 +2,10 @@ jQuery(function () {
     // build commit popup
     var fieldsetcontent =
         '<p>' +
-            '<label for="do__popup_msg">' +
-                PluginDo.getLang("popup_msg") +
-            '</label>' +
-            '<input class="edit" id="do__popup_msg" />' +
+        '<label for="do__popup_msg">' +
+        PluginDo.getLang("popup_msg") +
+        '</label>' +
+        '<input class="edit" id="do__popup_msg" />' +
         '</p>';
 
     PluginDo.createOverlay(
