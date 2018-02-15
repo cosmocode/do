@@ -136,6 +136,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 $oldTasks[$state['md5']] = $state;
             }
         }
+        if (empty($oldTasks[$md5])) {
+            return array();
+        }
         return (array) $oldTasks[$md5];
     }
 
@@ -213,10 +216,9 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin {
                 break;
 
             case DOKU_LEXER_EXIT:
-
                 $R->doc .= '</span>'
                     . '<span class="plugin_do_commit">'
-                    . (empty($data['task']['msg']) ? '' : '(' . $this->lang['js']['note_done'] . hsc($data['task']['msg']) . ')')
+                    . (empty($data['task']['msg']) ? '' : '(' . $this->getLang('js')['note_done'] . hsc($data['task']['msg']) . ')')
                     . '</span>';
 
                 if(isset($data['task']['users']) || isset($data['task']['date'])) {

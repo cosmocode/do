@@ -151,7 +151,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
             $table .= '<td class="plugin_do_status" align="center">';
 
             // task status icon...
-            list($class, $image, $title) = $data = $this->prepareTaskInfo($row['user'], $row['date'], $row['status'], $row['closedby']);
+            $image = ($row['status']) ? 'done.png' : 'undone.png';
             $editor = ($row['closedby']) ? $hlp->getPrettyUser($row['closedby']) : '';
 
             $table .= '<span class="plugin_do_item plugin_do_' . $row['md5'] . ($row['status'] ? ' plugin_do_done' : '') . '">'; // outer span
@@ -179,66 +179,6 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin {
 
         $table .= '</table>';
         return $table;
-    }
-
-    /**
-     * Returns array with some task info
-     *
-     * @param string $user user id
-     * @param string $date due date
-     * @param string $status null or closing date
-     * @param string $closedBy user id
-     * @return array with class, image name and title
-     */
-    protected function prepareTaskInfo($user, $date, $status, $closedBy) {
-        $result = array();
-        if($user && $date) {
-            $result[] = 'plugin_do1';
-        } elseif($user) {
-            $result[] = 'plugin_do2';
-        } elseif($date) {
-            $result[] = 'plugin_do3';
-        } else {
-            $result[] = 'plugin_do4';
-        }
-
-        // change to "done" images
-        $img = ($status) ? 'done.png' : 'undone.png';
-
-        // setup title
-        $title = '';
-
-        if($user) {
-            $title .= $this->getJsText('assignee', $user);
-        }
-
-        if($date) {
-            $title .= $this->getJsText('due', $date);
-        }
-
-        if($status) {
-            $title .= $this->getJsText('done', $status);
-        }
-
-        if($closedBy) {
-            $title .= $this->getJsText('closedby', $closedBy);
-        }
-
-        $result[] = $img;
-        $result[] = trim($title);
-
-        return $result;
-    }
-
-    /**
-     * Returns localized string from js strings and performs placeholder replacement
-     *
-     * @param string $str key of localized string
-     * @param string $arg placeholder value
-     * @return string
-     */
-    protected function getJsText($str, $arg) {
-        return sprintf($this->lang['js'][$str], $arg) . ' ';
     }
 }
 

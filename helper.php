@@ -50,12 +50,14 @@ class helper_plugin_do extends DokuWiki_Plugin {
     public function saveTask($data) {
         if(!$this->db) return;
 
+        $date = !empty($data['date']) ? $data['date'] : null;
+
         $this->db->query(
             'INSERT INTO tasks (page,md5,date,text,creator,pos)
              VALUES (?, ?, ?, ?, ?, ?)',
             $data['page'],
             $data['md5'],
-            $data['date'],
+            $date,
             $data['text'],
             $data['creator'],
             $data['pos']
@@ -240,9 +242,9 @@ class helper_plugin_do extends DokuWiki_Plugin {
         $stat = $stat['status'];
 
         // load task details and determine notify receivers
-        $task = array_shift($this->loadTasks(array('id' => $ID, 'md5' => $md5)));
+        $task = $this->loadTasks(array('id' => $ID, 'md5' => $md5))[0];
         $recs = (array) $task['users'];
-        array_push($recs, $task['creator']);
+        $recs[] = $task['creator'];
         $recs = array_unique($recs);
         $recs = array_diff($recs, array($_SERVER['REMOTE_USER']));
 
