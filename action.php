@@ -165,24 +165,27 @@ class action_plugin_do extends DokuWiki_Action_Plugin {
     }
 
     /**
+     * Delete all tasks associated with a page from database, if all have been removed from the page
+     *
      * @param Doku_Event $event event object by reference
      * @param null       $param the parameters passed to register_hook when this handler was registered
      */
     public function handle_delete(&$event, $param) {
         if(preg_match('/<do[^>]*>.*<\/do>/i', $event->data[0][1])) {
-            // Only run if all tasks where removed from the page
+            // Only run if all tasks where removed from the page, partial removes are handled in \syntax_plugin_do_do::_save
             return;
         }
-
-        if(isset($this->run[$event->data[2]])) {
+        $namespace = $event->data[1] ? $event->data[1] . ':' : '';
+        $id = $namespace . $event->data[2];
+        if(isset($this->run[$id])) {
             // Only execute on the first run
             return;
         }
 
         /** @var helper_plugin_do $hlp */
         $hlp = plugin_load('helper', 'do');
-        $hlp->cleanPageTasks($event->data[2]);
-        $this->run[$event->data[2]] = true;
+        $hlp->cleanPageTasks($id);
+        $this->run[$id] = true;
     }
 
 }
