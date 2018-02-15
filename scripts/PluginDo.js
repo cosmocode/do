@@ -132,7 +132,7 @@ var PluginDo = {
         if (!assignees || !assignees.length) {
             //take the assignees of the first task or table row when tasks are duplicated
             var $assigneeobjs = $applyto.first().find('span.plugin_do_meta_user');
-            if($assigneeobjs.length === 0) {
+            if ($assigneeobjs.length === 0) {
                 $assigneeobjs = $applyto.parent('td').parent().first().find('td.plugin_do_assignee');
             }
             assignees = [];
@@ -147,7 +147,7 @@ var PluginDo = {
         // determine due date
         if (!due) {
             var $due = $applyto.first().find('span.plugin_do_meta_date');
-            if($due.length === 0) {
+            if ($due.length === 0) {
                 $due = $applyto.parent('td').parent().first().find('td.plugin_do_date');
             }
             due = PluginDo.stripTags($due.length ? $due.html() : '');
@@ -184,7 +184,7 @@ var PluginDo = {
 
         if (arg1 === null) {
             return lang;
-        } else if(arg2 === null) {
+        } else if (arg2 === null) {
             return lang.replace(/%(1\$)?(s|d)/, arg1);
         } else {
             return lang.replace(/%(1\$)?(s|d)/, arg1)
@@ -362,7 +362,7 @@ var PluginDo = {
                 closedon = null;
             if (response == "-1" || response == "-2") {
                 var langkey = 'notallowed';
-                if(response == "-1") {
+                if (response == "-1") {
                     langkey = "notloggedin";
                 }
                 alert(PluginDo.getLang(langkey));
@@ -413,7 +413,7 @@ var PluginDo = {
 
             PluginDo.buildTitle($dotags, [], '', state.closedby, state.status);
             PluginDo.switchDoNr(!state.status, $dotags);
-            if(state.status) {
+            if (state.status) {
                 $dotags.addClass('plugin_do_done');
             }
 
@@ -432,7 +432,7 @@ var PluginDo = {
     $toolbardialog: null,
     textarea: null,
 
-    initDialog: function(edid) {
+    initDialog: function (edid) {
         PluginDo.textarea = jQuery('#' + edid)[0];
 
         var fieldsetcontent = '';

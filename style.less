@@ -18,6 +18,7 @@ div.dokuwiki span.plugin_do_done span.plugin_do_task {
 div.dokuwiki div.page span span.plugin_do_commit {
     display: none;
 }
+
 div.dokuwiki div.page span.plugin_do_done span.plugin_do_commit {
     display: inline;
 }
@@ -28,46 +29,46 @@ div.dokuwiki table.plugin_do span.plugin_do_item {
 
 /* POPUPS */
 div.dokuwiki div.plugin_do_popup {
-    position:absolute;
+    position: absolute;
     background-color: __background__;
-    border:1px solid __border__;
-    width:400px;
+    border: 1px solid __border__;
+    width: 400px;
     z-index: 45;
 }
 
 div.dokuwiki div.plugin_do_popup .title {
     background-color: __background_alt__;
-    text-align:center;
+    text-align: center;
 }
 
 div.dokuwiki div.plugin_do_popup .title img {
-    float:right;
-    cursor:pointer;
+    float: right;
+    cursor: pointer;
 }
 
 div.dokuwiki div.plugin_do_popup fieldset {
-    border:0;
-    padding-bottom:0.3em;
+    border: 0;
+    padding-bottom: 0.3em;
 }
 
 div.dokuwiki div.plugin_do_popup fieldset p {
-    margin-bottom:0;
-    clear:left;
+    margin-bottom: 0;
+    clear: left;
 }
 
 div.dokuwiki div.plugin_do_popup fieldset p label {
-    display:block;
-    width:46%;
-    float:left;
-    line-height:25px;
+    display: block;
+    width: 46%;
+    float: left;
+    line-height: 25px;
     text-align: right;
     margin-right: 0.1em;
 }
 
 div.dokuwiki div.plugin_do_popup fieldset p input {
-    display:block;
-    width:46%;
-    float:left;
+    display: block;
+    width: 46%;
+    float: left;
 }
 
 div.dokuwiki div.plugin_do_popup fieldset {
@@ -75,7 +76,7 @@ div.dokuwiki div.plugin_do_popup fieldset {
 }
 
 div.dokuwiki div.plugin_do_popup .button_wrap {
-    text-align:center;
+    text-align: center;
 }
 
 /* Show autocompletion even with core’s c44e5a88*/
@@ -87,12 +88,20 @@ div.dokuwiki div.plugin_do_popup fieldset div.JSpopup {
 
 div.plugin__do_pagetasks span {
     background: transparent url(pix/toolbar.png) no-repeat top right;
-    padding-right:17px;
+    padding-right: 17px;
 }
 
-.plugin__do_pagetasks span.do_done   { background-image: url(pix/tasklist_green.png); }
-.plugin__do_pagetasks span.do_undone { background-image: url(pix/tasklist_yellow.png); }
-.plugin__do_pagetasks span.do_late   { background-image: url(pix/tasklist_red.png); }
+.plugin__do_pagetasks span.do_done {
+    background-image: url(pix/tasklist_green.png);
+}
+
+.plugin__do_pagetasks span.do_undone {
+    background-image: url(pix/tasklist_yellow.png);
+}
+
+.plugin__do_pagetasks span.do_late {
+    background-image: url(pix/tasklist_red.png);
+}
 
 .plugin__do_usertasks {
     background: none;
@@ -126,6 +135,7 @@ div.plugin__do_pagetasks span {
         cursor: inherit;
     }
 }
+
 .plugin__do_usertasks_list {
     background-color: @ini_background;
 
