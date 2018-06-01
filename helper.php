@@ -354,7 +354,12 @@ class helper_plugin_do extends DokuWiki_Plugin
                 continue;
             }
             $to = $info['name'] . ' <' . $info['mail'] . '>';
-            mail_send($to, $subj, $text, $conf['mailfrom']);
+			$mail = new Mailer();
+			$mail->to($to);
+			$mail->from($conf['mailfrom']);
+			$mail->subject($subj);
+			$mail->setBody($text);
+			$mail->send();
         }
     }
 
