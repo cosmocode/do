@@ -3,6 +3,7 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  *
+ * @author Schplurtz le Déboulonné <schplurtz@laposte.net>
  * @author Andreas Gohr <gohr@cosmocode.de>
  * @author Agnès Haasser <agnes.haasser@gmail.com>
  * @author ubibene <services.m@benard.info>
@@ -15,7 +16,7 @@ $lang['js']['title_done']      = 'Toutes les tâches sont clôturées.';
 $lang['js']['title_undone']    = 'Il y a %1$d tâches en cours.';
 $lang['js']['title_late']      = 'Il y a %1$d tâches en cours, dont %2$d sont en retard.';
 $lang['js']['done']            = 'Cette tâche a été clôturée le %s.';
-$lang['js']['open']            = 'Cette tâche n’a pas été terminée… pour l’instant.';
+$lang['js']['open']            = 'Cette tâche n’est pas terminée… pour l’instant.';
 $lang['js']['toolbar_title']   = 'Créer une nouvelle tâche';
 $lang['js']['popup_assign']    = 'Assigner à <small>(nom(s))</small>';
 $lang['js']['popup_date']      = 'À faire pour le <small>(AAAA-MM-JJ)</small>';

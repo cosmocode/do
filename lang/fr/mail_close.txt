@@ -7,5 +7,5 @@ Date limite : @DATE@
 Page wiki :   @TASKURL@
 
 -- 
-Cet e-mail a été généré par DokuWiki.
+Courriel envoyé par DokuWiki.
 @DOKUWIKIURL@
