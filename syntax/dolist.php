@@ -162,7 +162,7 @@ class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin
             $table .= implode(', ', $row['users']);
             $table .= '</td>';
             $table .= '<td class="plugin_do_date">' . hsc($row['date']) . '</td>';
-            $table .= '<td class="plugin_do_status" align="center">';
+            $table .= '<td class="plugin_do_status">';
 
             // task status icon...
             $image = ($row['status']) ? 'done.png' : 'undone.png';
