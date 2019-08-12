@@ -2,7 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
  * @author Gerrit Uitslag <klapinklapin@gmail.com>
  */
 $lang['js']['title1']          = 'Taak toegewezen aan %1$s. Vervalt op %2$s.';
@@ -24,6 +24,7 @@ $lang['js']['note_done']       = 'Voltooid: ';
 $lang['js']['assignee']        = 'Taak is toegewezen aan %s.';
 $lang['js']['due']             = 'Vervalt op %s.';
 $lang['js']['notloggedin']     = 'Je bent niet ingelogd.';
+$lang['js']['notallowed']      = 'Actie niet toegestaan';
 $lang['js']['closedby']        = 'Taak is gesloten door %s.';
 $lang['js']['by_unknown']      = 'een onbekende gebruiker';
 $lang['js']['finish_popup_title'] = 'Taak sluiten';
@@ -31,6 +32,9 @@ $lang['js']['finish_popup_submit'] = 'Sluiten';
 $lang['title_intime']          = 'Er zijn %1$d open taken. ';
 $lang['title_late']            = 'Er zijn %1$d open taken, %2$d te laat.';
 $lang['title_alldone']         = 'Alle taken voltooid.';
+$lang['tasks_user_none']       = 'Je hebt geen open taken.';
+$lang['tasks_user_intime']     = 'Je hebt %1$d open taken.';
+$lang['prefix_tasks_user']     = 'je open taken:';
 $lang['task']                  = 'Taak';
 $lang['user']                  = 'Toegewezen aan';
 $lang['date']                  = 'Vervalt op';
