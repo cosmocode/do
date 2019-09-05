@@ -149,6 +149,10 @@ class helper_plugin_do extends DokuWiki_Plugin
             if (isset($args['limit'])) {
                 $limit = ' LIMIT ' . intval($args['limit'][0]);
             }
+		
+	    if (isset($args['overdue'])) {
+                $where .= " AND date > date('1970-01-01') AND date < date('now') ";
+            }	
 
             if (isset($args['md5'])) {
                 if (!is_array($args['md5'])) {
