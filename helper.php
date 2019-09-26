@@ -163,6 +163,17 @@ class helper_plugin_do extends DokuWiki_Plugin
                     if (!is_array($args[$n])) {
                         $args[$n] = array($args[$n]);
                     }
+
+                    // replace current user's placeholder
+                    $args[$n] = array_map(
+                        function ($user) {
+                            return (strtolower($user) === '@user@' && $_SERVER['REMOTE_USER']) ?
+                                $_SERVER['REMOTE_USER'] :
+                                $user;
+                        },
+                        $args[$n]
+                    );
+
                     $search = $n;
 
                     /** @var DokuWiki_Auth_Plugin $auth */
