@@ -8,12 +8,6 @@
  * @author  Dominik Eckelmann <eckelmann@cosmocode.de>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) {
-    die();
-}
-require_once(DOKU_INC . 'inc/JSON.php');
-
 class action_plugin_do extends DokuWiki_Action_Plugin
 {
 
@@ -81,8 +75,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin
             p_get_metadata($id, '', true);
 
             header('Content-Type: application/json; charset=utf-8');
-            $JSON = new JSON();
-            echo $JSON->encode($status);
+            echo json_encode($status);
 
         } elseif ($event->data == 'plugin_do_status') {
             // read status for a bunch of tasks
@@ -101,8 +94,7 @@ class action_plugin_do extends DokuWiki_Action_Plugin
             }
 
             header('Content-Type: application/json; charset=utf-8');
-            $JSON = new JSON();
-            echo $JSON->encode($status);
+            echo json_encode($status);
         } elseif ($event->data === 'plugin_do_userTasksOverlay') {
             $event->preventDefault();
             $event->stopPropagation();
