@@ -1,4 +1,8 @@
 <?php
+
+use dokuwiki\Parsing\Handler\Nest;
+use dokuwiki\Utf8\PhpString;
+
 /**
  * DokuWiki Plugin do (Syntax Component)
  *
@@ -7,11 +11,6 @@
  * @author  Adrian Lang <lang@cosmocode.de>
  * @author  Dominik Eckelmann <eckelmann@cosmocode.de>
  */
-
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) {
-    die();
-}
 
 class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
 {
@@ -28,36 +27,43 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
         $this->hlp = plugin_load('helper', 'do');
     }
 
+    /** @inheritDoc */
     public function getType()
     {
         return 'formatting';
     }
 
+    /** @inheritDoc */
     public function getPType()
     {
         return 'normal';
     }
 
+    /** @inheritDoc */
     public function getSort()
     {
         return 155;
     }
 
+    /** @inheritDoc */
     public function getAllowedTypes()
     {
         return array('formatting');
     }
 
+    /** @inheritDoc */
     public function connectTo($mode)
     {
         $this->Lexer->addEntryPattern('<do.*?>(?=.*?</do>)', $mode, 'plugin_do_do');
     }
 
+    /** @inheritDoc */
     public function postConnect()
     {
         $this->Lexer->addExitPattern('</do>', 'plugin_do_do');
     }
 
+    /** @inheritDoc */
     public function handle($match, $state, $pos, Doku_Handler $handler)
     {
         global $auth;
@@ -87,13 +93,13 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
                     $data['task']['users'] = array_filter($data['task']['users']);
                 }
 
-                $ReWriter = new Doku_Handler_Nest($handler->CallWriter, 'plugin_do_do');
-                $handler->CallWriter = &$ReWriter;
+                $ReWriter = new Nest($handler->getCallWriter(), 'plugin_do_do');
+                $handler->setCallWriter($ReWriter);
                 $handler->addPluginCall('do_do', $data, $state, $pos, $match);
                 break;
 
             case DOKU_LEXER_UNMATCHED:
-                $handler->_addCall('cdata', array($match), $pos);
+                $handler->addCall('cdata', array($match), $pos);
                 break;
 
             case DOKU_LEXER_EXIT:
@@ -101,20 +107,22 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
                 $data['task']['text'] = $this->_textContent(
                     p_render(
                         'xhtml',
-                        array_slice($handler->CallWriter->calls, 1),
+                        array_slice($handler->getCallWriter()->calls, 1),
                         $ignoreme
                     )
                 );
-                $data['task']['md5'] = md5(utf8_strtolower(preg_replace('/\s/', '', $data['task']['text'])) . $ID);
+                $data['task']['md5'] = md5(
+                    PhpString::strtolower(preg_replace('/\s/', '', $data['task']['text'])) . $ID
+                );
 
                 // Add missing data from ENTER and EXIT to the other
-                $handler->CallWriter->calls[0][1][1]['task'] += $data['task'];
-                $data['task'] += $handler->CallWriter->calls[0][1][1]['task'];
+                $handler->getCallWriter()->calls[0][1][1]['task'] += $data['task'];
+                $data['task'] += $handler->getCallWriter()->calls[0][1][1]['task'];
 
                 $handler->addPluginCall('do_do', $data, $state, $pos, $match);
-                $handler->CallWriter->process();
-                $ReWriter = &$handler->CallWriter;
-                $handler->CallWriter = &$ReWriter->CallWriter;
+                $handler->getCallWriter()->process();
+                $ReWriter = $handler->getCallWriter();
+                $handler->setCallWriter($ReWriter->getCallWriter());
         }
         return false;
     }
@@ -171,6 +179,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
         return true;
     }
 
+    /** @inheritDoc */
     public function render($mode, Doku_Renderer $R, $data)
     {
         global $ID;
