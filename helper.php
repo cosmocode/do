@@ -143,7 +143,12 @@ class helper_plugin_do extends DokuWiki_Plugin
                 } elseif ($status == 'undone') {
                     $where .= ' AND B.status IS null';
                 }
+            }
 
+            if (isset($args['from']) && isset($args['to'])) {
+                $from = $args['from'][0];
+                $to =  $args['to'][0];
+                $where .= " AND A.date >= '$from' AND A.date <= '$to'";
             }
 
             if (isset($args['limit'])) {
