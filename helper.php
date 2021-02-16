@@ -157,6 +157,15 @@ class helper_plugin_do extends DokuWiki_Plugin
                 $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5'][0]);
             }
 
+            // default value
+            $orderby = ' A.page, A.pos';
+            if (isset($args['order'])) {
+              $order = utf8_strtolower($args['order'][0]);
+              if ($order == 'text') {
+                  $orderby = ' A.text, A.page, A.pos';
+              }
+            }
+
             $argn = array('user', 'creator');
             foreach ($argn as $n) {
                 if (isset($args[$n])) {
@@ -208,7 +217,7 @@ class helper_plugin_do extends DokuWiki_Plugin
                      ON A.page = C.page
                      AND A.md5 = C.md5
                      ' . $where . '
-                   ORDER BY A.page, A.pos' . $limit;
+                   ORDER BY ' . $orderby . $limit;
         $res = $this->db->query($query);
         $res = $this->db->res2arr($res);
 
@@ -547,4 +556,3 @@ class helper_plugin_do extends DokuWiki_Plugin
         }
     }
 }
-
