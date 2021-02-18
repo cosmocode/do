@@ -146,9 +146,12 @@ class helper_plugin_do extends DokuWiki_Plugin
             }
 
             if (isset($args['from']) && isset($args['to'])) {
-                $from = strtotime($args['from'][0], 0);
-                $to =  strtotime($args['to'][0], 0);
-                $where .= " AND strftime('%s',A.date, 'utc') >= '$from' AND strftime('%s',A.date, 'utc') <= '$to'";
+                // regex to match YYYY-MM-DD
+                $dateRegex = '/^\d{4}-([0]\d|1[0-2])-([0-2]\d|3[01])$/';
+                if (!preg_match($dateRegex, $args['from'][0]) || !preg_match($dateRegex, $args['to'][0])) {
+                    return array();
+                }
+                $where .= sprintf(' AND A.date >= %s AND  A.date <= %s', $this->db->quote_string($args['from'][0]), $this->db->quote_string($args['to'][0]));
             }
 
             if (isset($args['limit'])) {
