@@ -1,10 +1,12 @@
 <?php
+
 /**
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ *
  * english language file for do plugin
  *
+ * @author Dwayne <dwaynemccorkle@yahoo.de>
  * @author Adrian Lang <lang@cosmocode.de>
  */
-
-$lang['userpage'] = 'A printf input string used to generate a link to a userpage (insert ›%s‹ where the user name should appear)';
-$lang['notify_assignee'] = 'Send mails about new tasks and status changes to affected users';
-
+$lang['userpage']              = 'Dwayne';
+$lang['notify_assignee']       = '0';

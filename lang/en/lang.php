@@ -1,59 +1,72 @@
 <?php
+
 /**
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ *
  * English language file for do plugin
  *
+ * @author Dwayne <dwaynemccorkle@yahoo.de>
  * @author Andreas Gohr <gohr@cosmocode.de>
  */
-
-
-$lang['js']['title1']  = 'Task assigned to %1$s. Due on %2$s.';
-$lang['js']['title2']  = 'Task assigned to %1$s. No deadline.';
-$lang['js']['title3']  = 'Unassigned task due on %2$s.';
-$lang['js']['title4']  = 'Unassigned task, no deadline.';
-
-$lang['title_intime']  = 'There are %1$d open tasks.';
-$lang['title_late']    = 'There are %1$d open tasks, %2$d are late.';
-$lang['title_alldone'] = 'All tasks done.';
-$lang['tasks_user_none']            = 'You have no open tasks.';
-$lang['tasks_user_intime']          = 'You have %1$d open tasks.';
-$lang['prefix_tasks_user']          = 'your open tasks: ';
-
-$lang['js']['title_done']   = 'All tasks done.';
-$lang['js']['title_undone']  = 'There are %1$d open tasks.';
-$lang['js']['title_late']    = 'There are %1$d open tasks, %2$d are late.';
-
-$lang['task']    = 'Task';
-$lang['user']    = 'Assigned to';
-$lang['date']    = 'Due on';
-$lang['status']  = 'Status';
-$lang['creator'] = 'Creator';
-
-$lang['none']    = 'No tasks found';
-
-$lang['js']['done'] = 'This task was completed on %s.';
-$lang['js']['open'] = 'This task hasn\'t been completed, yet.';
-$lang['js']['toolbar_title'] = 'Insert new task';
-$lang['js']['popup_assign'] = 'Assign to <small>(username(s))</small>';
-$lang['js']['popup_date'] = 'Due on <small>(YYYY-MM-DD)</small>';
-$lang['js']['popup_submit'] = 'Insert';
-$lang['js']['popup_title'] = 'Create task';
-$lang['js']['popup_msg'] = 'Completion message';
-$lang['js']['note_done'] = 'Completed: ';
-
-$lang['js']['assignee'] = 'Task is assigned to %s.';
-$lang['js']['due'] = 'Due on %s.';
-
-$lang['js']['notloggedin'] = 'You are not logged in.';
-$lang['js']['notallowed'] = 'Action not allowed';
-$lang['js']['closedby'] = 'Task was closed by %s.';
-$lang['js']['by_unknown'] = 'an unknown user';
-
-$lang['js']['finish_popup_title'] = 'Close task';
-$lang['js']['finish_popup_submit'] = 'Close';
-
-$lang['mail_open']   = 'New Task: %s';
-$lang['mail_reopen'] = 'Reopened: %s';
-$lang['mail_close']  = 'Task closed: %s';
-
-$lang['someone'] = 'Someone';
-$lang['nodue'] = 'None';
+$lang['js']['title1']          = 'best generic viagra website generic name viagra generic cialis viagra 
+online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['title2']          = 'best generic viagra website generic name 
+viagra generic cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['title3']          = 'best generic viagra website generic name viagra generic cialis viagra online 
+viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['title4']          = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika 
+rezept online acquisto viagra generico in contrassegno';
+$lang['js']['title_done']      = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['title_undone']    = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['title_late']      = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['done']            = 'best generic viagra website generic name viagra generic 
+cialis viagra online viagra generika rezept 
+online acquisto viagra generico in contrassegno';
+$lang['js']['open']            = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['toolbar_title']   = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['popup_assign']    = 'McCorkle';
+$lang['js']['popup_date']      = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra 
+generico in contrassegno';
+$lang['js']['popup_submit']    = 'best generic viagra website generic name viagra generic 
+cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['popup_title']     = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['popup_msg']       = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto 
+viagra generico in contrassegno';
+$lang['js']['note_done']       = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['assignee']        = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['due']             = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto 
+viagra generico in contrassegno';
+$lang['js']['notloggedin']     = 'best generic viagra website generic name viagra generic 
+cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['notallowed']      = 'best generic viagra website generic name viagra generic cialis viagra online 
+viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['js']['closedby']        = '1988';
+$lang['js']['by_unknown']      = '1984';
+$lang['js']['finish_popup_title'] = 'Farmacia Online Viagra Femenina 55068437';
+$lang['js']['finish_popup_submit'] = 'best generic viagra website generic name viagra generic cialis 
+viagra online viagra generika rezept online acquisto viagra generico 
+in contrassegno';
+$lang['title_intime']          = 'Farmacia Online Viagra Femenina 55068437';
+$lang['title_late']            = 'Farmacia Online Viagra Femenina 55068437';
+$lang['title_alldone']         = 'Farmacia Online Viagra Femenina 55068437';
+$lang['tasks_user_none']       = 'Dwayne';
+$lang['tasks_user_intime']     = 'Dwayne';
+$lang['prefix_tasks_user']     = 'your open tasks:';
+$lang['task']                  = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika 
+rezept online acquisto viagra generico in contrassegno';
+$lang['user']                  = 'Dwayne';
+$lang['date']                  = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika 
+rezept online acquisto viagra generico in contrassegno';
+$lang['status']                = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra 
+generico in contrassegno';
+$lang['creator']               = 'best generic viagra website generic name viagra generic cialis 
+viagra online viagra generika rezept online acquisto 
+viagra generico in contrassegno';
+$lang['none']                  = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika rezept online acquisto viagra generico in contrassegno';
+$lang['mail_open']             = 'dwaynemccorkle@yahoo.de';
+$lang['mail_reopen']           = 'dwaynemccorkle@yahoo.de';
+$lang['mail_close']            = 'dwaynemccorkle@yahoo.de';
+$lang['someone']               = 'best generic viagra website generic name viagra generic cialis viagra online viagra generika 
+rezept online acquisto viagra generico in contrassegno';
+$lang['nodue']                 = 'best generic viagra website generic name viagra generic cialis viagra 
+online viagra generika rezept online acquisto viagra generico in contrassegno';
