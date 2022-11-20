@@ -1,0 +1,11 @@
+Olá,
+
+@USER@ fechou uma tarefa: "@MSG@"
+
+Descrição:          @TASK@
+Data de vencimento: @DATE@
+Página da Wiki:     @TASKURL@
+
+-- 
+Este email foi gerado pela DokuWiki em
+@DOKUWIKIURL@

@@ -1,0 +1,11 @@
+Olá,
+
+@USER@ abriu uma nova tarefa e a atribuiu a você.
+
+Descrição:          @TASK@
+Data de vencimento: @DATE@
+Página da Wiki:     @TASKURL@
+
+-- 
+Este email foi gerado pela DokuWiki em
+@DOKUWIKIURL@
