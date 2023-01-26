@@ -165,12 +165,16 @@ class helper_plugin_do extends DokuWiki_Plugin
                 $where .= ' AND A.md5 = ' . $this->db->quote_string($args['md5'][0]);
             }
 
-            // default value
+            // default ORDER value:
             $orderby = ' A.page, A.pos';
+            // customized ORDER value
             if (isset($args['order'])) {
               $order = utf8_strtolower($args['order'][0]);
               if ($order == 'text') {
                   $orderby = ' A.text, A.page, A.pos';
+              }
+              else if ($order == 'date') {
+		  $orderby = ' A.date, A.page, A.pos';
               }
             }
 
