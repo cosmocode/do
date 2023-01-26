@@ -8,29 +8,28 @@
  * @author  Dominik Eckelmann <eckelmann@cosmocode.de>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) {
-    die();
-}
-
 class syntax_plugin_do_dolist extends DokuWiki_Syntax_Plugin
 {
 
+    /** @inheritDoc */
     public function getType()
     {
         return 'substition';
     }
 
+    /** @inheritDoc */
     public function getPType()
     {
         return 'block';
     }
 
+    /** @inheritDoc */
     public function getSort()
     {
         return 155;
     }
 
+    /** @inheritDoc */
     public function connectTo($mode)
     {
         $this->Lexer->addSpecialPattern('{{dolist>.*?}}', $mode, 'plugin_do_dolist');
