@@ -420,7 +420,7 @@ class helper_plugin_do extends DokuWiki_Plugin
     }
 
     /**
-     * Get information about the number of tasks on a specefic id.
+     * Get information about the number of tasks on a specific id.
      *
      * result keys are
      *   count  - number of all tasks
