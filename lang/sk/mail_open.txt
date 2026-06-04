@@ -1,0 +1,11 @@
+Dobrý deň,
+
+@USER@ otvoril novú úlohu a pridelil ju vám.
+
+Popis:       @TASK@
+Termín:      @DATE@
+Wiki stránka: @TASKURL@
+
+-- 
+Tento e-mail vygenerovala DokuWiki na
+@DOKUWIKIURL@
