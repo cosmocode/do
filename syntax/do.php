@@ -305,7 +305,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
 
         // make sure data is complete
         if (!isset($data['task']['creator'])) {
-            $data['task']['creator'] = $_SERVER['REMOTE_USER'];
+            $data['task']['creator'] = $_SERVER['REMOTE_USER'] ?? null;
         }
         $data['task']['page'] = $ID;
         $data['task']['pos'] = ++$this->position;
@@ -329,7 +329,7 @@ class syntax_plugin_do_do extends DokuWiki_Syntax_Plugin
         $receivers = array_diff(
             $data['task']['users'],
             (array)$oldtask['users'],
-            array($_SERVER['REMOTE_USER'], $data['task']['creator'])
+            array($_SERVER['REMOTE_USER'] ?? null, $data['task']['creator'])
         );
 
         // now mail any new assignees if task is still open
